@@ -27,9 +27,9 @@
     "@ng-icons/ux-aspects": "^25.1.0",
     "@shopify/buy-button-js": "^2.4.0",
     "chart.js": "^4.3.0",
-    "firebase": "^10.3.0",
-    "firebase-admin": "^11.11.0",
+    "firebase": "^9.23.0",
     "fuse.js": "^6.6.2",
+    "rxfire": "^6.1.0",
     "rxjs": "~7.8.0",
     "stripe": "^14.4.0",
     "tslib": "^2.3.0",
@@ -40,12 +40,13 @@
     "@angular/cli": "~16.0.4",
     "@angular/compiler-cli": "^16.0.0",
     "@types/jasmine": "~4.3.0",
+    "@types/node": "^18.16.3",
     "jasmine-core": "~4.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
-    "typescript": "~5.0.2"
+    "typescript": "~5.1.6"
   }
 }

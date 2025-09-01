@@ -12,7 +12,7 @@ export class ChatsService{
   getChatId(id: number): Observable<Chat | null>{
     const chatRef = doc(this.firestore, `chats/${id}`);
     return docData(chatRef).pipe(
-      map((chat:Chat) => {
+      map((chat: Chat | undefined) => {
         if(chat){
           return { ...chat, numVenta: id };
         }else{
