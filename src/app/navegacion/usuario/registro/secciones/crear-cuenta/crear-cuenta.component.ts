@@ -138,12 +138,6 @@ export class CrearCuentaComponent implements OnInit{
   singInGoogle(){
     this.authService.singInGoogle();
   }
-  singInFacebook(){
-    this.authService.singInFacebook();
-  }
-  singInTwitter(){
-    this.authService.singInTwitter();
-  }
   //---------------------------------------------------------------
   navegar(ruta: string){
     this.zone.run(()=>{

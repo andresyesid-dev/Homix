@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, User, authState, sendEmailVerification, signInWithEmailAndPassword, signInWithRedirect, updateProfile, RecaptchaVerifier, signInWithPhoneNumber, ConfirmationResult, getRedirectResult, getAdditionalUserInfo, signInWithCredential, PhoneAuthProvider} from '@angular/fire/auth';
+import { Auth, FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider, User, authState, sendEmailVerification, signInWithEmailAndPassword, signInWithRedirect, signInWithPopup, updateProfile, getAdditionalUserInfo } from '@angular/fire/auth';
 import { Firestore, arrayUnion, collection, collectionData, doc, docData, getDoc, getDocs, query, setDoc, updateDoc, where} from '@angular/fire/firestore';
 import { Router } from '@angular/router';
 import { DataSharingService } from './data-sharing.service';
@@ -14,7 +14,9 @@ interface ErrorResponse  {
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private auth: Auth, private router: Router, private dataSharingService: DataSharingService, private firestore: Firestore) { this.handleRedirectResult() }
+  constructor(private auth: Auth, private router: Router, private dataSharingService: DataSharingService, private firestore: Firestore) { 
+    // Ya no necesitamos manejar redirects
+  }
   private readonly googleProvider = new GoogleAuthProvider();
   private readonly facebookProvider = new FacebookAuthProvider();
   private readonly twitterProvider = new TwitterAuthProvider();
@@ -88,6 +90,27 @@ export class AuthService {
     }
   }
 
+  async getUserPhoneFromFirestore(uid: string | undefined): Promise<string | null> {
+    if (!uid) {
+      return null;
+    }
+    
+    try {
+      const userDoc = doc(this.firestore, 'usuarios', uid);
+      const docSnapshot = await getDoc(userDoc);
+      
+      if (docSnapshot.exists()) {
+        const userData = docSnapshot.data();
+        return userData['telefono'] || null;
+      }
+      
+      return null;
+    } catch (error) {
+      console.error('Error obteniendo teléfono del usuario:', error);
+      return null;
+    }
+  }
+
   get getUsuarios$(): Observable<Usuario[]>{
     const collectionUsuarios = collection(this.firestore, 'usuarios');
     return collectionData(collectionUsuarios, {idField: 'id'}) as Observable<Usuario[]>;
@@ -155,13 +178,8 @@ export class AuthService {
   async singIn(email:string, password:string):Promise<string | void>{
     try {
       await signInWithEmailAndPassword(this.auth, email, password);
-      // SingIN
-      // verificar si verificó el Email
-      // redireccionar
     } catch (error:unknown) {
       const {code, message} = error as ErrorResponse;
-      console.log('code', code);
-      console.log('message', message)
       if(code === 'auth/user-not-found'){
         return 'emailError'
       } else if(code === 'auth/wrong-password'){
@@ -182,72 +200,53 @@ export class AuthService {
     try{
       this.auth.signOut();
     }catch(error: unknown){
-      console.log(error)
+      console.error('Error al cerrar sesión:', error)
     }
   }
+  
   async sendEmail(user:User): Promise<void>{
     try {
       await sendEmailVerification(user);
     } catch (error:unknown) {
-      console.log(error)
+      console.error('Error al enviar email de verificación:', error)
     }
   }
   //-------------------------------------------------------------------------------------------- GOOGLE --------------
 
-
-  async handleRedirectResult() {
-    try {
-      const result = await getRedirectResult(this.auth);
+  async singInGoogle(): Promise<void>{
+    try{
+      const result = await signInWithPopup(this.auth, this.googleProvider);
+      
       if (result) {
         const isNewUser = getAdditionalUserInfo(result)?.isNewUser;
+        
         if (isNewUser) {
+          await this.addUserFirestore();
           this.dataSharingService.setFormData({
             tipo: "singUpGoogle"
           });
-          await this.addUserFirestore();
+          this.router.navigate(['cuenta/phone-validation']);
         } else {
-          const docRef = doc(this.firestore, 'usuarios', this.auth.currentUser?.uid!);
+          const docRef = doc(this.firestore, 'usuarios', result.user.uid);
           const docSnap = await getDoc(docRef);
-          const usuario = docSnap.data()
-          if(usuario!['telefono']) {
+          const usuario = docSnap.data();
+          
+          if(usuario && usuario['telefono']) {
             this.dataSharingService.setFormData({
-              phone: usuario!['telefono'],
+              phone: usuario['telefono'],
               tipo: "singInGoogle"
             });
-          }else{
+            this.router.navigate(['cuenta/phone-validation/enter-code']);
+          } else {
             this.dataSharingService.setFormData({
               tipo: "singInGoogle"
             });
+            this.router.navigate(['cuenta/phone-validation']);
           }
         }
-        this.router.navigate(['cuenta/phone-validation']);
       }
-    } catch (error) {
-      console.log("Error", error)
-    }
-  }
-
-  //----------------------------------------------------------
-
-  async singInGoogle(): Promise<void>{
-    try{
-      await signInWithRedirect(this.auth, this.googleProvider);
     }catch(error){
-      console.log('google login', error)
-    }
-  }
-  async singInFacebook(): Promise<void>{
-    try{
-      await signInWithRedirect(this.auth, this.facebookProvider);
-    }catch(error){
-      console.log('google login', error)
-    }
-  }
-  async singInTwitter(): Promise<void>{
-    try{
-      await signInWithRedirect(this.auth, this.twitterProvider);
-    }catch(error){
-      console.log('google login', error)
+      console.error('Error en singInGoogle:', error)
     }
   }
 }
