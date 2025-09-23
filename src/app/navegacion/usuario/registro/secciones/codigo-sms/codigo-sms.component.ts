@@ -1,8 +1,8 @@
 import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
-import { Auth, EmailAuthProvider, PhoneAuthCredential, PhoneAuthProvider, RecaptchaVerifier, linkWithCredential, sendPasswordResetEmail, signInWithCredential, signInWithPhoneNumber, updatePhoneNumber, updateProfile } from '@angular/fire/auth';
+import { Auth, EmailAuthProvider, createUserWithEmailAndPassword, linkWithCredential, sendPasswordResetEmail, signInWithEmailAndPassword, updateProfile } from '@angular/fire/auth';
 import { Firestore, doc, updateDoc } from '@angular/fire/firestore';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 import { ActivatedRoute, Router } from '@angular/router';
-import { ConfirmationResult, signInWithEmailAndPassword } from 'firebase/auth';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { DataSharingService } from 'src/app/servicios/usuarios/data-sharing.service';
 
@@ -17,20 +17,22 @@ interface ErrorResponse  {
   styleUrls: ['./codigo-sms.component.scss']
 })
 export class CodigoSMSComponent implements OnInit{
-  constructor(private authService: AuthService, private auth: Auth, private router: Router, private dataSharingService: DataSharingService, private firestore: Firestore){}
+  constructor(
+    private authService: AuthService, 
+    private auth: Auth, 
+    private router: Router, 
+    private dataSharingService: DataSharingService, 
+    private firestore: Firestore,
+    private functions: Functions
+  ){}
   @ViewChildren('verificationInput') verificationInputs!: QueryList<ElementRef>;
   @ViewChild('firstInput') firstInput!: ElementRef;
-  private verificationId!: string;
-  capcha = false;
   private datos!: any;
   numero!: string;
   private algo: boolean = false;
   codigoIncorrecto = false;
   check = false;
-  recaptchaVerifier!: RecaptchaVerifier;
-
-  confirmationResult!: ConfirmationResult;
-
+  private generatedCode!: string; // El código que generamos y enviamos
   enteredCodes: string[] = ['', '', '', '', '', ''];
   cargando = false;
 
@@ -56,79 +58,98 @@ export class CodigoSMSComponent implements OnInit{
   }
 
   async sendVerificationCode() {
-    this.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {
-      size: 'normal',
-      callback: () => {
-      },
-    }, this.auth);
-
-    await signInWithPhoneNumber(this.auth, this.numero, this.recaptchaVerifier)
-      .then((confirmationResult) => {
-        this.verificationId = confirmationResult.verificationId;
-        this.capcha = true;
-        this.firstInput.nativeElement.focus();
-      })
-      .catch((error) => {
-        console.log(error)
+    try {
+      // Generar código aleatorio de 6 dígitos
+      this.generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+      
+      // Llamar a la Cloud Function para enviar WhatsApp
+      const enviarWhatsApp = httpsCallable(this.functions, 'enviarWhatsApp');
+      const result = await enviarWhatsApp({
+        numero: this.numero,
+        codigo: this.generatedCode
       });
-    
+      
+      console.log('WhatsApp enviado exitosamente:', result);
+      this.firstInput.nativeElement.focus();
+    } catch (error) {
+      console.error('Error al enviar WhatsApp:', error);
+    }
   }
 
   async verifyCode() {
     this.cargando = true;
-    const enteredCode = this.enteredCodes.join(''); //Codigo ingresado por el usuario
-    const phoneCredential: PhoneAuthCredential = PhoneAuthProvider.credential(this.verificationId, enteredCode); // Creación de credencial
+    const enteredCode = this.enteredCodes.join(''); // Código ingresado por el usuario
+    
+    // Verificar si el código ingresado coincide con el generado
+    if (enteredCode !== this.generatedCode) {
+      this.cargando = false;
+      this.codigoIncorrecto = true;
+      return;
+    }
+
     try {
+      // 3.1 - SignIn: Iniciar sesión con email y password
       if(this.datos.tipo === 'singIn'){
-        await signInWithCredential(this.auth, phoneCredential); //verificación de credencial
-      } else if(this.datos.tipo === 'singUp'){
-        const singCredential = await signInWithCredential(this.auth, phoneCredential);// ya creó la cuenta con el numero o inició la cuenta con el numero. 
-        const emailCredential = EmailAuthProvider.credential(this.datos.email, this.datos.password);
-        const currentUser = this.auth.currentUser;
-        await linkWithCredential(currentUser!, emailCredential);
-        await updateProfile(singCredential.user, {
+        await signInWithEmailAndPassword(this.auth, this.datos.email, this.datos.password);
+      } 
+      // 3.2 - SignUp: Crear cuenta con email y password
+      else if(this.datos.tipo === 'singUp'){
+        const userCredential = await createUserWithEmailAndPassword(this.auth, this.datos.email, this.datos.password);
+        
+        // Actualizar perfil del usuario
+        await updateProfile(userCredential.user, {
           displayName: `${this.datos.name} ${this.datos.lastname}`
         });
+        
+        // Agregar usuario a Firestore y enviar email de verificación
         await this.authService.addUserFirestore();
-        await this.authService.sendEmail(singCredential.user);
-        await updateDoc(doc(this.firestore, "usuarios", currentUser?.uid!), { telefono: this.numero });
+        await this.authService.sendEmail(userCredential.user);
+        
+        // Actualizar número de teléfono en Firestore
+        await updateDoc(doc(this.firestore, "usuarios", userCredential.user.uid), { 
+          telefono: this.numero 
+        });
+        
         this.authService.usuarioNuevo = true;
-      } else if(this.datos.tipo === 'singUpGoogle' || this.datos.tipo === 'singInGoogle'){
+      } 
+      // 3.3 - Google SignIn/SignUp: Continuar sin phoneCredential
+      else if(this.datos.tipo === 'singUpGoogle' || this.datos.tipo === 'singInGoogle'){
         const currentUser = this.auth.currentUser;
-        await updatePhoneNumber(currentUser!, phoneCredential);
-        await updateDoc(doc(this.firestore, "usuarios", currentUser?.uid!), { telefono: this.numero });
-        if(this.datos.tipo === 'singUpGoogle'){
-          this.authService.usuarioNuevo = true;
+        if (currentUser) {
+          // Solo actualizar el número en Firestore
+          await updateDoc(doc(this.firestore, "usuarios", currentUser.uid), { 
+            telefono: this.numero 
+          });
+          
+          if(this.datos.tipo === 'singUpGoogle'){
+            this.authService.usuarioNuevo = true;
+          }
         }
       }
+      
       //-----------------------------------------------------------
+      // 3.4 - Forgot Password: Enviar email de reset si código es correcto
       if(this.datos.tipo !== 'forgotPassword'){
         this.dataSharingService.deleteData();
         this.check = true;
         this.router.navigate(['']);
-      }else{
-        sendPasswordResetEmail(this.auth, this.datos.email)
-        .then(async () => {
+      } else {
+        try {
+          await sendPasswordResetEmail(this.auth, this.datos.email);
           this.check = true;
           this.dataSharingService.setFormData({
             email: this.datos.email
-          })
-          await signInWithCredential(this.auth, phoneCredential);
+          });
           this.router.navigate(['cuenta/email-sent']);
-        })
-        .catch((error) => {
+        } catch (error) {
           console.error("Error al enviar el correo electrónico:", error);
-        });
+        }
       }
     } catch (error) {
       this.cargando = false;
       const {code, message} = error as ErrorResponse;
-      if (code === 'auth/invalid-verification-code') {
-        this.codigoIncorrecto = true;
-      }else {
-        console.error('Error al verificar el código:', error);
-        this.codigoIncorrecto = false;
-      }
+      console.error('Error en el proceso de autenticación:', error);
+      this.codigoIncorrecto = false;
     }
   }
 

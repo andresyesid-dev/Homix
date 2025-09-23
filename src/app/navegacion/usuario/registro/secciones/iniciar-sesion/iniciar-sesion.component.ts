@@ -77,11 +77,15 @@ export class IniciarSesionComponent {
       this.errorEmail = false; this.errorPassword = false; this.requiredEmail = false; this.requiredPassword = false;
       
       const { email, password } = this.form.value;
-        this.dataSharingService.setFormData({
-          email: email,
-          password: password,
-          phone: this.auth.currentUser?.phoneNumber,
-          tipo: "singIn"
+      
+      // Obtener el número de teléfono desde Firestore
+      const userPhone = await this.authService.getUserPhoneFromFirestore(this.auth.currentUser?.uid);
+      
+      this.dataSharingService.setFormData({
+        email: email,
+        password: password,
+        phone: userPhone,
+        tipo: "singIn"
       });
       this.authService.signOut();
       this.router.navigate(['cuenta/phone-validation']);
@@ -92,12 +96,6 @@ export class IniciarSesionComponent {
   //------------------------------------------
   singInGoogle(){
     this.authService.singInGoogle();
-  }
-  singInFacebook(){
-    this.authService.singInFacebook();
-  }
-  singInTwitter(){
-    this.authService.singInTwitter();
   }
   /*-------- Crear Usuario y Producto ---------*/
 

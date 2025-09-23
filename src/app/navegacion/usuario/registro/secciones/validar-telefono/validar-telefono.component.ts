@@ -83,7 +83,7 @@ export class ValidarTelefonoComponent implements OnDestroy{
               });
             }else if(this.datosRegistros.tipo === 'singUpGoogle' || this.datosRegistros.tipo === 'singInGoogle'){
               this.dataSharingService.setFormData({
-                tipo: 'singUpGoogle',
+                tipo: this.datosRegistros.tipo, // Mantener el tipo original
                 phone: phone
               });
             }
