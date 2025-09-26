@@ -7,11 +7,18 @@ import { Observable, map } from 'rxjs';
 import { Usuario, porComprar, referenciaCompra } from 'src/app/interfaces/usuario/usuario';
 import { Producto } from 'src/app/interfaces/producto/producto';
 import { Venta } from 'src/app/interfaces/venta';
+import { MercadoPagoPaymentData, MercadoPagoPaymentResponse } from 'src/app/interfaces/mercadopago';
+import { Functions, httpsCallable } from '@angular/fire/functions';
 @Injectable({
   providedIn: 'root'
 })
 export class ComprarService {
-  constructor(private firestore: Firestore, private auth: Auth, private authService: AuthService){}
+  constructor(
+    private firestore: Firestore, 
+    private auth: Auth, 
+    private authService: AuthService,
+    private functions: Functions
+  ){}
   agregarDir = false;
   modificarDir = false;
   direccionIndex!: number;
@@ -219,7 +226,81 @@ export class ComprarService {
     } catch (error) {
       console.error("ERROR",error);
     }
-  
+  }
+
+  //----------------- MercadoPago Integration ---------
+
+  /**
+   * Procesa un pago con MercadoPago usando la función de Firebase
+   */
+  async procesarPagoMercadoPago(paymentData: MercadoPagoPaymentData): Promise<MercadoPagoPaymentResponse> {
+    try {
+      const crearPago = httpsCallable(this.functions, 'crearPagoMercadoPago');
+      const response = await crearPago(paymentData);
+      return response.data as MercadoPagoPaymentResponse;
+    } catch (error: any) {
+      console.error('Error procesando pago:', error);
+      throw new Error(error.message || 'Error al procesar el pago');
+    }
+  }
+
+  /**
+   * Calcula el total de una compra incluyendo envío
+   */
+  calcularTotalCompra(producto: Producto, unidades: number, tamanioIndex?: number): number {
+    let precioProducto: number;
+    
+    if (producto.tamanios && typeof tamanioIndex === 'number') {
+      precioProducto = producto.tamanios[tamanioIndex].precio;
+    } else {
+      precioProducto = producto.precio;
+    }
+    
+    const subtotal = precioProducto * unidades;
+    const costoEnvio = producto.envioGratis ? 0 : (producto.precioEnvio || 0);
+    
+    return subtotal + costoEnvio;
+  }
+
+  /**
+   * Inicializa MercadoPago SDK
+   */
+  async inicializarMercadoPago(publicKey: string): Promise<void> {
+    console.log('🔑 Inicializando MercadoPago con clave:', publicKey);
+    
+    if (typeof window === 'undefined') {
+      throw new Error('Window no está disponible');
+    }
+
+    if (!publicKey || publicKey === 'TEST-your-public-key-here') {
+      throw new Error('Clave pública de MercadoPago no configurada correctamente');
+    }
+
+    if (!window.MercadoPago) {
+      console.log('📦 Cargando SDK de MercadoPago...');
+      // Cargar el SDK si no está cargado
+      return new Promise((resolve, reject) => {
+        const script = document.createElement('script');
+        script.src = 'https://sdk.mercadopago.com/js/v2';
+        script.onload = () => {
+          try {
+            window.MercadoPago = new (window as any).MercadoPago(publicKey);
+            console.log('✅ MercadoPago SDK cargado e inicializado');
+            resolve();
+          } catch (error: any) {
+            console.error('❌ Error inicializando MercadoPago:', error);
+            reject(new Error('Error inicializando MercadoPago: ' + error.message));
+          }
+        };
+        script.onerror = () => {
+          reject(new Error('Error cargando el SDK de MercadoPago'));
+        };
+        document.head.appendChild(script);
+      });
+    } else {
+      console.log('✅ MercadoPago ya estaba inicializado');
+      return Promise.resolve();
+    }
   }
 
 }

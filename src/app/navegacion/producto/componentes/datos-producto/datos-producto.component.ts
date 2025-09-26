@@ -15,6 +15,8 @@ import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { DocumentData, DocumentReference, Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { first } from 'rxjs';
+import { MercadoPagoPaymentData, MercadoPagoBrickConfig } from 'src/app/interfaces/mercadopago';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-datos-producto',
@@ -41,6 +43,13 @@ export class DatosProductoComponent implements OnInit,OnChanges{
   tamanioSelec = 0;
 
   anchoPagina: number = window.innerWidth;
+
+  // MercadoPago properties
+  mostrarModalPago = false;
+  procestandoPago = false;
+  pagoCompletado = false;
+  errorPago: string | null = null;
+  brickController: any = null;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -181,30 +190,255 @@ export class DatosProductoComponent implements OnInit,OnChanges{
   }
 
   async comprar(){
-    if(this.productoCargado){
-      if(this.producto){ //verificar que el producto ah cargado para no enviar datos undefined
-        if(this.auth.currentUser){
-          if(this.productoPropio){
-            //Este es tu producto
-          }else{
-            if(this.producto.tamanios){
-              this.comprarService.agregarReferenciaCompra(this.producto.id!, this.auth.currentUser.uid, Number(this.unidades), this.tamanioSelec);
-            }else{
-              this.comprarService.agregarReferenciaCompra(this.producto.id!, this.auth.currentUser.uid, Number(this.unidades));
-            }
-            this.authService.getUsuarioId(this.auth.currentUser.uid).pipe(first()).subscribe((usuario)=>{
-              if(usuario.direcciones && usuario.direcciones.length !== 0){
-                this.router.navigate(['comprar/checkout/resumen']);
-              }else{
-                this.comprarService.agregarDir = true;
-                this.router.navigate(['comprar/checkout/detalles-envio']);
-              }
-            })
-          }
+    console.log('🚀 Botón Comprar presionado');
+    console.log('Estado:', {
+      productoCargado: this.productoCargado,
+      producto: !!this.producto,
+      currentUser: !!this.auth.currentUser,
+      productoPropio: this.productoPropio
+    });
+
+    if(this.producto){ //verificar que el producto ah cargado para no enviar datos undefined
+      if(this.auth.currentUser){
+        if(this.productoPropio){
+          console.log('❌ Este es tu propio producto');
+          alert('Este es tu propio producto');
         }else{
-          this.router.navigate(['cuenta/crear-cuenta']);
+          console.log('✅ Iniciando proceso de pago...');
+          // Mostrar modal de pago con MercadoPago Bricks
+          await this.iniciarProcesoPago();
+        }
+      }else{
+        console.log('❌ Usuario no autenticado, redirigiendo...');
+        this.router.navigate(['cuenta/crear-cuenta']);
+      }
+    } else {
+      console.log('❌ Producto no cargado');
+      alert('El producto aún no está cargado. Espera un momento.');
+    }
+  }
+
+  async iniciarProcesoPago() {
+    try {
+      console.log('💳 Iniciando proceso de pago...');
+      this.mostrarModalPago = true;
+      this.errorPago = null;
+      
+      console.log('🔧 Inicializando MercadoPago SDK...');
+      // Inicializar MercadoPago
+      await this.comprarService.inicializarMercadoPago(environment.mercadoPago.publicKey);
+      
+      console.log('🎯 Configurando brick de pago...');
+      // Configurar el brick de pago
+      await this.configurarBrickPago();
+      console.log('✅ Modal de pago configurado correctamente');
+    } catch (error: any) {
+      console.error('❌ Error inicializando pago:', error);
+      this.errorPago = 'Error al inicializar el sistema de pago: ' + error.message;
+      this.mostrarModalPago = false;
+      alert('Error al inicializar el pago: ' + error.message);
+    }
+  }
+
+  async configurarBrickPago() {
+    const total = this.comprarService.calcularTotalCompra(this.producto, this.unidades, this.tamanioSelec);
+    
+    console.log('💰 Total calculado:', total);
+    
+    // Verificar que el contenedor existe
+    const container = document.getElementById('brick-container');
+    if (!container) {
+      throw new Error('Contenedor brick-container no encontrado');
+    }
+    
+    // Limpiar cualquier brick anterior
+    container.innerHTML = '';
+    
+    const brickConfig = {
+      initialization: {
+        amount: total,
+        payer: {
+          email: '' // Se completará en el formulario
+        }
+      },
+      customization: {
+        paymentMethods: {
+          creditCard: 'all',
+          debitCard: 'all'
+        },
+        visual: {
+          hidePaymentButton: false,
+          hideFormTitle: false
+        }
+      },
+      callbacks: {
+        onReady: () => {
+          console.log('✅ Brick configurado y listo');
+        },
+        onSubmit: async (data: any) => {
+          console.log('📤 Datos del formulario recibidos');
+          return await this.procesarPago(data);
+        },
+        onError: (error: any) => {
+          console.error('❌ Error en brick:', error);
+          this.errorPago = `Error en el formulario de pago: ${error.message || 'Error desconocido'}`;
         }
       }
+    };
+
+    console.log('🔧 Configuración del brick:', brickConfig);
+
+    try {
+      // Crear el brick
+      this.brickController = await window.MercadoPago.bricks().create('payment', 'brick-container', brickConfig);
+      console.log('✅ Brick creado exitosamente');
+    } catch (error: any) {
+      console.error('❌ Error creando brick:', error);
+      throw new Error(`Error creando brick: ${error.message}`);
+    }
+  }
+
+  async procesarPago(formData: any) {
+    try {
+      this.procestandoPago = true;
+      this.errorPago = null;
+
+      // Obtener datos del usuario
+      const usuario = await this.authService.getUsuarioId(this.auth.currentUser!.uid).pipe(first()).toPromise();
+      
+      if (!usuario?.correo) {
+        throw new Error('Email del usuario no encontrado');
+      }
+
+      const total = this.comprarService.calcularTotalCompra(this.producto, this.unidades, this.tamanioSelec);
+      
+      const paymentData: MercadoPagoPaymentData = {
+        token: formData.token,
+        amount: total,
+        description: `${this.producto.nombre} x${this.unidades}`,
+        installments: formData.installments || 1,
+        payment_method_id: formData.payment_method_id,
+        payer: {
+          email: usuario.correo,
+          identification: formData.payer?.identification || {
+            type: 'CC',
+            number: ''
+          }
+        }
+      };
+
+      // Procesar pago a través de Firebase Functions
+      const response = await this.comprarService.procesarPagoMercadoPago(paymentData);
+      
+      if (response.success && response.payment) {
+        // Pago exitoso
+        this.pagoCompletado = true;
+        this.procestandoPago = false;
+        
+        // Agregar referencia de compra y redirigir
+        if (this.producto.tamanios) {
+          await this.comprarService.agregarReferenciaCompra(
+            this.producto.id!, 
+            this.auth.currentUser!.uid, 
+            Number(this.unidades), 
+            this.tamanioSelec
+          );
+        } else {
+          await this.comprarService.agregarReferenciaCompra(
+            this.producto.id!, 
+            this.auth.currentUser!.uid, 
+            Number(this.unidades)
+          );
+        }
+
+        // Cerrar modal después de un momento
+        setTimeout(() => {
+          this.cerrarModalPago();
+          this.router.navigate(['comprar/checkout/resumen']);
+        }, 2000);
+        
+      } else {
+        throw new Error(response.error || 'Error al procesar el pago');
+      }
+    } catch (error: any) {
+      console.error('Error procesando pago:', error);
+      this.errorPago = error.message || 'Error al procesar el pago';
+      this.procestandoPago = false;
+    }
+  }
+
+  cerrarModalPago() {
+    this.mostrarModalPago = false;
+    this.procestandoPago = false;
+    this.pagoCompletado = false;
+    this.errorPago = null;
+    
+    if (this.brickController) {
+      this.brickController.unmount();
+      this.brickController = null;
+    }
+  }
+
+  calcularTotal(): number {
+    return this.comprarService.calcularTotalCompra(this.producto, this.unidades, this.tamanioSelec);
+  }
+
+  // Método para debug - puedes llamarlo desde el template para verificar el estado
+  debugBotones(): void {
+    console.log('Debug Botones:', {
+      productoCargado: this.productoCargado,
+      producto: !!this.producto,
+      productoNombre: this.producto?.nombre,
+      productoEstado: this.producto?.estado
+    });
+  }
+
+  async agregarAlCarrito() {
+    console.log('🛒 Botón Agregar al Carrito presionado');
+    console.log('Estado:', {
+      producto: !!this.producto,
+      currentUser: !!this.auth.currentUser,
+      productoPropio: this.productoPropio,
+      unidades: this.unidades
+    });
+
+    if (this.producto && this.auth.currentUser) {
+      if (this.productoPropio) {
+        console.log('❌ Este es tu propio producto');
+        alert('No puedes agregar tu propio producto al carrito');
+        return;
+      }
+
+      try {
+        console.log('✅ Agregando al carrito...');
+        if (this.producto.tamanios) {
+          await this.comprarService.agregarReferenciaCarrito(
+            this.producto.id!, 
+            this.auth.currentUser.uid, 
+            Number(this.unidades), 
+            this.tamanioSelec
+          );
+        } else {
+          await this.comprarService.agregarReferenciaCarrito(
+            this.producto.id!, 
+            this.auth.currentUser.uid, 
+            Number(this.unidades)
+          );
+        }
+        
+        console.log('✅ Producto agregado al carrito exitosamente');
+        alert('¡Producto agregado al carrito!');
+        
+      } catch (error) {
+        console.error('❌ Error agregando al carrito:', error);
+        alert('Error al agregar al carrito: ' + error);
+      }
+    } else if (!this.auth.currentUser) {
+      console.log('❌ Usuario no autenticado, redirigiendo...');
+      this.router.navigate(['cuenta/crear-cuenta']);
+    } else {
+      console.log('❌ Producto no disponible');
+      alert('El producto no está disponible');
     }
   }
 

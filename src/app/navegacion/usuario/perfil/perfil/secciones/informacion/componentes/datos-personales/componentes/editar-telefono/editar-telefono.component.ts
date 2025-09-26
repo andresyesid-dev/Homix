@@ -103,7 +103,7 @@ export class EditarTelefonoComponent {
         this.ingresarNumero = false;
         this.cargando = false;
         setTimeout(() => {
-          this.enviarCodigo();
+          //this.enviarCodigo();
         }, 10);
       })
       .catch((error) => {
@@ -127,7 +127,7 @@ export class EditarTelefonoComponent {
       this.ingresarCodigoEmail = false;
       this.ingresarNumero = false;
       setTimeout(() => {
-        this.enviarCodigo();
+        //this.enviarCodigo();
       }, 10);
     } catch (error: any) {
       if(error.code == 'auth/user-mismatch'){
@@ -136,24 +136,6 @@ export class EditarTelefonoComponent {
         console.log(error);
       }
     }
-  }
-
-  async enviarCodigo(){
-    if (this.appVerifier) {
-      this.appVerifier.clear();
-    }
-    this.appVerifier = new RecaptchaVerifier('recaptcha-container', {
-      size: 'normal',
-      callback: () => {},
-    }, this.auth);
-    const phoneProvider = new PhoneAuthProvider(this.auth);
-    await phoneProvider.verifyPhoneNumber('+57' + this.telefono, this.appVerifier).then((verificationId)=>{
-      this.verificationId = verificationId;
-      this.capcha = true;
-      setTimeout(() => {
-        this.firstInput.nativeElement.focus();
-      }, 1000);
-    });
   }
 
   async validarCodigo(){

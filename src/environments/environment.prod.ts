@@ -15,6 +15,10 @@ export const environment = {
   }, 
   stripe: {
     key: 'pk_live_51NttnvIR0Fjtn6lAkTbFofKfbxkqLOVr0p5RNDXFBpaBB0nQgMkQMdXHFfmRbnCaLlKE1JPjNESDxwZOa9jOSzL700rRo2nACz'
+  },
+  mercadoPago: {
+    // Reemplaza con tu clave pública de producción de MercadoPago
+    publicKey: 'APP_USR-your-production-public-key-here'
   }
 };
 
