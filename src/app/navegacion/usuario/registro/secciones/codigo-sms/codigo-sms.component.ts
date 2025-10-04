@@ -45,12 +45,25 @@ export class CodigoSMSComponent implements OnInit{
         this.router.navigate(['']);
       }
       this.datos = formData;
-      if(this.datos.tipo === 'singUp' || this.datos.tipo === 'singUpGoogle'){
-        this.numero = this.datos.phone.toString();
-        this.numero = '+57' + this.numero;
-      }else{
-        this.numero = this.datos.phone;
+      
+      console.log('🔍 Datos recibidos:', this.datos);
+      console.log('📞 Phone original:', this.datos.phone);
+      console.log('📋 Tipo:', this.datos.tipo);
+      
+      // Normalizar el número siempre
+      let numeroLimpio = this.datos.phone.toString();
+      
+      // Remover cualquier +57 existente para evitar duplicados
+      if(numeroLimpio.startsWith('+57')){
+        numeroLimpio = numeroLimpio.substring(3);
+      } else if(numeroLimpio.startsWith('57')){
+        numeroLimpio = numeroLimpio.substring(2);
       }
+      
+      // Siempre agregar +57 al final
+      this.numero = '+57' + numeroLimpio;
+      
+      console.log('📱 Número final construido:', this.numero);
     }
     setTimeout(() => {
       this.sendVerificationCode();
@@ -62,6 +75,11 @@ export class CodigoSMSComponent implements OnInit{
       // Generar código aleatorio de 6 dígitos
       this.generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
       
+      console.log('🚀 Enviando WhatsApp...');
+      console.log('📱 FROM (debería ser sandbox): whatsapp:+14155238886');
+      console.log('📱 TO (número de destino):', `whatsapp:${this.numero}`);
+      console.log('🔢 Código:', this.generatedCode);
+      
       // Llamar a la Cloud Function para enviar WhatsApp
       const enviarWhatsApp = httpsCallable(this.functions, 'enviarWhatsApp');
       const result = await enviarWhatsApp({
@@ -69,10 +87,15 @@ export class CodigoSMSComponent implements OnInit{
         codigo: this.generatedCode
       });
       
-      console.log('WhatsApp enviado exitosamente:', result);
+      console.log('✅ WhatsApp enviado exitosamente:', result);
       this.firstInput.nativeElement.focus();
-    } catch (error) {
-      console.error('Error al enviar WhatsApp:', error);
+    } catch (error: any) {
+      console.error('❌ Error al enviar WhatsApp:', error);
+      console.error('❌ Código de error:', error.code);
+      console.error('❌ Mensaje completo:', error.message);
+      
+      // Mostrar el error específico
+      alert(`Error WhatsApp: ${error.message}`);
     }
   }
 

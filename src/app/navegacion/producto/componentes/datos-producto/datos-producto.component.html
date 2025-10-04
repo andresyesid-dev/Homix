@@ -46,8 +46,16 @@
                 <ng-icon name="heroChevronRight"></ng-icon>
             </div>
         </ng-container>
-        <app-boton-compra  *ngIf="producto.estado" [id]="producto.botonCompra!.id" [idDocumento]="producto.botonCompra!.idDocumento" [variante]="producto.botonCompra!.variante ? producto.botonCompra!.variante : '' "></app-boton-compra>
-        <app-boton-carrito  *ngIf="producto.estado" [id]="producto.botonCompra!.id" [idDocumento]="producto.botonCompra!.idDocumento" [variante]="producto.botonCompra!.variante ? producto.botonCompra!.variante : '' "></app-boton-carrito>
+        
+        <!-- Botones de compra -->
+        <div class="botones-compra" *ngIf="producto">
+            <button class="btn-comprar-directo" (click)="comprar()">
+                Comprar ahora
+            </button>
+            <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">
+                Agregar al carrito
+            </button>
+        </div>
         <!--
         <div class="linea-botones"></div>
         <button class="btnComprar" *ngIf="producto.estado">
