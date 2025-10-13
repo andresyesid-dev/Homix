@@ -1,13 +1,13 @@
 {
   "projects": {
-    "default": "joum-b86f6",
-    "joum": "joum-b86f6"
+    "default": "homix0523",
+    "homix": "homix0523"
   },
   "targets": {
-    "joum-b86f6": {
+    "homix0523": {
       "hosting": {
-        "joum": [
-          "joum-b86f6"
+        "homix": [
+          "homix0523"
         ]
       }
     }

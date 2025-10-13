@@ -90,7 +90,7 @@ export const crearPagoMercadoPago = onCall(
     const paymentData = {
       transaction_amount: parseFloat(amount),
       token,
-      description: description || 'Compra en Joum',
+      description: description || 'Compra en Homix',
       installments: installments || 1,
       payment_method_id,
       payer: {
