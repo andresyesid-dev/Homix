@@ -7,6 +7,7 @@ import { Producto } from 'src/app/interfaces/producto/producto';
 import { Usuario, referenciaCompra } from 'src/app/interfaces/usuario/usuario';
 import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
+import { ProductosService } from 'src/app/servicios/productos/productos.service';
 
 @Component({
   selector: 'app-producto-guardado',
@@ -25,10 +26,12 @@ export class ProductoGuardadoComponent implements OnInit, OnDestroy{
   private usuario!: Usuario;
   userUsuario!: string;
   estiloString!: string;
+  fotoUrl: string = '';
   
-  constructor(private zone: NgZone, private router: Router, private firestore: Firestore, private auth:Auth, private authService: AuthService, private comprarService: ComprarService){}
+  constructor(private zone: NgZone, private router: Router, private firestore: Firestore, private auth:Auth, private authService: AuthService, private comprarService: ComprarService, private prdService: ProductosService){}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.cargarFoto();
     this.auth.onAuthStateChanged(async (user) => {
       if (user) {
         this.subscription = this.authService.getUsuarioId(user.uid).subscribe((usuario)=>{
@@ -41,6 +44,22 @@ export class ProductoGuardadoComponent implements OnInit, OnDestroy{
         this.productoGuardado.precio = this.productoGuardado.tamanios![this.tamanio as number].precio;
       }
     });
+  }
+
+  async cargarFoto() {
+    try {
+      const fotos = await this.prdService.obtenerFotoUno(this.productoGuardado);
+      this.fotoUrl = fotos[0] || '';
+    } catch (error) {
+      console.error('Error cargando foto:', error);
+      if (this.productoGuardado.fotos && this.productoGuardado.fotos.length > 0) {
+        this.fotoUrl = `assets/img/productos/${this.productoGuardado.fotos[0]}.webp`;
+      }
+    }
+  }
+
+  onImageLoad() {
+    this.imagenCargada = true;
   }
 
   async cambiarUnidad(accion: string, index: number){

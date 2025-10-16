@@ -1,0 +1,30 @@
+<div class="factura-card">
+    <div class="factura-header">
+        <div class="icono-tipo">
+            <ng-icon [name]="facturaReporte.tipo === 'factura' ? 'heroDocument' : 'heroChartBar'" size="24"></ng-icon>
+        </div>
+        <div class="info-principal">
+            <h3>{{ facturaReporte.tipo === 'factura' ? 'Factura' : 'Reporte' }}</h3>
+            <p class="periodo" *ngIf="facturaReporte.periodo">{{ facturaReporte.periodo }}</p>
+        </div>
+        <div class="estado" [class]="facturaReporte.estado">
+            <span>{{ facturaReporte.estado }}</span>
+        </div>
+    </div>
+    
+    <div class="factura-body">
+        <p class="descripcion" *ngIf="facturaReporte.descripcion">{{ facturaReporte.descripcion }}</p>
+        
+        <div class="factura-footer">
+            <span class="fecha" *ngIf="facturaReporte.fecha">{{ facturaReporte.fecha.toDate() | date:'mediumDate' }}</span>
+            <span class="monto" *ngIf="facturaReporte.monto">{{ facturaReporte.monto | currency:'USD' }}</span>
+        </div>
+    </div>
+    
+    <div class="acciones">
+        <button class="btn-descargar">
+            <ng-icon name="heroArrowDownTray" size="16"></ng-icon>
+            Descargar
+        </button>
+    </div>
+</div>

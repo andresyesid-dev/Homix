@@ -1,0 +1,137 @@
+<div class="contenido">
+    <form [formGroup]='form' (ngSubmit)="submit()" novalidate>
+        <h1>Detalles</h1>
+        <div class="detalles">
+            <ng-container *ngFor="let detalle of detalles; let index = index">
+              <div [ngClass]="{'siNo': detalle.tipo === 'selectSiNo', 'medida': detalle.tipo === 'medida' || detalle.tipo === 'medidaVolumen' ||  detalle.tipo === 'medidaPeso' || detalle.tipo === 'medidaPotencia' || detalle.tipo === 'medidaTemperatura', 'active': detalle.active == true, 'desactive': detalle.active == false }">
+                <label [for]="detalle.detalle">{{ detalle.nombre }}</label>
+
+                <ng-container *ngIf="detalle.tipo === 'input'">
+                  <input type="text" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                </ng-container>
+                <ng-container *ngIf="detalle.tipo === 'number'">
+                  <input type="number" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'select'">
+                    <select *ngIf="detalle.nombre == 'Formato de venta'" class="select" (change)="selectFormatoVenta(index, $event)" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                        <option value="" disabled></option>
+                        <option *ngFor="let opcion of detalle.opciones" [value]="opcion">{{ opcion }}</option>
+                    </select>
+
+                    <select *ngIf="detalle.nombre == 'Sub categoría'" class="select" (change)="selectSubCategoria($event)" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="" disabled></option>
+                      <option *ngFor="let opcion of detalle.opciones" [value]="opcion">{{ opcion }}</option>
+                    </select>
+
+                    <select *ngIf="detalle.nombre !== 'Formato de venta' && detalle.nombre !== 'Sub categoría'" class="select" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="" disabled></option>
+                      <option *ngFor="let opcion of detalle.opciones" [value]="opcion">{{ opcion }}</option>
+                    </select>
+                   <ng-icon class="down" name="ionChevronDown"></ng-icon>
+                </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'selectSiNo'">
+                    <select (change)="inputSecundarioSiNo($event, 'tipoPlanta'); " *ngIf="detalle.detalle == 'conPlanta'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+                    <select (change)="inputSecundarioSiNo($event, 'coleccion'); " *ngIf="detalle.detalle == 'coleccionable'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+                    <select (change)="inputSecundarioSiNo($event, 'tipoRosca'); " *ngIf="detalle.detalle == 'giratorio'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+                    <select (change)="inputSecundarioSiNo($event, 'tipoControl'); " *ngIf="detalle.detalle == 'control'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+
+                    <select (change)="inputSecundarioSiNo($event, 'tipoPanel'); " *ngIf="detalle.detalle == 'panel'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+
+                    <select (change)="inputSecundarioSiNo($event, 'materialMarco'); " *ngIf="detalle.detalle == 'marco'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+                    <select (change)="inputSecundarioSiNo($event, 'tipoPersonaje'); " *ngIf="detalle.detalle == 'personaje'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+
+                    <select *ngIf="detalle.detalle !== 'conPlanta' && detalle.detalle !== 'coleccionable' && detalle.detalle !== 'giratorio' && detalle.detalle !== 'control' && detalle.detalle !== 'panel' && detalle.detalle !== 'marco' && detalle.detalle !== 'personaje'" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                      <option value="No">No</option>
+                      <option value="Sí">Sí</option>
+                    </select>
+
+                    <ng-icon class="downDos" name="ionChevronDown"></ng-icon>
+                  </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'medida'">
+                    <br>
+                    <input type="number" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                    <select class="select" [formControlName]='detalle.valorSelect'>
+                        <option value="cm">cm</option>
+                        <option value="m">m</option>
+                    </select>
+                   <ng-icon class="down" name="ionChevronDown"></ng-icon>
+                </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'medidaVolumen'">
+                    <br>
+                    <input type="number" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                    <select class="select" [formControlName]='detalle.valorSelect'>
+                        <option value="L">L</option>
+                        <option value="cc">cc</option>
+                        <option value="mL">mL</option>
+                    </select>
+                   <ng-icon class="down" name="ionChevronDown"></ng-icon>
+                </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'medidaPeso'">
+                  <br>
+                  <input type="number" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                  <select class="select" [formControlName]='detalle.valorSelect'>
+                      <option value="g">g</option>
+                      <option value="Kg" selected>Kg</option>
+                      <option value="lb">lb</option>
+                  </select>
+                 <ng-icon class="down" name="ionChevronDown"></ng-icon>
+                </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'medidaPotencia'">
+                  <br>
+                  <input type="number" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                  <select class="select" [formControlName]='detalle.valorSelect'>
+                      <option value="W">W</option>
+                      <option value="Im" selected>Im</option>
+                      <option value="cd">cd</option>
+                      <option value="IRC">IRC</option>
+                  </select>
+                 <ng-icon class="down" name="ionChevronDown"></ng-icon>
+                </ng-container>
+
+                <ng-container *ngIf="detalle.tipo === 'medidaTemperatura'">
+                  <br>
+                  <input type="number" [formControlName]='detalle.detalle' [id]="detalle.detalle">
+                  <select class="select" [formControlName]='detalle.valorSelect'>
+                      <option value="K">K</option>
+                  </select>
+                 <ng-icon class="down" name="ionChevronDown"></ng-icon>
+                </ng-container>
+              </div>
+            </ng-container>
+          </div>
+        
+        <div class="center-content">
+          <button class="botonInvalid" [disabled]="form.invalid || !submitValue || !cambios" type="submit" [ngClass]="{'success': actualizacionExitosa, 'botonValid': submitValue && cambios}">
+            <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+            <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+          </button>
+        </div>
+    </form>
+</div>

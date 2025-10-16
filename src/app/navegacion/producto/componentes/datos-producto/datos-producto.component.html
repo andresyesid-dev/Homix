@@ -26,24 +26,37 @@
         </div>
 
         <ng-container *ngIf="producto">
-            <div class="linea-Menu" *ngIf="anchoPagina > 800 && (producto.colores || producto.estilos)"></div>
-            <div class="sabores" *ngIf="producto.colores">
-                <label for="estilos">Colores:</label><br>
-                <select id="estilos" (change)="seleccionarColor($event)">
+            <div class="linea-Menu" *ngIf="anchoPagina > 800 && ((producto.colores && producto.colores.length > 1) || (producto.estilos && producto.estilos.length > 1))"></div>
+            <div class="sabores" *ngIf="producto.colores && producto.colores.length > 1">
+                <label for="colores">Colores:</label><br>
+                <select id="colores" (change)="seleccionarColor($event)">
                     <ng-container *ngFor="let color of producto.colores; let index = index">
                         <option [value]="index">{{color.color}}</option>
                     </ng-container>
                 </select>
                 <ng-icon name="heroChevronRight"></ng-icon>
             </div>
-            <div class="sabores" *ngIf="producto.estilos">
+            <div class="sabores" *ngIf="producto.estilos && producto.estilos.length > 1">
                 <label for="estilos">Estilos:</label><br>
-                <select id="estilos" (change)="seleccionarEstilo($event)">
+                <select id="estilos" [(ngModel)]="selectEstilo" (change)="seleccionarEstilo($event)">
                     <ng-container *ngFor="let estilo of producto.estilos; let index = index">
-                        <option [value]="index">{{estilo.estilo}}</option>
+                        <option [value]="index">{{estilo.nombre}}</option>
                     </ng-container>
                 </select>
                 <ng-icon name="heroChevronRight"></ng-icon>
+            </div>
+            
+            <!-- Selector de unidades (si el estilo tiene unidades) -->
+            <div class="sabores" *ngIf="producto.estilos && producto.estilos.length > 0 && producto.estilos[selectEstilo]?.unidades && producto.estilos[selectEstilo].unidades! > 0">
+                <label for="unidades">Unidades:</label><br>
+                <select id="unidades" [style.width.px]="unaUnidad ? 90 : 117" (change)="cambiarUnidades($event)">
+                    <option value="1" selected>1 unidad</option>
+                    <option *ngFor="let i of crearArrayUnidades(producto.estilos[selectEstilo].unidades!); let index = index" [value]="index + 2">
+                        {{ index + 2 }} unidad{{ index + 1 !== 0 ? 'es' : '' }}
+                    </option>
+                </select>
+                <ng-icon name="heroChevronRight"></ng-icon>
+                <p class="disponibles">(<span>{{producto.estilos[selectEstilo].unidades}}</span> disponibles)</p>
             </div>
         </ng-container>
         

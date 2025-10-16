@@ -28,6 +28,9 @@ export class ResumenComponent implements OnInit{
   productos!: Producto[];
   unidades!: number[];
   tamanios: (number | string)[] = [];
+  fotosUrls: string[] = [];
+  imagenesCargadas: boolean[] = [];
+  
   ngOnInit(): void {
     this.authService.getUsuarioId(this.auth.currentUser?.uid!).pipe(first()).subscribe((usuario)=>{
       if(usuario.direcciones && usuario.direcciones.length !== 0){
@@ -91,7 +94,33 @@ export class ResumenComponent implements OnInit{
     });
     this.unidades = this.usuario.referenciaCompra!.map((referencia)=>{
       return referencia.unidades;
-    })
+    });
+    
+    // Cargar fotos de todos los productos
+    await this.cargarFotos();
+  }
+
+  async cargarFotos() {
+    this.fotosUrls = await Promise.all(
+      this.productos.map(async (producto) => {
+        try {
+          const fotos = await this.prdsService.obtenerFotoUno(producto);
+          return fotos[0] || '';
+        } catch (error) {
+          console.error('Error cargando foto:', error);
+          if (producto.fotos && producto.fotos.length > 0) {
+            return `assets/img/productos/${producto.fotos[0]}.webp`;
+          }
+          return '';
+        }
+      })
+    );
+    // Inicializar el array de imagenes cargadas
+    this.imagenesCargadas = new Array(this.productos.length).fill(false);
+  }
+
+  onImageLoad(index: number) {
+    this.imagenesCargadas[index] = true;
   }
 
   async cambiarUnidad(accion: string, index: number){

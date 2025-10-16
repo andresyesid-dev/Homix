@@ -1,8 +1,60 @@
 
 <div #body class="body">
+    <div class="sombraMenuSmall" *ngIf='screenWidth < 1950' [ngStyle]='{"left": mouseInMenu ? "0" : "-100%", "opacity": mouseInMenu ? "100" : "0"}'></div>
     <app-barra-menu></app-barra-menu>
-    <div class="contenidoTotal"> 
-        <router-outlet></router-outlet>
+    <div class="contenidoUsuario">
+        <div>
+            <nav [ngStyle]='{"height": screenHeight - 90}' class="headercuenta">
+                <ul #principalUL [ngStyle]='{"height": screenHeight - 90}' class="principalUL" id="ul">
+                    <div class="contenidoHeader4">
+                        <img src="assets/img/usuarios/user.svg" class="IdPicUser4 fotoPerfil" alt="Image">
+                    </div>
+                    <li class="titleMenu">
+                        <span class="menuSmall" id="nombreContenidoUsuario">{{miNombre}}</span>
+                    </li>
+
+                    <li><a (click)='navegar([miUsuario +"/perfil/informacion"], $event);' class="perfil-a">
+                        <ng-icon style="font-size: 20px;" name="heroUserCircleSolid"></ng-icon><span style="position: absolute; margin-top: 3px;" class="menuSmall">Perfil</span></a>
+                    </li>
+                    <li (click)='desplegarSubmenu(0); scroll();' class="item-submenu-compras" menu="1">
+                        <p>
+                            <ng-icon name="heroShoppingCartSolid"></ng-icon><span class="texto">Compras</span><ng-icon class="icono-submenu" name="heroChevronDown"></ng-icon>
+                        </p>
+                        <span class="menuSmall">
+                            <ul [@submenu]='stateSubMenu[0]' class="submenu-compras">
+                                <li><a (click)='navegar([miUsuario +"/compras"], $event);'><ng-icon name="heroShoppingCart"></ng-icon>Compras</a></li>
+                                <li><a (click)='navegar([miUsuario +"/favoritos"], $event)'><ng-icon name="heroStar"></ng-icon>Favoritos</a></li>
+                                <li><a (click)='navegar([miUsuario +"/opiniones"], $event)'><ng-icon name="heroStar"></ng-icon>Opiniones</a></li>
+                            </ul>
+                        </span>
+                    </li>
+                    <li (click)='desplegarSubmenu(1); scroll();' class="item-submenu-ventas" menu="2">
+                        <p>
+                            <ng-icon name="heroCurrencyDollarSolid"></ng-icon><span class="texto">Ventas</span><ng-icon class="icono-submenu" name="heroChevronDown"></ng-icon>
+                        </p>
+                        <span class="menuSmall">
+                            <ul [@submenu]='stateSubMenu[1]' class="submenu-ventas">
+                                <li><a (click)='navegar([miUsuario +"/publicaciones"], $event)'><ng-icon name="heroBuildingStorefront"></ng-icon>Publicaciones</a></li>
+                                <li><a (click)='navegar([miUsuario +"/ventas"], $event)'><ng-icon name="heroCurrencyDollar"></ng-icon>Ventas</a></li>
+                                <li><a (click)='navegar([miUsuario +"/tu-dinero"], $event)'><ng-icon name="heroBanknotesMini"></ng-icon>Tu Dinero</a></li>
+                                <li><a (click)='navegar([miUsuario +"/metricas/negocio"], $event)'><ng-icon name="heroChartPie"></ng-icon>Métricas</a></li>
+                                <li><a (click)='navegar([miUsuario +"/novedades"], $event)'><ng-icon name="heroNewspaper"></ng-icon>Novedades</a></li>
+                                <li><a (click)='navegar([miUsuario +"/reputacion"], $event)'><ng-icon name="heroTrophy"></ng-icon>Reputación</a></li>
+                            </ul>
+                        </span>
+                    </li>
+                    <li><a (click)='navegar([miUsuario +"/facturacion"], $event);' class="facturacion-a">
+                        <ng-icon style="font-size: 20px;" name="heroDocumentText"></ng-icon><span style="position: absolute; margin-top: 3px;" class="menuSmall">Facturación</span></a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="contenidoInfoUsuario">
+            <div class="contenido2">
+                <router-outlet></router-outlet>
+            </div>
+        </div>
     </div>
-    <app-footer></app-footer>
+    <app-footer (footerHeight)='getFooterHeight($event)' (footer)='getFooter($event)' #footer></app-footer>
 </div>

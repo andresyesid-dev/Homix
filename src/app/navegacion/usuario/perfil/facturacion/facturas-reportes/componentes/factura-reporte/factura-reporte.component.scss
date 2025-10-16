@@ -1,0 +1,133 @@
+.factura-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.factura-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    .icono-tipo {
+        width: 48px;
+        height: 48px;
+        background: #f5f5f5;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        
+        ng-icon {
+            color: #667eea;
+        }
+    }
+    
+    .info-principal {
+        flex: 1;
+        
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin: 0 0 5px 0;
+        }
+        
+        .periodo {
+            font-size: 14px;
+            color: #888;
+            margin: 0;
+        }
+    }
+    
+    .estado {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 13px;
+        font-weight: 500;
+        
+        &.pendiente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        &.procesado {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        &.completado {
+            background: #d1fae5;
+            color: #065f46;
+        }
+    }
+}
+
+.factura-body {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+    .descripcion {
+        font-size: 14px;
+        color: #666;
+        margin: 0;
+    }
+    
+    .factura-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 10px;
+        border-top: 1px solid #f0f0f0;
+        
+        .fecha {
+            font-size: 13px;
+            color: #888;
+        }
+        
+        .monto {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+    }
+}
+
+.acciones {
+    display: flex;
+    justify-content: flex-end;
+    
+    .btn-descargar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: #667eea;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background 0.2s ease;
+        
+        &:hover {
+            background: #5568d3;
+        }
+        
+        ng-icon {
+            color: white;
+        }
+    }
+}

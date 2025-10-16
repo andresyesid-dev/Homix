@@ -1,0 +1,50 @@
+h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 30px 0;
+}
+
+.cargando {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.contenedor {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.lista-facturas {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.sinFacturas {
+    text-align: center;
+    padding: 80px 20px;
+    
+    ng-icon {
+        color: #ccc;
+        margin-bottom: 30px;
+    }
+    
+    p {
+        font-size: 20px;
+        font-weight: 500;
+        color: #555;
+        margin: 0 0 10px 0;
+        
+        &.descripcion {
+            font-size: 16px;
+            font-weight: 400;
+            color: #888;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    }
+}

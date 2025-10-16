@@ -1,0 +1,61 @@
+<div class="contenido" [ngClass]="{'sinGratuita': !gratuita}">
+    <form novalidate>
+        <h1>Tipo de publicación</h1>
+        <p *ngIf="!gratuita" class="infDebido"><ng-icon name="ionInformationCircleOutline"></ng-icon> Como tienes más de 1 unidad de tu producto, solo puedes publicar en Básica o Premium. </p>
+        <div class="tipoPublicaciones" >
+            <div *ngIf="gratuita" (click)="cambiarPlan('gratuito'); cambios = true" [ngClass]="{'gratuito': gratuito}">
+                <h2>Gratuita</h2>
+                <p><span>·</span>Exposición baja</p>
+                <p><span>·</span>Duración 60 días</p>
+                <h3><span>$</span>0</h3>
+                <h5>Cargo por venta</h5>
+                <button><span *ngIf="!gratuito">Seleccionar</span> <ng-icon *ngIf="gratuito" name="ionCheckmarkSharp"></ng-icon></button>
+            </div>
+            <div (click)="cambiarPlan('basico'); cambios = true" [ngClass]="{'basico': basico}">
+                <h2>Básica</h2>
+                <p><span>·</span>Exposición alta</p>
+                <p><span>·</span>Duración ilimitada</p>
+                <h3><span>$</span>{{precioBasico | number: '1.0-0'}} <ng-icon name="ionInformationCircleOutline"></ng-icon></h3>
+                <h5>Cargo por venta</h5>
+                <button><span *ngIf="!basico">Seleccionar</span> <ng-icon *ngIf="basico" name="ionCheckmarkSharp"></ng-icon></button>
+            </div>
+            <div (click)="cambiarPlan('premium'); cambios = true" [ngClass]="{'premium': premium}">
+                <h2>Premium</h2>
+                <p><span>·</span>Máxima exposición</p>
+                <p><span>·</span>Duración ilimitada</p>
+                <p><span>·</span>Exhibición Mensual</p>
+                <h3><span>$</span>{{precioPremium | number: '1.0-0'}} <ng-icon name="ionInformationCircleOutline"></ng-icon></h3>
+                <h5>Cargo por   venta</h5>
+                <button><span *ngIf="!premium">Seleccionar</span> <ng-icon *ngIf="premium" name="ionCheckmarkSharp"></ng-icon></button>
+            </div>
+        </div>
+
+        <div class="center-content">
+            <button class="detalles botonInvalid" (click)="verDetalles = true"><ng-icon name="aspectsInformation"></ng-icon> Ver detalles</button>
+            <button class="botonInvalid" [disabled]="!cambios" (click)="submit()" [ngClass]="{'success': actualizacionExitosa, 'botonValid': cambios}">
+                <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+            </button>
+        </div>
+    </form>
+
+    <div class="verDetalles" *ngIf="verDetalles" (click)="verDetalles = !verDetalles">
+        <div class="content" (click)="$event.stopPropagation()">
+          <h1>Beneficios</h1>
+          <h4>Gratuita</h4>
+          <p> - Exposición baja: Con esta opción, tu producto tendrá una exposición limitada en Joum, lo que significa que es menos probable que sea visto por un gran número de compradores.</p>
+          <p> - Duración 60 días: Tu publicación: Tu publicación permanecerá activa en nuestra plataforma durante 60 días, brindándote un período específico para promocionar tu producto. </p>
+          <h4>Básica</h4>
+          <p> - Exposición Alta: Con la opción básica, tu producto disfrutará de una exposición significativamente mayor en Joum, lo que aumentará su visibilidad ante un público más amplio.</p>
+          <p> - Duración ilimitada:  Tu publicación no tendrá límite de tiempo y se mantendrá activa de forma indefinida.</p>
+          <h4>Premium</h4>
+          <p> -  Exposición Máxima: La opción premium te ofrece la exposición más destacada en nuestra plataforma, lo que significa que tu producto será visto por una amplia audiencia de compradores.</p>
+          <p> - Duración ilimitada: Al igual que la opción básica, tu publicación no tendrá límite de tiempo y permanecerá activa de manera indefinida.</p>
+          <p> - Exhibición mensual: Además de la exposición máxima, tu producto se destacará mensualmente en nuestra plataforma, lo que aumentará aún más su visibilidad y posibilidades de venta.</p>
+          <div>
+            <button (click)="verDetalles = !verDetalles">Aceptar</button>
+          </div>
+          <p class="close" (click)="verDetalles = !verDetalles">x</p>
+        </div>
+      </div>
+</div>

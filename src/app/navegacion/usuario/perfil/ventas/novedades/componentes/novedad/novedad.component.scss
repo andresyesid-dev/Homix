@@ -1,0 +1,43 @@
+.novedad-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: box-shadow 0.3s ease;
+    
+    &:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+}
+
+.novedad-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    gap: 15px;
+    
+    .titulo {
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        margin: 0;
+        flex: 1;
+    }
+    
+    .fecha {
+        font-size: 13px;
+        color: #888;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+}
+
+.novedad-contenido {
+    p {
+        font-size: 15px;
+        line-height: 1.6;
+        color: #555;
+        margin: 0;
+    }
+}

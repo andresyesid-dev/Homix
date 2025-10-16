@@ -8,7 +8,7 @@
                 <div class="productos">
                     <section (click)="navegar(['prod/', element.id])" class="producto-inicio" [ngClass]="{'producto-inicio': carousel === 2, 'producto-en-similares': carousel === 3}">
                         <div *ngIf="element" class="img-content">
-                            <img [src]="'assets/img/productos/'+ element.fotos[0] + '.png'" alt="Image">
+                            <img [src]="obtenerFotoProducto(element)" alt="Image">
                         </div>
                         <div class="informacion">
                             <h3 *ngIf="!element.descuento">$ {{ element.precio | number:'1.0-0'}} <span>COP</span></h3>

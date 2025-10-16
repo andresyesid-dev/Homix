@@ -41,6 +41,8 @@ export interface Usuario {
   //------------- 
   publicaciones?: DocumentReference<DocumentData>[]; 
   //-------------
+  novedades?: DocumentReference<DocumentData>[];
+  //-------------
   facturacion?: Facturacion;
   //-------------
   notificaciones?: Notificacion[];

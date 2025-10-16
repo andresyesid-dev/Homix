@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { routes } from './perfil-routing.module';
 import { RouterModule } from '@angular/router';
 import { NgIconsModule } from '@ng-icons/core';
+import { heroStar, heroTrophy, heroNewspaper, heroShoppingBag } from '@ng-icons/heroicons/outline';
 
 import { ComponentesGeneralesModule } from '../../componentes-generales/componentes-generales.module';
 
@@ -13,10 +14,16 @@ import { PerfilUsuarioModule } from './perfil/perfil-usuario.module';
 import { ComprasComponent } from './compras/compras/compras.component';
   import { DetalleCompraComponent } from './compras/compras/detalle-compra/detalle-compra.component';
 import { FavoritosComponent } from './compras/favoritos/favoritos.component';
+import { OpinionesComponent } from './compras/opiniones/opiniones.component';
+  import { OpinionComponent } from './compras/opiniones/componentes/opinion/opinion.component';
 /*-- Ventas --*/
 import { MetricasModule } from './ventas/metricas/metricas.module';
 import { PublicacionesComponent } from './ventas/publicaciones/publicaciones.component';
+import { EditarPublicacionModule } from './ventas/publicaciones/editar-publicacion/editar-publicacion.module';
 import { VentasModule } from './ventas/ventas/ventas.module';
+import { NovedadesComponent } from './ventas/novedades/novedades.component';
+  import { NovedadComponent } from './ventas/novedades/componentes/novedad/novedad.component';
+import { ReputacionComponent } from './ventas/reputacion/reputacion.component';
 /*-- Facturación --*/
 import { EnviarMensajeModule } from './perfil/secciones/enviar-mensaje/enviar-mensaje.module';
 
@@ -34,8 +41,13 @@ import { ChatsService } from 'src/app/servicios/chats/chats.service';
     ComprasComponent,
     DetalleCompraComponent,
     FavoritosComponent,
+    OpinionesComponent,
+    OpinionComponent,
     PublicacionesComponent,
     PublicacionComponent,
+    NovedadesComponent,
+    NovedadComponent,
+    ReputacionComponent,
     CompraComponent,
     FavoritoComponent,
     ProductoComponent
@@ -43,10 +55,11 @@ import { ChatsService } from 'src/app/servicios/chats/chats.service';
   imports: [
     CommonModule,
     ComponentesGeneralesModule,
-    NgIconsModule,
+    NgIconsModule.withIcons({ heroStar, heroTrophy, heroNewspaper, heroShoppingBag }),
     PerfilUsuarioModule,
     VentasModule,
     MetricasModule,
+    EditarPublicacionModule,
     EnviarMensajeModule,
     RouterModule.forChild(routes)
   ],

@@ -1,0 +1,17 @@
+<div class="contenido">
+    <button class="back" (click)='atras()'><ng-icon name="heroArrowSmallLeft"></ng-icon></button>
+    <form *ngIf="form" [formGroup]='form' (ngSubmit)="submit()" class="paso2" novalidate>
+
+        <h1>Crea un titulo para tu producto</h1>
+        <p>Destaca la importancia de un título llamativo que capture la atención de
+            los posibles compradores.</p>
+    
+        <div class="field-container">
+            <input formControlName='titulo' type="text" class="field" placeholder="Ej.: Cuadros Decorativos Para Sala 150cm Ancho * 90cm Alto" id="Titulo"> <br />
+        </div>
+    
+        <div class="center-content">
+            <button type="submit" class="botonInvalid" value="Continuar" name="boton" [disabled]='form.invalid' [ngClass]="{'botonValid': form.valid}">Continuar</button>
+        </div>
+    </form>
+</div>

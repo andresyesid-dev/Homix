@@ -13,7 +13,12 @@ const routes: Routes = [
     path: '', component: InicioComponent
   },
   { 
-    path: 'vender', component: ComoVenderComponent
+    path: 'vender', 
+    component: ComoVenderComponent
+  },
+  {
+    path: 'publicar',
+    loadChildren: () => import('./navegacion/usuario/vender/publicar/vender.module').then(m => m.PublicarModule)
   },
   {
     path: 'ofertas-del-dia', component: OfertasDelDiaComponent

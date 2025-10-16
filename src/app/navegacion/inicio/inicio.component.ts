@@ -67,20 +67,15 @@ export class InicioComponent implements OnInit, OnDestroy{
       fotos: ['d3', 'd3-2', 'd3-3', 'd3-4', 'd3-5', 'd3-6'],
       /*
       estilos: [
-        { fotos: ['d1-01', 'd1-01-2', 'd1-3', 'd1-4'], estilo: 'Médico', idBoton: '9306418544942', idBotonDocumento: '1714838881822', variante: '48691122929966' },
-        { fotos: ['d1-02', 'd1-02-2', 'd1-02-2', 'd1-3', 'd1-4'], estilo: 'Café', idBoton: '9306418544942', idBotonDocumento: '1714838881822', variante: '48691122962734' },
-        { fotos: ['d1-03', 'd1-03-2', 'd1-03-3', 'd1-3', 'd1-4'], estilo: 'Celular', idBoton: '9306418544942', idBotonDocumento: '1714838881822', variante: '48691122995502' },
-        { fotos: ['d1-04', 'd1-04-2', 'd1-04-3', 'd1-3', 'd1-4'], estilo: 'Corazón', idBoton: '9306418544942', idBotonDocumento: '1714838881822', variante: '48691123028270' },
-        { fotos: ['d1-05', 'd1-05-2', 'd1-3', 'd1-4'], estilo: 'Computadora', idBoton: '9306418544942', idBotonDocumento: '1714838881822', variante: '48691123061038' }
+        { fotos: ['d1-01', 'd1-01-2', 'd1-3', 'd1-4'], estilo: 'Médico' },
+        { fotos: ['d1-02', 'd1-02-2', 'd1-02-2', 'd1-3', 'd1-4'], estilo: 'Café' },
+        { fotos: ['d1-03', 'd1-03-2', 'd1-03-3', 'd1-3', 'd1-4'], estilo: 'Celular' },
+        { fotos: ['d1-04', 'd1-04-2', 'd1-04-3', 'd1-3', 'd1-4'], estilo: 'Corazón' },
+        { fotos: ['d1-05', 'd1-05-2', 'd1-3', 'd1-4'], estilo: 'Computadora' }
       ], */
       soloPorHoy: false,
       masVendido: false,
       enFavorito: 85,
-      botonCompra: {
-        id: '9319828062510',
-        idDocumento: '1714873111170',
-        //variante: '48691122929966'
-      },
       envioGratis: false,
       estado: true,
       idUsuario: 'zxVEEQ9rUOXM9k0zFPhDm8AWKTe2',

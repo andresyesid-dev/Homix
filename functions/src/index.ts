@@ -38,7 +38,7 @@ export const enviarWhatsApp = onCall(
       const client = twilio(accountSid, authToken);
       
       const message = await client.messages.create({
-        from: 'whatsapp:+14155238886',
+        from: 'whatsapp:+16592465522',
         to: `whatsapp:${numero}`,
         body: `Tu código de verificación es: ${codigo}`
       });

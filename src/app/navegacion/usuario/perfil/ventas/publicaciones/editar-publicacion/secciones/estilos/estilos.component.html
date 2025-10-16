@@ -1,0 +1,30 @@
+<div class="contenido">
+    <form (ngSubmit)="submit()">
+        <h1>Estilos <ng-icon name="ionInformationCircleOutline" (click)="inf = true"></ng-icon></h1>
+        <p>Si tienes varios diseños de tu producto, agregalos según como consideres sus diferencias.</p>
+        <div class="field-container">
+            <ng-container *ngFor="let input of inputs; let i = index">
+                <div>
+                    <input [value]="estilosSubmit[i].nombre" type="text" class="field" (input)="modificarestilo(i, $event)" [ngClass]="{'inputError': estilosErrors[i]}" #estiloInput>
+                    <button *ngIf="!error" class="removeColor" (click)="eliminarestilo(i)" type="button">X</button>
+                </div>
+            </ng-container>
+            <button type="button" class="addColor" class="addColor" (click)="agregarestilo()" *ngIf="agregar">+ <span>Añadir Estilo</span></button>
+        </div>
+
+        <div class="center-content">
+            <button type="submit" class="botonInvalid" value="Continuar" name="boton" [disabled]='!btnSubmit' [ngClass]="{'botonValid': btnSubmit}">Continuar</button>
+        </div>
+    </form>
+
+    <div class="alerta" *ngIf="inf" (click)="info()">
+        <div class="content" (click)="$event.stopPropagation()">
+          <h1>Estilos de mi producto</h1>
+          <p>Son las diferentes versiones o diseños de tu producto que deseas ofrecer. Por ejemplo, si estás vendiendo {{descripcion}}. Esto te permite brindar opciones variadas a tus clientes.</p>
+          <div>
+            <button (click)="info()">Aceptar</button>
+          </div>
+          <p class="close" (click)="info()">x</p>
+        </div>
+      </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="contenido">
+    <form novalidate (ngSubmit)="submit()">
+        <h1>Envio</h1>
+        <p *ngIf="precioMenor">Ofrecerás envíos a cargo del comprador únicamente, ya que el costo de envío excede el valor de tu producto.</p>
+
+        <div class="inputs" *ngIf="!precioMenor">
+            <input id="checkUno" type="checkbox" (click)="check('gratis'); cambios = true" [ngClass]="{'checkedBox': envioGratis}">
+            <label for="checkUno">Ofrecer envio gratis</label>
+            <p>Pagaras por el envio entre 10.000 y 20.000</p>
+        </div>
+        <div class="inputs" *ngIf="!precioMenor">
+            <input id="checkDos" type="checkbox" (click)="check(''); cambios = true" [ngClass]="{'checkedBox': sinEnvioGratis}">
+            <label for="checkDos">No ofrecer envío gratis</label>
+            <p>Tus clientes pagarán por el envío</p>
+        </div>
+
+        <div class="center-content">
+            <button class="botonInvalid" [disabled]="!cambios" type="submit" [ngClass]="{'success': actualizacionExitosa, 'botonValid': cambios}">
+                <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+            </button>
+        </div>
+    </form>
+</div>

@@ -14,8 +14,10 @@
         </div>
     </div>
     <div class="producto" *ngFor="let producto of productos; let index = index">
-        <div class="contenidoImg">
-            <img [src]="'assets/img/productos/'+ producto.fotos[0] + '.png'">
+        <div class="contenidoImg" [class.loaded]="imagenesCargadas[index]">
+            <img [src]="fotosUrls[index] || 'assets/img/productos/default.webp'" 
+                 [alt]="imagenesCargadas[index] ? producto.nombre : ''"
+                 (load)="onImageLoad(index)">
         </div>
         <div>
             <p>{{producto.nombre}} <span *ngIf="tamanios[index] !== 'false'">{{producto.tamanios![+tamanios[index]].gramos}}</span></p>

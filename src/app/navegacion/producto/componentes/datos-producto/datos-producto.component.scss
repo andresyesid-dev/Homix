@@ -550,7 +550,7 @@
         left: 0;
         right: 0;
         height: 4px;
-        background: linear-gradient(90deg, #FF9C53, #FFB366, #FF9C53);
+        background: linear-gradient(90deg, #FF9C59, #FFB366, #FF9C59);
         border-radius: 20px 20px 0 0;
     }
 
@@ -582,7 +582,7 @@
         .header-icon {
             width: 48px;
             height: 48px;
-            background: linear-gradient(135deg, #FF9C53, #FFB366);
+            background: linear-gradient(135deg, #FF9C59, #FFB366);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -610,7 +610,7 @@
 
             .subtitle {
                 margin: 2px 0 0 0;
-                color: #FF9C53;
+                color: #FF9C59;
                 font-size: 14px;
                 font-weight: 500;
                 letter-spacing: 0.5px;
@@ -638,7 +638,7 @@
         ng-icon {
             width: 20px;
             height: 20px;
-            color: #FF9C53;
+            color: #FF9C59;
         }
     }
 }
@@ -688,7 +688,7 @@
 
         &.active .step-number,
         &.completed .step-number {
-            background: linear-gradient(135deg, #FF9C53, #FFB366);
+            background: linear-gradient(135deg, #FF9C59, #FFB366);
             box-shadow: 0 4px 12px rgba(255, 156, 83, 0.3);
         }
 
@@ -701,7 +701,7 @@
 
         &.active .step-label,
         &.completed .step-label {
-            color: #FF9C53;
+            color: #FF9C59;
             font-weight: 600;
         }
     }
@@ -714,7 +714,7 @@
         transition: all 0.3s ease;
 
         &.completed {
-            background: linear-gradient(90deg, #FF9C53, #FFB366);
+            background: linear-gradient(90deg, #FF9C59, #FFB366);
         }
     }
 }
@@ -735,7 +735,7 @@
         left: 0;
         right: 0;
         height: 3px;
-        background: linear-gradient(90deg, #FF9C53, #FFB366);
+        background: linear-gradient(90deg, #FF9C59, #FFB366);
         border-radius: 16px 16px 0 0;
     }
 
@@ -748,7 +748,7 @@
         ng-icon {
             width: 24px;
             height: 24px;
-            color: #FF9C53;
+            color: #FF9C59;
         }
 
         h4 {
@@ -819,7 +819,7 @@
                 position: absolute;
                 top: -5px;
                 right: -5px;
-                background: linear-gradient(135deg, #FF9C53, #FFB366);
+                background: linear-gradient(135deg, #FF9C59, #FFB366);
                 color: white;
                 border-radius: 50%;
                 width: 24px;
@@ -876,7 +876,7 @@
                 }
 
                 .tamanio {
-                    color: #FF9C53;
+                    color: #FF9C59;
                     font-weight: 600;
                 }
             }
@@ -890,7 +890,7 @@
                 padding: 10px;
                 background: rgba(255, 156, 83, 0.05);
                 border-radius: 6px;
-                border-left: 3px solid #FF9C53;
+                border-left: 3px solid #FF9C59;
 
                 .precio-item {
                     display: flex;
@@ -907,7 +907,7 @@
 
                     .precio-base {
                         font-weight: 700;
-                        color: #FF9C53;
+                        color: #FF9C59;
                         font-size: 15px;
                     }
 
@@ -935,7 +935,7 @@
                 }
 
                 .total-amount {
-                    color: #FF9C53;
+                    color: #FF9C59;
                     font-size: 20px;
                     font-weight: 700;
                 }
@@ -976,7 +976,7 @@
             width: 50px;
             height: 50px;
             border: 4px solid rgba(255, 156, 83, 0.2);
-            border-left: 4px solid #FF9C53;
+            border-left: 4px solid #FF9C59;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto;
@@ -1158,7 +1158,7 @@
         justify-content: center;
 
         .btn-retry {
-            background: linear-gradient(135deg, #FF9C53, #FFB366);
+            background: linear-gradient(135deg, #FF9C59, #FFB366);
             color: white;
             border: none;
             padding: 12px 20px;
@@ -1172,7 +1172,7 @@
             gap: 8px;
 
             &:hover {
-                background: linear-gradient(135deg, #e88a47, #ff9c53);
+                background: linear-gradient(135deg, #e88a47, #FF9C59);
                 transform: translateY(-2px);
                 box-shadow: 0 4px 12px rgba(255, 156, 83, 0.3);
             }
@@ -1331,14 +1331,14 @@
         transition: all 0.3s ease !important;
 
         &:focus {
-            border-color: #FF9C53 !important;
+            border-color: #FF9C59 !important;
             box-shadow: 0 0 0 3px rgba(255, 156, 83, 0.2) !important;
             outline: none !important;
         }
     }
 
     :deep(.mp-button) {
-        background: linear-gradient(135deg, #FF9C53, #FFB366) !important;
+        background: linear-gradient(135deg, #FF9C59, #FFB366) !important;
         border: none !important;
         border-radius: 10px !important;
         padding: 15px 25px !important;
@@ -1350,7 +1350,7 @@
         box-shadow: 0 4px 15px rgba(255, 156, 83, 0.3) !important;
 
         &:hover {
-            background: linear-gradient(135deg, #e88a47, #ff9c53) !important;
+            background: linear-gradient(135deg, #e88a47, #FF9C59) !important;
             transform: translateY(-2px) !important;
             box-shadow: 0 6px 20px rgba(255, 156, 83, 0.4) !important;
         }
@@ -1377,7 +1377,7 @@
     margin: 25px 0;
 
     .btn-comprar-directo {
-        background: linear-gradient(135deg, #FF9C53, #FFB366);
+        background: linear-gradient(135deg, #FF9C59, #FFB366);
         color: white;
         border: none;
         padding: 16px 24px;
@@ -1402,7 +1402,7 @@
         }
 
         &:hover:not(:disabled) {
-            background: linear-gradient(135deg, #e88a47, #ff9c53);
+            background: linear-gradient(135deg, #e88a47, #FF9C59);
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(255, 156, 83, 0.4);
 
@@ -1430,8 +1430,8 @@
 
     .btn-agregar-carrito {
         background: white;
-        color: #FF9C53;
-        border: 2px solid #FF9C53;
+        color: #FF9C59;
+        border: 2px solid #FF9C59;
         padding: 14px 24px;
         border-radius: 12px;
         font-size: 16px;
@@ -1448,14 +1448,14 @@
             left: 0;
             width: 0;
             height: 100%;
-            background: linear-gradient(135deg, #FF9C53, #FFB366);
+            background: linear-gradient(135deg, #FF9C59, #FFB366);
             transition: width 0.3s ease;
             z-index: -1;
         }
 
         &:hover:not(:disabled) {
             color: white;
-            border-color: #FF9C53;
+            border-color: #FF9C59;
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(255, 156, 83, 0.3);
 

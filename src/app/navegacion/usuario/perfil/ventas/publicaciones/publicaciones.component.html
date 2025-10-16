@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-        <app-publicacion [publicacion]="publicacion" *ngFor="let publicacion of publicaciones; let index = index"></app-publicacion>
+        <app-publicacion [publicacion]="publicacion" (eliminarProducto)="eliminarProducto($event)" *ngFor="let publicacion of publicaciones; let index = index"></app-publicacion>
         <div class="sinPublicaciones" *ngIf="!publicaciones">
             <img src="assets/img/logo/iconos/publications-empty.svg">
             <p>No tienes publicaciones realizadas</p>

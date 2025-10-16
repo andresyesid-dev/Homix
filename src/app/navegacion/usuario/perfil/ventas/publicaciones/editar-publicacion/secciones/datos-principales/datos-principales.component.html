@@ -1,0 +1,34 @@
+<div class="contenido">
+	<form [formGroup]='form' (submit)='submit()' id="form_session3" novalidate>
+
+		<h1>Datos principales</h1>
+		<div class="inputs">
+			<div class="input fabricante" [ngClass]="{'disabled': hechoPorMi}">
+				<label for="fabricante" >Artista o fabricante:</label>
+				<input formControlName='autoria' type="text" class="field" placeholder="Fabricante" id="fabricante" (input)="validar()"> <br />
+			</div>
+			<div class="checkbox">
+				<input formControlName='hechoPorMi' type="checkbox" id="checkbox" (change)="validar()"> <label for="checkbox">Hecho por mi</label>
+			</div>
+	
+			<div class="input">
+				<label for="marca"><b class="option"></b> Marca:</label>
+				<input formControlName='marca' type="text" class="field" id="marca" (input)="cambios = true"> <br />
+			</div>
+	
+			<div class="input">
+				<label for="modelo"><b class="option"></b> Modelo:</label>
+				<input formControlName='modelo' type="text" class="field" id="modelo" (input)="cambios = true"> <br />
+			</div>
+		</div>
+	
+		<div class="center-content">
+            <button class="botonInvalid" [disabled]="!submitValue || !cambios" type="submit" [ngClass]="{'success': actualizacionExitosa, 'botonValid': submitValue && cambios}">
+                <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+            </button>
+        </div>
+	
+	</form>
+	
+</div>

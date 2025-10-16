@@ -1,0 +1,174 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  backdrop-filter: blur(2px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 480px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  &.warning {
+    background: #fff3cd;
+    border-bottom-color: #ffc107;
+  }
+  
+  &.danger {
+    background: #f8d7da;
+    border-bottom-color: #dc3545;
+  }
+  
+  &.info {
+    background: #d1ecf1;
+    border-bottom-color: #17a2b8;
+  }
+  
+  h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: #666;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    transition: all 0.2s;
+    
+    &:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: #333;
+    }
+    
+    span {
+      display: block;
+      line-height: 0.8;
+    }
+  }
+}
+
+.modal-body {
+  padding: 24px;
+  
+  p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.5;
+    color: #555;
+  }
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  
+  .btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.1);
+    }
+  }
+  
+  .btn-cancelar {
+    background: #f5f5f5;
+    color: #555;
+    
+    &:hover {
+      background: #e5e5e5;
+    }
+  }
+  
+  .btn-confirmar {
+    color: white;
+    
+    &.warning {
+      background: #ffc107;
+      
+      &:hover {
+        background: #e0a800;
+      }
+    }
+    
+    &.danger {
+      background: #dc3545;
+      
+      &:hover {
+        background: #c82333;
+      }
+    }
+    
+    &.info {
+      background: #17a2b8;
+      
+      &:hover {
+        background: #138496;
+      }
+    }
+  }
+}
+
+// Animaciones adicionales
+@media (max-width: 600px) {
+  .modal-content {
+    width: 95%;
+    margin: 0 auto;
+  }
+  
+  .modal-header h3 {
+    font-size: 18px;
+  }
+  
+  .modal-body p {
+    font-size: 15px;
+  }
+  
+  .modal-footer {
+    flex-direction: column-reverse;
+    
+    .btn {
+      width: 100%;
+    }
+  }
+}

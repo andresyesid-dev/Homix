@@ -17,10 +17,10 @@
     background-color: #fefefe;
     border: 1px solid #e8e8e8;
     border-radius: 6px;
-    border-left: 4px solid #FF9C53;
+    border-left: 4px solid #FF9C59;
     > ng-icon{
         font-size: 30px;
-        color: #FF9C53;
+        color: #FF9C59;
         margin: 10px;
     }
     .dir{
@@ -67,7 +67,7 @@
             padding-left: 4px;
         }
         ng-icon{
-            color: #FF9C53;
+            color: #FF9C59;
             font-size: 18px;
             transform: translateY(-1px);
         }
@@ -96,6 +96,10 @@
         padding: 3px;
         display: flex;
         justify-content: center;
+        background: #f5f5f5;
+        &.loaded{
+            background: transparent;
+        }
         img{
             object-fit: contain;
             border-radius: 5px;

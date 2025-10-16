@@ -1,0 +1,231 @@
+.contenido{
+	position: relative;
+	width: 800px;
+	background-color: white;
+	box-shadow: 0 -0.1px 2.6px rgba(0,0,0,0.17), 0 3.1px 2.3px rgba(0,0,0,0.05);
+	border-radius: 10px;
+	padding-bottom: 140px;
+	button.back{
+		width: 34px;
+		height: 34px;
+		background-color: #e9e9e9;
+		border-radius: 50%;
+		border: none;
+		position: absolute;
+		left: 20px;
+		top: 25px;
+		cursor: pointer;
+		transition: .2s;
+		ng-icon{
+			color: #666;
+			font-size: 21px;
+			padding: 3px 1px;
+		}
+		&:hover{
+			background-color: #ffad72;
+			ng-icon{
+				color: white;
+			}
+		}
+	}
+}
+form{
+	width: 100%;
+	h1 {
+		color: #666;
+		font-size: 24px;
+		letter-spacing: 0.7px;
+		word-spacing: 1.2px;
+		font-weight: 500;
+		text-align: center;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+        padding: 10.5px 0;
+	}
+//--------------------------
+	.detalles{
+		margin-top: 40px;
+		width: calc(100% - 100px);
+		margin-left: 50px;
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		column-gap: 35px;
+		row-gap: 46px;
+		>div{
+			position: relative;
+			label{
+				font-size: 14px;
+				font-weight: 420;
+				width: 250px;
+				text-align: left;
+				color: #777;
+				word-spacing: 1px;
+				font-weight: 450;
+				letter-spacing: 0.5px;
+				margin-left: 2px;
+				padding-right: 8px;
+				cursor: pointer;
+			}
+			input{
+				width: calc(100% - 40px);
+				border: 1px solid #c9c9c9;
+				outline: none;
+				border-radius: 7px;
+				color: #505050;
+				font-weight: 420;
+				letter-spacing: 0.4px;
+				font-size: 15px;
+				padding: 13px 20px;
+				margin-top: 5px;
+				&:focus{
+					border: 1.5px solid #bbb;
+					width: calc(100% - 41px);
+				}
+			}
+			.select {
+				margin-top: 5px;
+				appearance: none;
+				padding: 13px 18px;
+				border: 1px solid #c9c9c9;
+				border-radius: 7px;
+				width: 100%;
+				outline: none;
+				color: #505050;
+				font-weight: 420;
+				letter-spacing: 0.4px;
+				font-size: 15px;
+				cursor: pointer;
+				&:focus{
+					border: 1.5px solid #bbb;
+				}
+			}
+			
+			.down {
+				position: absolute;
+				bottom: 14px;
+				right: 10px;
+				font-size: 17px;
+				color: #666;
+				pointer-events: none;
+			}
+		}
+		.siNo{
+			label{
+				font-size: 16px;
+				font-weight: 400;
+				color: #666;
+			}
+			.downDos {
+				position: relative;
+				font-size: 17px;
+				color: #707070;
+				pointer-events: none;
+				transform: translate(-23px, 4px)
+			}
+				  
+			select{
+				width: 60px;
+				appearance: none;
+				border: 1px solid #fff;
+				outline: none;
+				border-radius: 7px;
+				color: #606060;
+				font-weight: 420;
+				letter-spacing: 0.4px;
+				font-size: 15px;
+				padding: 13px 0 13px 8px;
+				margin-top: 22px;
+				&:focus{
+					border: 1px solid #c9c9c9;
+				}
+			}
+		}
+		.medida{
+			input{
+				width: calc(75% - 50px);
+				margin-right: 8px;
+				&:focus{
+					width: calc(75% - 51px);
+				}
+			}
+			select{
+				width: 25%;
+			}
+		}
+		.active{
+			display: block;
+		}
+		.desactive{
+			display: none;
+		}
+	}
+
+//--------------------------
+
+	.botonInvalid {
+		width: 190px;
+		float: right;
+		background: white;
+		height: 40px;
+		border: 1px solid #aaa;
+		color: #888;
+		border-radius: 6px;
+		font-size: 16px;
+		margin: 70px 50px;
+		text-align: center;
+		cursor: default;
+		transition: .2s;
+	}
+
+	.botonValid {
+		width: 200px;
+		background: #ffad72;
+		border: none;
+		color: white;
+		font-size: 16px;
+		cursor: pointer;
+		&:hover{
+			background: #ffa462;
+		}
+	}
+}
+.success{
+    background-color: #3fd06b !important;
+    animation: botonCheck .5s;
+    &:hover{
+        background-color: #3fd06b !important;
+    }
+    ng-icon{
+        margin-top: 3px;
+        font-size: 28px;
+        animation: check .8s;
+		color: white;
+    }
+}
+
+@keyframes botonCheck {
+	0%{
+		transform: scale(.8);
+	}
+    65%{
+        transform: scale(1.05);
+    }
+	100%{
+		transform: scale(1);
+	}
+}
+
+@keyframes check {
+	0%{
+		transform: scale(.0);
+	}
+    40%{
+        transform: scale(.0);
+    }
+    80%{
+        transform: scale(1.3);
+    }
+	100%{
+		transform: scale(1);
+	}
+}

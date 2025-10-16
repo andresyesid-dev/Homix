@@ -1,0 +1,38 @@
+<div class="contenido">
+  <button class="back" (click)='atras()'><ng-icon name="heroArrowSmallLeft"></ng-icon></button>
+  <form (submit)='submit()' class="paso2" novalidate>
+
+      <h1>Fotos</h1>
+      <p>Agrega las fotos de tu producto, junto a las unidades disponibles.</p>
+  
+      <ng-container  *ngFor="let estilo of estilos; let i = index">
+        <h5>{{estilo.nombre}}</h5>
+        <div class="fotos">
+            <ng-container *ngFor="let foto of estilo.fotos; let index = index">
+              <div class="marco" [ngClass]="{'active': estilo.fotos[index - 1] !== '' || index == 0, 'conFoto': estilo.fotos[index] !== ''}"><ng-icon name="matAddAPhotoRound"></ng-icon>
+                <input type="file" accept="image/*" (change)="subirFoto($event, i, index)" style="display: none">
+                <img *ngIf="estilo.fotos[index] !== ''" [src]="estilo.fotos[index]" alt="Imagen" style="display: none">
+                <ng-icon name="ionCloseCircleSharp" style="display: none;" (click)="eliminarFoto(i, index)"></ng-icon>
+                <div class="circulo" style="display: none;"></div>
+              </div>
+            </ng-container>
+        </div>
+        <div class="inputs">
+          <div>
+            <label for="unidades">Unidades</label>
+            <input [value]="estilo.unidades" name="unidades" type="number" maxlength="3" required (input)="actualizarDatosInputs($event, i, 'unidades')" (keydown)="validadCampo($event, $event)" onpaste="return false;">
+          </div>
+          <div>
+            <label for="SKU">SKU (Opcional)</label>
+            <input [value]="estilo.sku" name="SKU" type="text" maxlength="12" (input)="actualizarDatosInputs($event, i, 'sku')">
+          </div>
+        </div>
+      </ng-container>
+
+      <!---------------------------------->
+  
+      <div class="center-content">
+          <button class="botonInvalid" value="Continuar" name="boton" [disabled]='!submitValue' [ngClass]="{'botonValid': submitValue}">Continuar</button>
+      </div>
+  </form>
+</div>

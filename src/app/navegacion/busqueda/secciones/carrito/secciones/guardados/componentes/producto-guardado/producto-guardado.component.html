@@ -1,10 +1,13 @@
 <div class="contenedor">
     <div>
-        <div class="cuadroImg">
-            <img [src]="'assets/img/productos/'+ productoGuardado.fotos[0] + '.png'" (click)="navegar(['prod/' + productoGuardado.id])">
+        <div class="cuadroImg" [class.loaded]="imagenCargada">
+            <img [src]="fotoUrl || 'assets/img/productos/default.webp'" 
+                 [alt]="imagenCargada ? productoGuardado.nombre : ''"
+                 (load)="onImageLoad()"
+                 (click)="navegar(['prod/' + productoGuardado.id])">
         </div>
         <div>
-            <p>{{productoGuardado.nombre}} <span *ngIf="tamanio !== 'false'">{{productoGuardado.tamanios![+tamanio].gramos}}</span></p>
+            <p class="titulo" (click)="navegar(['prod/' + productoGuardado.id])">{{productoGuardado.nombre}} <span *ngIf="tamanio !== 'false'">{{productoGuardado.tamanios![+tamanio].gramos}}</span></p>
             <p>Sabor: {{productoGuardado.sabor}}</p>
             <p *ngIf="productoGuardado.envioGratis" class="envioGratis">Envio gratis</p>
             <p *ngIf="!productoGuardado.envioGratis" class="envioPrecio"><span>Recíbelo</span> por <span>$ {{productoGuardado.precioEnvio}}</span></p>

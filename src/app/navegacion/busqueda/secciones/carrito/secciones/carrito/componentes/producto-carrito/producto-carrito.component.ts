@@ -8,6 +8,7 @@ import { Auth } from '@angular/fire/auth';
 import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { Subscription, first, firstValueFrom } from 'rxjs';
+import { ProductosService } from 'src/app/servicios/productos/productos.service';
 
 @Component({
   selector: 'app-producto-carrito',
@@ -24,10 +25,13 @@ export class ProductoCarritoComponent implements OnInit, OnDestroy{
   private subscription!: Subscription;
   private usuario!: Usuario;
   userUsuario!: string;
+  fotoUrl: string = '';
+  imagenCargada: boolean = false;
   
-  constructor(private zone: NgZone, private router: Router, private firestore: Firestore, private auth:Auth, private comprarService: ComprarService, private authService: AuthService){}
+  constructor(private zone: NgZone, private router: Router, private firestore: Firestore, private auth:Auth, private comprarService: ComprarService, private authService: AuthService, private prdService: ProductosService){}
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.cargarFoto();
     this.auth.onAuthStateChanged(async(user) => {
       if (user) {
         this.subscription = this.authService.getUsuarioId(user.uid).subscribe((usuario)=>{
@@ -37,6 +41,22 @@ export class ProductoCarritoComponent implements OnInit, OnDestroy{
       const usuario$ = this.authService.getUsuarioId(this.productoCarrito.idUsuario!);
       this.userUsuario = (await firstValueFrom(usuario$)).usuario!;
     });
+  }
+
+  async cargarFoto() {
+    try {
+      const fotos = await this.prdService.obtenerFotoUno(this.productoCarrito);
+      this.fotoUrl = fotos[0] || '';
+    } catch (error) {
+      console.error('Error cargando foto:', error);
+      if (this.productoCarrito.fotos && this.productoCarrito.fotos.length > 0) {
+        this.fotoUrl = `assets/img/productos/${this.productoCarrito.fotos[0]}.webp`;
+      }
+    }
+  }
+
+  onImageLoad() {
+    this.imagenCargada = true;
   }
 
   async cambiarUnidad(accion: string, index: number){

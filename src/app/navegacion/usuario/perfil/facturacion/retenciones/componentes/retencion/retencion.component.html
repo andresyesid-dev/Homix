@@ -1,0 +1,29 @@
+<div class="retencion-card">
+    <div class="retencion-header">
+        <div class="icono">
+            <ng-icon name="heroReceiptPercent" size="24"></ng-icon>
+        </div>
+        <div class="info-principal">
+            <h3>{{ retencion.tipo || 'Retención' }}</h3>
+            <span class="fecha" *ngIf="retencion.fecha">{{ retencion.fecha.toDate() | date:'mediumDate' }}</span>
+        </div>
+        <div class="estado" [class]="retencion.estado">
+            <span>{{ retencion.estado }}</span>
+        </div>
+    </div>
+    
+    <div class="retencion-body">
+        <p class="descripcion" *ngIf="retencion.descripcion">{{ retencion.descripcion }}</p>
+        
+        <div class="montos">
+            <div class="monto-item" *ngIf="retencion.porcentaje">
+                <span class="label">Porcentaje:</span>
+                <span class="valor">{{ retencion.porcentaje }}%</span>
+            </div>
+            <div class="monto-item" *ngIf="retencion.monto">
+                <span class="label">Monto retenido:</span>
+                <span class="valor destacado">{{ retencion.monto | currency:'USD' }}</span>
+            </div>
+        </div>
+    </div>
+</div>

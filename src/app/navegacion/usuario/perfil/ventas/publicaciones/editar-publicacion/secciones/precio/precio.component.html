@@ -1,0 +1,19 @@
+<div class="contenido">
+	<form [formGroup]='form' (submit)="submit()" >
+		<h1>Precio</h1>
+		<p>Edita el precio de tu producto</p>
+		<div class="inputs">
+			<label for="">COP</label>
+			<input class="input1" type="text" maxlength="11" formControlName='precio' [ngClass]="{ 'activado': form.valid }" required>
+			<p>$</p>
+		</div>
+	
+		<div class="center-content">
+            <button class="botonInvalid" [disabled]="form.invalid || !cambios" type="submit" [ngClass]="{'success': actualizacionExitosa, 'botonValid': form.valid && cambios}">
+                <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+            </button>
+        </div>
+	
+	</form>
+</div>

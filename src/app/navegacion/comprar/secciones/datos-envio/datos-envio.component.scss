@@ -10,13 +10,13 @@
     color: #333;
     margin-bottom: 2rem;
     text-align: center;
-    border-bottom: 3px solid #FF9C53;
+    border-bottom: 3px solid #FF9C59;
     padding-bottom: 1rem;
   }
 
   .resumen-producto {
     background: #fafafa;
-    border: 2px solid #FF9C53;
+    border: 2px solid #FF9C59;
     border-radius: 16px;
     padding: 2rem;
     margin-bottom: 2rem;
@@ -29,7 +29,7 @@
       
       ng-icon {
         font-size: 2rem;
-        color: #FF9C53;
+        color: #FF9C59;
       }
 
       h2 {
@@ -55,14 +55,14 @@
         height: 120px;
         object-fit: cover;
         border-radius: 12px;
-        border: 2px solid #FF9C53;
+        border: 2px solid #FF9C59;
       }
 
       .cantidad-badge {
         position: absolute;
         top: -8px;
         right: -8px;
-        background: #FF9C53;
+        background: #FF9C59;
         color: white;
         border-radius: 50%;
         width: 28px;
@@ -107,7 +107,7 @@
 
       .precio-total {
         padding-top: 0.5rem;
-        border-top: 2px solid #FF9C53;
+        border-top: 2px solid #FF9C59;
         
         .total-label {
           display: block;
@@ -119,7 +119,7 @@
         .total-amount {
           font-size: 1.5rem;
           font-weight: 700;
-          color: #FF9C53;
+          color: #FF9C59;
         }
       }
     }
@@ -179,7 +179,7 @@
 
         &:focus {
           outline: none;
-          border-color: #FF9C53;
+          border-color: #FF9C59;
         }
       }
 
@@ -221,7 +221,7 @@
 
           &:focus {
             outline: none;
-            border-color: #FF9C53;
+            border-color: #FF9C59;
           }
         }
 
@@ -254,13 +254,13 @@
 
   .payment-status {
     background: #fff3e0;
-    border: 2px solid #FF9C53;
+    border: 2px solid #FF9C59;
 
     .spinner {
       width: 50px;
       height: 50px;
       border: 4px solid #ffe0b2;
-      border-left: 4px solid #FF9C53;
+      border-left: 4px solid #FF9C59;
       border-radius: 50%;
       animation: spin 1s linear infinite;
       margin: 0 auto 1rem;
@@ -307,7 +307,7 @@
 
   .form-incomplete {
     background: #fff3e0;
-    border: 2px solid #FF9C53;
+    border: 2px solid #FF9C59;
     border-radius: 12px;
     padding: 2rem;
     text-align: center;
