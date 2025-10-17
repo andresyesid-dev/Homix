@@ -8,18 +8,22 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentesGeneralesModule } from '../componentes-generales/componentes-generales.module';
 
 import { ComprarComponent } from './comprar.component';
-import { DatosEnvioComponent } from './secciones/datos-envio/datos-envio.component';
 import { MetodoPagoComponent } from './secciones/metodo-pago/metodo-pago.component';
-import { ResumenComponent } from './secciones/resumen/resumen.component';
 import { CambiarDireccionComponent } from './secciones/cambiar-direccion/cambiar-direccion.component';
+import { SelectorDireccionesComponent } from './secciones/selector-direcciones/selector-direcciones.component';
+import { FormularioDireccionComponent } from './secciones/formulario-direccion/formulario-direccion.component';
+import { ResumenCompraComponent } from './secciones/resumen-compra/resumen-compra.component';
+import { RespuestaCompraComponent } from './secciones/respuesta-compra/respuesta-compra.component';
 
 @NgModule({
   declarations: [
     ComprarComponent,
-    DatosEnvioComponent,
+    SelectorDireccionesComponent,
+    FormularioDireccionComponent,
     MetodoPagoComponent,
-    ResumenComponent,
-    CambiarDireccionComponent
+    CambiarDireccionComponent,
+    ResumenCompraComponent,
+    RespuestaCompraComponent
   ],
   imports: [
     CommonModule,

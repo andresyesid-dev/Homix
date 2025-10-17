@@ -1,9 +1,10 @@
 <div class="content">
     <div class="contenedor" [ngClass]="{'masUnidades': unidades, 'pausada': !estado, 'masUnidadesDosFilas': unidadesMasEstilos}">
-        <img [src]="fotoUrl || 'assets/img/productos/default.webp'" 
+        <img [src]="fotoUrl" 
              [alt]="imagenCargada ? publicacion.nombre : ''"
              (load)="onImageLoad()"
-             [class.loaded]="imagenCargada">
+             [class.loaded]="imagenCargada"
+             *ngIf="fotoUrl">
         <div>
             <p>{{publicacion.nombre}}</p>
             <p>#{{publicacion.id}}</p>

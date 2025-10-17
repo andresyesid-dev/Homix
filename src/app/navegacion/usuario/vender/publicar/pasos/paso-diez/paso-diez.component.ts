@@ -61,8 +61,8 @@ export class PasoDiezComponent implements OnInit{
         this.submitValue = true;
       }
     }
-    this.precioBasico = this.pasos.producto.precio * 0.07;
-    this.precioPremium = this.pasos.producto.precio * 0.11;
+    this.precioBasico = this.pasos.producto.precio * 0.08;
+    this.precioPremium = this.pasos.producto.precio * 0.12;
   }
 
   cambiarPlan(plan: string){

@@ -1,0 +1,82 @@
+<div class="selector-direcciones-container">
+  <!-- Estado de carga -->
+  <div class="cargando" *ngIf="cargando">
+    <div class="spinner"></div>
+    <p>Cargando direcciones...</p>
+  </div>
+
+  <!-- Vista principal: Lista de direcciones o formulario -->
+  <div *ngIf="!cargando" class="contenido">
+    <!-- Lista de direcciones guardadas -->
+    <div *ngIf="!mostrarFormulario && direcciones.length > 0" class="lista-direcciones">
+      <div class="header-section">
+        <h2 class="titulo-seccion">¿Dónde quieres recibir tu compra?</h2>
+        <p class="descripcion">Selecciona una dirección o agrega una nueva</p>
+      </div>
+
+      <!-- Botón para agregar nueva dirección - MOVIDO ARRIBA -->
+      <button class="btn-agregar-direccion" (click)="agregarNuevaDireccion()">
+        <ng-icon name="heroPlus"></ng-icon>
+        <span>Agregar nueva dirección</span>
+      </button>
+      
+      <div class="direcciones-grid">
+        <div *ngFor="let direccion of direcciones; let i = index" 
+             class="direccion-card"
+             [class.seleccionada]="direccionSeleccionada === direccion"
+             (click)="seleccionarDireccion(direccion)">
+          
+          <div class="direccion-radio">
+            <input type="radio" 
+                   [checked]="direccionSeleccionada === direccion"
+                   (change)="seleccionarDireccion(direccion)"
+                   [id]="'direccion-' + i"
+                   [attr.aria-label]="'Seleccionar dirección de ' + direccion.nombresApellidos">
+          </div>
+
+          <div class="direccion-contenido">
+            <div class="direccion-titulo">
+              <h3>{{direccion.nombresApellidos}}</h3>
+              <span class="badge-predeterminada" *ngIf="direccion.direccionPredeterminada">
+                <ng-icon name="heroHome"></ng-icon>
+                Principal
+              </span>
+            </div>
+            
+            <div class="direccion-detalles">
+              <p class="direccion-linea">{{formatearDireccion(direccion)}}</p>
+              <p class="direccion-linea">{{direccion.barrio}} · {{direccion.municipioLocalidad}}</p>
+              <p class="telefono">
+                <ng-icon name="heroPhone"></ng-icon>
+                {{direccion.telefono}}
+              </p>
+              <p class="detalle" *ngIf="direccion.detalle">
+                {{direccion.detalle}}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario para agregar dirección -->
+    <div *ngIf="mostrarFormulario" class="formulario-seccion">
+      <div class="formulario-wrapper">
+        <div class="header-section">
+          <h2 class="titulo-seccion">Agrega tu dirección de envío</h2>
+          <p class="descripcion" *ngIf="direcciones.length === 0">
+            Para continuar con tu compra, necesitamos saber dónde enviar tu pedido
+          </p>
+          <p class="descripcion" *ngIf="direcciones.length > 0">
+            Completa los datos de tu nueva dirección
+          </p>
+        </div>
+        
+        <app-formulario-direccion 
+          (direccionGuardada)="direccionAgregada($event)"
+          (cancelar)="cancelarFormulario()">
+        </app-formulario-direccion>
+      </div>
+    </div>
+  </div>
+</div>

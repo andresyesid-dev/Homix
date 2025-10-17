@@ -1,5 +1,5 @@
 .body {
-    background-color: #f8f8f8;
+    background-color: #f7f7f7;
     width: 100%;
     min-height: 100vh;
     min-width: 1000px;
@@ -20,7 +20,7 @@
     width: 95%;
     display: flex;
     margin: auto;
-    margin-top: 73px;
+    margin-top: 33px;
     padding-bottom: 180px;
     display: grid;
     grid-template-columns: 2.6fr 1fr;
@@ -40,66 +40,15 @@
 
     .izquierda {
         min-width: 500px;
-        background-color: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 8px;
-        padding: 15px 15px 50px 15px;
-        box-shadow: 0 2px 7px -1px rgba(0, 0, 0, 0.1);
     }
+}
 
-    .derecha {
-        box-shadow: 0 2px 7px -1px rgba(0, 0, 0, 0.1);
-        background-color: #fff;
-        border: 1px solid #eaeaea;
-        border-radius: 8px;
-        height: 240px;
-
-        button {
-            position: relative;
-            width: calc(100% - 60px);
-            margin: 25px 30px 10px 30px;
-            height: 42px;
-            padding: 12px;
-            font-weight: 520;
-            font-size: 16px;
-            letter-spacing: .4px;
-            word-spacing: .8px;
-            color:white; 
-            background-color:#56dd81; 
-            border:none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            &:hover{
-                background-color: #40d36c;;
-            }
-        }
-
-        > div {
-            width :calc(100% - 60px); 
-            margin :20px 30px 0 30px; 
-            display:flex; 
-            justify-content :space-between; 
-
-            p{
-                color:#666; 
-                font-size :14px; 
-                font-weight :450; 
-                letter-spacing :.4px; 
-                word-spacing :1px; 
-                margin :0; 
-            }
-        }
-
-        > div:nth-child(5) p{
-            font-weight :550; 
-            color:#4a4a4a; 
-            font-size: 16px; 
-        }
-
-        .linea{
-            border-bottom :1px solid #ddd; 
-        }
-    }
+.contenido-respuesta {
+    position: relative;
+    width: 100%;
+    margin: auto;
+    margin-top: 33px;
+    padding-bottom: 180px;
 }
 
 //---- Animaciones boton ----
@@ -175,26 +124,96 @@
     position: relative;
     max-width: 1200px;
     width: 95%;
-    height: 330px;
+    min-height: 330px;
     margin: auto;
     margin-top: 45px;
     background: #FF9C59;
     border-radius: 10px;
     animation: compra .7s;
-    padding: 1px;
+    padding: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    
     h1{
         font-size: 28px;
         text-align: center;
-        margin: 35px 100px 15px 100px;
+        margin: 15px 100px 15px 100px;
         color: white;
         font-weight: 550;
         letter-spacing: 1px;
         word-spacing: 1.5px;
     }
+    
+    .payment-info {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 8px;
+        padding: 20px 30px;
+        margin: 20px 0;
+        width: 100%;
+        max-width: 600px;
+        
+        .payment-status {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            
+            .status-icon {
+                font-size: 32px;
+                
+                &.approved { color: #32c65e; }
+                &.pending { color: #FFA726; }
+                &.rejected { color: #EF5350; }
+            }
+            
+            .status-text {
+                flex: 1;
+                
+                h3 {
+                    margin: 0 0 5px 0;
+                    font-size: 18px;
+                    color: #333;
+                    font-weight: 600;
+                }
+                
+                p {
+                    margin: 0;
+                    font-size: 14px;
+                    color: #666;
+                }
+            }
+        }
+        
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+            
+            .detail-item {
+                display: flex;
+                flex-direction: column;
+                
+                .label {
+                    font-size: 12px;
+                    color: #888;
+                    margin-bottom: 4px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .value {
+                    font-size: 15px;
+                    color: #333;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+    
     button{
         margin-top: 20px;
         width: 180px;
@@ -208,8 +227,12 @@
         font-size: 14.5px;
         font-weight: 450;
         cursor: pointer;
+        transition: all 0.3s ease;
+        
         &:hover{
             background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
     }
 }

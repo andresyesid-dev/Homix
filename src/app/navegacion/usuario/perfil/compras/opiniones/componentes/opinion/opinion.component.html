@@ -1,6 +1,8 @@
 <div class="opinion-card">
     <div class="producto-info">
-        <img [src]="opinion.foto || 'assets/img/productos/default.webp'" [alt]="opinion.tituloProducto">
+            <div class="contenedor-foto">
+        <img [src]="opinion.foto" [alt]="opinion.tituloProducto" *ngIf="opinion.foto">
+    </div>
         <div class="detalles">
             <h3>{{opinion.tituloProducto}}</h3>
             <p class="fecha">{{opinion.fecha.toDate() | date:'dd/MM/yyyy'}}</p>

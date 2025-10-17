@@ -45,6 +45,7 @@ import { Auth, User } from '@angular/fire/auth';
 import { Firestore, doc, getDoc, setDoc} from '@angular/fire/firestore'; 
 import { Notificacion } from 'src/app/interfaces/usuario/subInterfaces/notificacion';
 import { InformacionPerfilService } from 'src/app/servicios/informacionPerfil/informacion-perfil.service';
+import { VendedorService } from 'src/app/servicios/vendedor/vendedor.service';
 
 @Component({
   selector: 'app-barra-menu',
@@ -53,14 +54,15 @@ import { InformacionPerfilService } from 'src/app/servicios/informacionPerfil/in
   viewProviders: [provideIcons({ heroUserCircle, heroBars3Solid, heroMagnifyingGlassMini, heroUserCircleSolid, iconoirViewStructureUp,  heroShoppingCartSolid, matShoppingCart, heroCurrencyDollarMini,heroShoppingCart, heroStar, heroDocumentCheck, heroChatBubbleBottomCenterText, heroBanknotes, heroRectangleGroup, heroBell, heroBuildingStorefront, heroChatBubbleLeftRight, heroBanknotesMini, heroDocumentChartBar, heroArrowTrendingUp, heroDocumentText, heroArrowRightOnRectangle, ionNotificationsOutline, ionChevronDownOutline, heroTruckSolid, heroChartPie, heroCurrencyDollar, aspectsContactCard})]
 })
 export class BarraMenuComponent{
-  constructor(private changeDetectorRef: ChangeDetectorRef, private zone: NgZone, private router: Router, private route: ActivatedRoute, private authService: AuthService, private auth: Auth, private firestore: Firestore, private perfilService: InformacionPerfilService){}
+  constructor(private changeDetectorRef: ChangeDetectorRef, private zone: NgZone, private router: Router, private route: ActivatedRoute, private authService: AuthService, private auth: Auth, private firestore: Firestore, private perfilService: InformacionPerfilService, private vendedorService: VendedorService){}
   public ultimoDatoUrl!: string;
   public scrollDisplay: Boolean = true;
   private routeSubscription!: Subscription;
   @ViewChild(MenuLateralComponent, {static: false})
-  menuLateral: MenuLateralComponent = new MenuLateralComponent(this.auth, this.authService, this.changeDetectorRef, this.zone,this.router, this.perfilService, this.firestore);
+  menuLateral: MenuLateralComponent = new MenuLateralComponent(this.auth, this.authService, this.changeDetectorRef, this.zone,this.router, this.perfilService, this.firestore, this.vendedorService);
 
   usuarioInterno = false;
+  usuarioVendedor = false;
   usuario!: Usuario | null;
   nombre!: string;
   inUser!: boolean;
@@ -136,12 +138,18 @@ export class BarraMenuComponent{
   obtenerUsuario(){
     this.routeSubscription = this.authService.getUsuarioId(this.auth.currentUser?.uid!).subscribe(async (usuario) =>{
       this.usuario = usuario;
+      
+      // Verificar si es usuario interno (empleado)
       const usuarioSnapshot = await getDoc(doc(this.firestore, `usuarios-internos/${usuario.id}`));
       if(usuarioSnapshot.exists()){
         this.usuarioInterno = true;
       }else{
         this.usuarioInterno = false;
       }
+
+      // Verificar si es vendedor activo usando el servicio
+      this.usuarioVendedor = await this.vendedorService.esVendedorActivo(usuario);
+
       //--- nombre ----
       const palabras = this.usuario.nombre!.trim().split(' ');
       this.nombre = palabras.slice(0, 2).join(' ');

@@ -60,18 +60,18 @@
                   </a>
                 </li>
 
-                <div class="linea-Menu" *ngIf="usuarioInterno"></div>
-                <li *ngIf="usuarioInterno">
+                <div class="linea-Menu" *ngIf="usuarioInterno || usuarioVendedor"></div>
+                <li *ngIf="usuarioVendedor">
                   <a (click)='navegar(usuario?.usuario + "/publicaciones")'>
                     <ng-icon name="heroBuildingStorefront"></ng-icon> Publicaciones
                   </a>
                 </li>
-                <li *ngIf="usuarioInterno">
+                <li *ngIf="usuarioVendedor">
                   <a (click)='navegar(usuario?.usuario + "/ventas")'>
                     <ng-icon name="heroCurrencyDollar"></ng-icon> Ventas
                   </a>
                 </li>
-                <li *ngIf="usuarioInterno">
+                <li *ngIf="usuarioVendedor">
                   <a (click)='navegar(usuario?.usuario + "/metricas/negocio")'>
                     <ng-icon name="heroChartPie"></ng-icon> Métricas
                   </a>

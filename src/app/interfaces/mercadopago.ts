@@ -27,6 +27,12 @@ export interface MercadoPagoPaymentResponse {
       email: string;
     };
     date_created: string;
+    external_resource_url?: string; // URL del banco (en raíz, para compatibilidad)
+    transaction_details?: {
+      external_resource_url?: string; // URL del banco para PSE (ubicación real en respuesta de MercadoPago)
+      financial_institution?: string;
+      [key: string]: any;
+    };
   };
   error?: string;
   details?: any;

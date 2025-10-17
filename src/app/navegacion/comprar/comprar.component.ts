@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
-import { Firestore, doc, getDoc, increment, updateDoc } from '@angular/fire/firestore';
-import { Router } from '@angular/router';
-import { Subscription} from 'rxjs';
+import { Firestore, doc, getDoc, increment, updateDoc, setDoc } from '@angular/fire/firestore';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import { Producto } from 'src/app/interfaces/producto/producto';
 import { Direccion } from 'src/app/interfaces/usuario/subInterfaces/direccion';
 import { Usuario, porComprar, referenciaCompra } from 'src/app/interfaces/usuario/usuario';
@@ -17,9 +18,17 @@ import { matCheck } from '@ng-icons/material-icons/baseline';
   styleUrls: ['./comprar.component.scss'],
   providers: [provideIcons({matCheck})]
 })
-export class ComprarComponent implements OnInit, OnDestroy{
-  constructor(private router: Router, private auth: Auth, private authService: AuthService, private comprarService: ComprarService, private firestore: Firestore){}
+export class ComprarComponent implements OnInit, OnDestroy {
+  constructor(
+    private router: Router,
+    private auth: Auth,
+    private authService: AuthService,
+    private comprarService: ComprarService,
+    private firestore: Firestore
+  ) { }
+
   private subscription!: Subscription;
+  private routerSubscription!: Subscription;
   usuario!: Usuario;
   productosLenght!: number;
   productos: Producto[] = [];
@@ -30,8 +39,48 @@ export class ComprarComponent implements OnInit, OnDestroy{
   cargando = false;
   actualizacionExitosa = false;
   compraExitosa = false;
+  estadoPago: any = null;
+  enRutaRespuesta = false; // Nueva propiedad para controlar el layout
+  
+  // Control de pasos
+  pasoActual: string = 'direccion';
 
   ngOnInit(): void {
+    // Suscribirse a cambios de ruta para saber en qué paso estamos
+    this.routerSubscription = this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe((event: any) => {
+      const url = event.url;
+      if (url.includes('/direccion')) {
+        this.pasoActual = 'direccion';
+      } else if (url.includes('/pago')) {
+        this.pasoActual = 'pago';
+      } else if (url.includes('/resumen')) {
+        this.pasoActual = 'resumen';
+      }
+      
+      // Si estamos en /comprar/checkout/response, redirigir a la ruta de respuesta
+      if (url.includes('/comprar/checkout/response')) {
+        this.enRutaRespuesta = true;
+        const estadoPago = this.comprarService.getEstadoPago();
+        if (estadoPago) {
+          console.log('📊 Detectado estado de pago en ruta de respuesta:', estadoPago);
+          this.compraExitosa = true;
+        }
+      } else {
+        this.enRutaRespuesta = false;
+      }
+    });
+
+    // Escuchar cuando el pago es aprobado para crear la venta
+    const pagoAprobadoSub = this.comprarService.pagoAprobado$.subscribe(async (paymentData) => {
+      console.log('✅ Pago aprobado recibido en ComprarComponent:', paymentData);
+      console.log('📦 Creando venta en Firestore con datos de pago...');
+      // Crear la venta en Firestore SOLO si el pago fue aprobado
+      await this.comprar(paymentData);
+    });
+    this.subscription = pagoAprobadoSub;
+
     this.auth.onAuthStateChanged(async (user) => {
       if (user) {
         const usuario = await this.authService.getUsuarioIdPromise(user.uid);
@@ -118,34 +167,94 @@ export class ComprarComponent implements OnInit, OnDestroy{
     }
     this.precioProductos = precioProductos;
     this.precioEnvios = precioEnvios;
+    
+    // Guardar el total en el servicio para que metodo-pago pueda acceder
+    const total = precioProductos + precioEnvios;
+    this.comprarService.setTotalCompra(total);
+  }
+
+  /**
+   * Valida si el usuario puede procesar la compra
+   * Debe tener una dirección seleccionada
+   */
+  validarPasoCompleto(): boolean {
+    // Verificar que hay una dirección seleccionada en el servicio
+    const direccion = this.comprarService.getDireccionEnvio();
+    
+    // El botón se habilita cuando hay una dirección seleccionada
+    return !!direccion;
+  }
+
+  /**
+   * Navega al paso de pago si aún no está ahí, o procesa la compra
+   */
+  async procesarONavegar(): Promise<void> {
+    const direccion = this.comprarService.getDireccionEnvio();
+    
+    if (!direccion) {
+      alert('Por favor selecciona una dirección de envío');
+      this.router.navigate(['comprar/checkout/direccion']);
+      return;
+    }
+
+    // Si está en el paso de dirección, navegar a pago
+    if (this.pasoActual === 'direccion') {
+      this.router.navigate(['comprar/checkout/pago']);
+      return;
+    }
+
+    // Si está en el paso de pago, iniciar el proceso de pago con MercadoPago
+    if (this.pasoActual === 'pago') {
+      console.log('🚀 Iniciando proceso de pago con MercadoPago Bricks...');
+      // Emitir evento para que metodo-pago muestre el brick
+      this.comprarService.iniciarPagoMercadoPago();
+    }
   }
 
 //-------------------------------------------------------------------------- Crear venta ---------------------------------
 
-  async comprar(){
+  async comprar(paymentData?: any){
     if(!this.cargando){
       this.cargando = true;
       this.usuario = await this.authService.getUsuarioIdPromise(this.auth.currentUser!.uid!);
+      
+      // Obtener la dirección desde el servicio (la que el usuario seleccionó)
+      const direccionSeleccionada = this.comprarService.getDireccionEnvio();
+      
+      if (!direccionSeleccionada) {
+        alert('Por favor selecciona una dirección de envío');
+        this.cargando = false;
+        this.router.navigate(['comprar/checkout/direccion']);
+        return;
+      }
+      
       if(this.usuario.referenciaCompra && this.usuario.referenciaCompra.length !== 0){
         await this.agruparReferenciasPorVendedor(this.usuario);
         for(let idVendedor in this.grupoReferencias){
           //----- obtener numero de venta y sumarle 1 -----
           const refVenta = doc(this.firestore, 'cookies/informacion');
+          
+          // Verificar si el documento existe, si no, crearlo
+          const docSnapshot = await getDoc(refVenta);
+          if (!docSnapshot.exists()) {
+            // Crear el documento con el contador inicial
+            await setDoc(refVenta, {
+              ventas: 0
+            });
+            console.log('✅ Documento cookies/informacion creado');
+          }
+          
+          // Incrementar el contador de ventas
           await updateDoc(refVenta, {
             ventas: increment(1)
           });
+          
           const infoVentasRef = await getDoc(refVenta);
-          const direcciones = this.usuario.direcciones;
           //----------------------------------------------- definir valores -------
           const referencias = this.grupoReferencias[idVendedor];
           const numVenta = infoVentasRef.data()!;
-          let direccion!: Direccion;
-          for(let dir of direcciones!){
-            if(dir.direccionPredeterminada){
-              direccion = dir //Obtener dirección que tenga por defecto
-            }
-          }
-          const venta = {
+          
+          const venta: any = {
             numVenta: numVenta['ventas'],
             referencias: referencias,
             fechaVenta: new Date(),
@@ -153,15 +262,48 @@ export class ComprarComponent implements OnInit, OnDestroy{
             entregado: false,
             idCliente: this.usuario.id!,
             idVendedor: idVendedor,
-            datosEnvio: direccion,
+            datosEnvio: direccionSeleccionada, // Usar la dirección del servicio
             cancelada: false
+          };
+          
+          // Agregar datos del pago de MercadoPago si existen
+          if (paymentData) {
+            venta.payment_id = paymentData.id;
+            venta.payment_status = paymentData.status;
+            venta.payment_method = paymentData.payment_method_id;
+            venta.transaction_amount = paymentData.transaction_amount;
+            console.log('💳 Venta creada con información de pago:', {
+              payment_id: paymentData.id,
+              status: paymentData.status
+            });
           }
+          
           await this.comprarService.agregarVenta(venta);
-          this.actualizacionExitosa = true;
-          setTimeout(()=>{
-            this.compraExitosa = true;
-          },1350)
+          console.log('✅ Venta registrada en Firestore:', venta);
         }
+        
+        // Después de procesar todas las ventas
+        this.actualizacionExitosa = true;
+        
+        // Obtener el estado del pago guardado
+        this.estadoPago = this.comprarService.getEstadoPago();
+        console.log('📊 Estado del pago obtenido:', this.estadoPago);
+        
+        setTimeout(()=>{
+          this.compraExitosa = true;
+          console.log('✅ Compra completada exitosamente');
+          
+          // Solo navegar si no estamos ya en la página de respuesta
+          if (!this.router.url.includes('checkout/response')) {
+            console.log('🔄 Navegando a página de respuesta');
+            this.router.navigate(['comprar/checkout/response']);
+          } else {
+            console.log('ℹ️ Ya estamos en la página de respuesta, no navegamos');
+          }
+          
+          // Scroll to top para ver el mensaje de éxito
+          window.scrollTo(0, 0);
+        }, 1350);
       }
     }
   }
@@ -189,7 +331,10 @@ export class ComprarComponent implements OnInit, OnDestroy{
       const productoSnapshot = await getDoc(referencia.producto);
       const producto = productoSnapshot.data() as Producto;
       await updateDoc(referencia.producto, {ventas: increment(1)});
-      const foto = producto.fotos[0];
+      
+      // Manejar foto: puede venir de fotos[] o ser undefined
+      const foto = producto.fotos && producto.fotos.length > 0 ? producto.fotos[0] : '';
+      
       return {
         idProducto: referencia.producto.id,
         tituloProducto: producto.nombre,
@@ -209,11 +354,14 @@ export class ComprarComponent implements OnInit, OnDestroy{
   }
   //-------------------------------------
   ngOnDestroy(): void {
-    if(this.subscription){
+    if (this.subscription) {
       this.subscription.unsubscribe();
+    }
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
     }
     this.comprarService.agregarDir = false;
     this.comprarService.agregarDir = false;
   }
-  
+
 }

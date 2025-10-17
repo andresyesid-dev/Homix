@@ -48,8 +48,8 @@ export class TipoPublicacionComponent {
       case 'premium': this.premium = true; break
     }
     this.submitValue = true;
-    this.precioBasico = this.precio * 0.07;
-    this.precioPremium = this.precio * 0.11;
+    this.precioBasico = this.precio * 0.08;
+    this.precioPremium = this.precio * 0.12;
   }
 
   cambiarPlan(plan: string){

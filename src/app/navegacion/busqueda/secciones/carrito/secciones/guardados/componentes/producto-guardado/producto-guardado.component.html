@@ -1,10 +1,11 @@
 <div class="contenedor">
     <div>
         <div class="cuadroImg" [class.loaded]="imagenCargada">
-            <img [src]="fotoUrl || 'assets/img/productos/default.webp'" 
+            <img [src]="fotoUrl" 
                  [alt]="imagenCargada ? productoGuardado.nombre : ''"
                  (load)="onImageLoad()"
-                 (click)="navegar(['prod/' + productoGuardado.id])">
+                 (click)="navegar(['prod/' + productoGuardado.id])"
+                 *ngIf="fotoUrl">
         </div>
         <div>
             <p class="titulo" (click)="navegar(['prod/' + productoGuardado.id])">{{productoGuardado.nombre}} <span *ngIf="tamanio !== 'false'">{{productoGuardado.tamanios![+tamanio].gramos}}</span></p>

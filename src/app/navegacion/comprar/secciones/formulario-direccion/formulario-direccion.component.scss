@@ -1,0 +1,404 @@
+.formulario-direccion-container {
+  form {
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+
+      &.address-row {
+        grid-template-columns: 0.95fr 0.92fr 2fr;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        min-width: 0; // Permite que el grid reduzca el tamaño según las proporciones
+
+        &.full-width {
+          grid-column: 1 / -1;
+        }
+
+        &.checkbox-group {
+          grid-column: 1 / -1;
+          margin-top: 0.5rem;
+          
+          .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            cursor: pointer;
+            font-size: 0.9375rem;
+            color: #333;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8f8f8 0%, #fafafa 100%);
+            border-radius: 10px;
+            border: 1.5px solid rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+
+            &:hover {
+              background: linear-gradient(135deg, #f5f9ff 0%, #eef6ff 100%);
+              border-color: rgba(52, 131, 250, 0.3);
+            }
+
+            input[type="checkbox"] {
+              width: 22px;
+              height: 22px;
+              cursor: pointer;
+              accent-color: #3483fa;
+              transition: transform 0.2s ease;
+
+              &:hover {
+                transform: scale(1.1);
+              }
+            }
+
+            span {
+              font-weight: 500;
+            }
+          }
+        }
+
+        label {
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #333;
+          margin-bottom: 0.625rem;
+          transition: color 0.3s ease;
+          letter-spacing: -0.01em;
+
+          &.invalid-field {
+            color: #dc2626;
+          }
+        }
+
+        input, textarea {
+          padding: 0.875rem 1rem;
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 10px;
+          font-size: 0.9375rem;
+          color: #333;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          font-family: inherit;
+          background: white;
+
+          &:hover {
+            border-color: rgba(52, 131, 250, 0.3);
+          }
+
+          &:focus {
+            outline: none;
+            border-color: #3483fa;
+            box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.1);
+            transform: translateY(-1px);
+          }
+
+          &::placeholder {
+            color: rgba(0, 0, 0, 0.35);
+          }
+
+          &:disabled {
+            background: #f8f8f8;
+            cursor: not-allowed;
+          }
+        }
+
+        textarea {
+          resize: vertical;
+          min-height: 90px;
+          line-height: 1.5;
+        }
+
+        .telefono-input {
+          display: flex;
+          align-items: center;
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 10px;
+          overflow: hidden;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          background: white;
+
+          &:hover {
+            border-color: rgba(52, 131, 250, 0.3);
+          }
+
+          &:focus-within {
+            border-color: #3483fa;
+            box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.1);
+            transform: translateY(-1px);
+          }
+
+          .prefijo {
+            padding: 0.875rem 1rem;
+            background: linear-gradient(135deg, #f8f8f8 0%, #f0f0f0 100%);
+            font-weight: 700;
+            color: #666;
+            border-right: 1.5px solid rgba(0, 0, 0, 0.12);
+            font-size: 0.9375rem;
+          }
+
+          input {
+            flex: 1;
+            border: none;
+            padding: 0.875rem 1rem;
+            box-shadow: none !important;
+            transform: none !important;
+
+            &:focus {
+              box-shadow: none !important;
+            }
+          }
+        }
+
+        .select-wrapper {
+          position: relative;
+
+          select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            padding-right: 2.75rem;
+            border: 1.5px solid rgba(0, 0, 0, 0.12);
+            border-radius: 10px;
+            font-size: 0.9375rem;
+            color: #333;
+            background: white;
+            appearance: none;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+
+            &:hover {
+              border-color: rgba(52, 131, 250, 0.3);
+            }
+
+            &:focus {
+              outline: none;
+              border-color: #3483fa;
+              box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.1);
+              transform: translateY(-1px);
+            }
+
+            option {
+              padding: 0.5rem;
+            }
+
+            option[disabled] {
+              color: rgba(0, 0, 0, 0.4);
+            }
+          }
+
+          ng-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #666;
+            font-size: 1.25rem;
+            transition: transform 0.3s ease;
+          }
+
+          &:focus-within ng-icon {
+            transform: translateY(-50%) rotate(180deg);
+            color: #3483fa;
+          }
+        }
+
+        .numero-input {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          border: 1.5px solid rgba(0, 0, 0, 0.12);
+          border-radius: 10px;
+          padding: 0 0.875rem;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          background: white;
+          width: 100%; // Usa todo el ancho disponible
+          max-width: 100%; // No se sale del contenedor
+          box-sizing: border-box; // Incluye padding y border en el ancho
+
+          &:hover {
+            border-color: rgba(52, 131, 250, 0.3);
+          }
+
+          &:focus-within {
+            border-color: #3483fa;
+            box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.1);
+            transform: translateY(-1px);
+          }
+
+          .hash, .guion {
+            font-weight: 700;
+            color: #666;
+            font-size: 1rem;
+            flex-shrink: 0; // No se reducen
+          }
+
+          input {
+            flex: 1;
+            border: none;
+            padding: 0.875rem 0.5rem;
+            box-shadow: none !important;
+            transform: none !important;
+            min-width: 0; // Permite reducirse si es necesario
+            width: 0; // Permite que flex: 1 calcule el tamaño
+
+            &:focus {
+              box-shadow: none !important;
+            }
+          }
+        }
+      }
+    }
+
+    .error-message {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.875rem;
+      background: linear-gradient(135deg, #fff5f5 0%, #fffafa 100%);
+      border: 1.5px solid rgba(220, 38, 38, 0.3);
+      border-radius: 10px;
+      padding: 1.125rem 1.25rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.1);
+      animation: shake 0.5s ease-in-out;
+
+      ng-icon {
+        font-size: 1.75rem;
+        color: #dc2626;
+        flex-shrink: 0;
+        line-height: 1;
+      }
+
+      p {
+        margin: 0;
+        color: #dc2626;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        line-height: 1.5;
+      }
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 2.5rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+
+      button {
+        padding: 1rem 2rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: none;
+        letter-spacing: -0.01em;
+        min-width: 140px;
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none !important;
+        }
+      }
+
+      .btn-cancelar {
+        background: white;
+        color: #666;
+        border: 1.5px solid rgba(0, 0, 0, 0.15);
+
+        &:hover:not(:disabled) {
+          background: #f8f8f8;
+          border-color: rgba(0, 0, 0, 0.25);
+          transform: translateY(-1px);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+        }
+      }
+
+      .btn-guardar {
+        background: linear-gradient(135deg, #3483fa 0%, #4ba3ff 100%);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.625rem;
+        box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+
+        &:hover:not(:disabled) {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(52, 131, 250, 0.4);
+        }
+
+        &:active:not(:disabled) {
+          transform: translateY(0);
+          box-shadow: 0 2px 8px rgba(52, 131, 250, 0.3);
+        }
+
+        &.guardando {
+          background: linear-gradient(135deg, #2968c8 0%, #3483fa 100%);
+          animation: pulse-button 1.5s ease-in-out infinite;
+        }
+
+        .loading-spinner {
+          width: 18px;
+          height: 18px;
+          border: 2.5px solid rgba(255, 255, 255, 0.25);
+          border-top: 2.5px solid white;
+          border-radius: 50%;
+          animation: spin 0.7s linear infinite;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+@keyframes pulse-button {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .formulario-direccion-container {
+    form {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+
+        &.address-row {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .form-actions {
+        flex-direction: column-reverse;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}
