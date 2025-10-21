@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, HostListener } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, doc, getDoc, increment, updateDoc, setDoc } from '@angular/fire/firestore';
 import { Router, NavigationEnd } from '@angular/router';
@@ -9,6 +9,7 @@ import { Direccion } from 'src/app/interfaces/usuario/subInterfaces/direccion';
 import { Usuario, porComprar, referenciaCompra } from 'src/app/interfaces/usuario/usuario';
 import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
+import { ResumenCompraComponent } from './secciones/resumen-compra/resumen-compra.component';
 import { provideIcons } from '@ng-icons/core';
 import { matCheck } from '@ng-icons/material-icons/baseline';
 
@@ -41,23 +42,65 @@ export class ComprarComponent implements OnInit, OnDestroy {
   compraExitosa = false;
   estadoPago: any = null;
   enRutaRespuesta = false; // Nueva propiedad para controlar el layout
+  mostrarBotonPaso2 = true; // Controla la visibilidad del botón en el paso 2
+  mostrarBotonPaso1 = false;
   
-  // Control de pasos
+  // Control de pasos para móvil
   pasoActual: string = 'direccion';
+  esModoMovil: boolean = false;
+  pasos = [
+    { numero: 1, id: 'direccion', titulo: 'Dirección de envío', completado: false },
+    { numero: 2, id: 'detalles', titulo: 'Detalles de compra', completado: false },
+    { numero: 3, id: 'pago', titulo: 'Pago', completado: false }
+  ];
+
+  // Referencias a componentes para móvil
+  @ViewChild('resumenCompraMovil', { static: false }) resumenCompraMovil!: ResumenCompraComponent;
+
+  @HostListener('window:scroll', ['$event'])
+  onScroll(): void {
+    if (this.esModoMovil && this.pasoActual === 'detalles') {
+      const scrollPosition = window.pageYOffset + window.innerHeight;
+      const pageHeight = document.documentElement.scrollHeight;
+      
+      // Ocultar el botón si el usuario está a 150px o menos del final de la página
+      if (pageHeight - scrollPosition <= 150) {
+        this.mostrarBotonPaso2 = false;
+      } else {
+        this.mostrarBotonPaso2 = true;
+      }
+    } else {
+      // Asegurarse de que el botón esté visible en otros pasos/vistas
+      this.mostrarBotonPaso2 = true;
+    }
+  }
 
   ngOnInit(): void {
+    // Detectar modo móvil
+    this.detectarModoMovil();
+    window.addEventListener('resize', () => this.detectarModoMovil());
+    
     // Suscribirse a cambios de ruta para saber en qué paso estamos
     this.routerSubscription = this.router.events.pipe(
       filter(event => event instanceof NavigationEnd)
     ).subscribe((event: any) => {
       const url = event.url;
-      if (url.includes('/direccion')) {
+      console.log('🔄 Detectando cambio de ruta:', url);
+      
+      // Detectar en qué paso estamos basado en la URL
+      if (url.includes('/seleccionar-direccion')) {
         this.pasoActual = 'direccion';
+        this.mostrarBotonPaso1 = true;
+      } else if (url.includes('/agregar-direccion') || url.includes('/actualizar-direccion')) {
+        this.pasoActual = 'direccion';
+        this.mostrarBotonPaso1 = false;
+      } else if (url.includes('/detalles-compra')) {
+        this.pasoActual = 'detalles';
       } else if (url.includes('/pago')) {
         this.pasoActual = 'pago';
-      } else if (url.includes('/resumen')) {
-        this.pasoActual = 'resumen';
       }
+      
+      console.log('📍 Paso actual detectado:', this.pasoActual);
       
       // Si estamos en /comprar/checkout/response, redirigir a la ruta de respuesta
       if (url.includes('/comprar/checkout/response')) {
@@ -168,7 +211,7 @@ export class ComprarComponent implements OnInit, OnDestroy {
     this.precioProductos = precioProductos;
     this.precioEnvios = precioEnvios;
     
-    // Guardar el total en el servicio para que metodo-pago pueda acceder
+    // Guardar el total en el servicio para que detalles-compra pueda acceder
     const total = precioProductos + precioEnvios;
     this.comprarService.setTotalCompra(total);
   }
@@ -193,21 +236,54 @@ export class ComprarComponent implements OnInit, OnDestroy {
     
     if (!direccion) {
       alert('Por favor selecciona una dirección de envío');
-      this.router.navigate(['comprar/checkout/direccion']);
+      this.router.navigate(['comprar/checkout/seleccionar-direccion']);
       return;
     }
 
-    // Si está en el paso de dirección, navegar a pago
+    // DESKTOP: Comportamiento simplificado y robusto
+    if (!this.esModoMovil) {
+      console.log('🖥️ DESKTOP: Ejecutando lógica desktop');
+      console.log('🖥️ DESKTOP: pasoActual =', this.pasoActual);
+      console.log('🖥️ DESKTOP: URL =', this.router.url);
+      
+      if (this.pasoActual === 'direccion') {
+        console.log('🖥️ DESKTOP: Navegando de dirección a detalles-compra');
+        this.router.navigate(['comprar/checkout/detalles-compra']);
+        return;
+      }
+
+      if (this.pasoActual === 'detalles') {
+        console.log('🖥️ DESKTOP: Navegando de detalles a pago y abriendo formulario');
+        this.router.navigate(['comprar/checkout/pago']).then(() => {
+          this.comprarService.iniciarPagoMercadoPago();
+        });
+        return;
+      }
+
+      // Fallback: volver a detalles-compra
+      console.log('🖥️ DESKTOP: Fallback - redirigiendo a detalles-compra');
+      this.router.navigate(['comprar/checkout/detalles-compra']);
+      return;
+    }
+
+    // MÓVIL: Lógica de pasos móviles con rutas explícitas
+    console.log('📱 MÓVIL: Ejecutando lógica móvil');
     if (this.pasoActual === 'direccion') {
+      console.log('📱 MÓVIL: Navegando de seleccionar-dirección a detalles-compra');
+      this.router.navigate(['comprar/checkout/detalles-compra']);
+      return;
+    }
+
+    if (this.pasoActual === 'detalles') {
+      console.log('📱 MÓVIL: Navegando de detalles-compra a pago');
       this.router.navigate(['comprar/checkout/pago']);
       return;
     }
 
-    // Si está en el paso de pago, iniciar el proceso de pago con MercadoPago
     if (this.pasoActual === 'pago') {
-      console.log('🚀 Iniciando proceso de pago con MercadoPago Bricks...');
-      // Emitir evento para que metodo-pago muestre el brick
+      console.log('📱 MÓVIL: Iniciando MercadoPago Bricks');
       this.comprarService.iniciarPagoMercadoPago();
+      return;
     }
   }
 
@@ -224,7 +300,7 @@ export class ComprarComponent implements OnInit, OnDestroy {
       if (!direccionSeleccionada) {
         alert('Por favor selecciona una dirección de envío');
         this.cargando = false;
-        this.router.navigate(['comprar/checkout/direccion']);
+        this.router.navigate(['comprar/checkout/seleccionar-direccion']);
         return;
       }
       
@@ -352,6 +428,143 @@ export class ComprarComponent implements OnInit, OnDestroy {
     this.router.navigate(ruta);
     window.scroll(0,0) 
   }
+
+  /**
+   * Detecta si estamos en modo móvil
+   */
+  detectarModoMovil(): void {
+    this.esModoMovil = window.innerWidth <= 768;
+    
+    // Si cambiamos de móvil a desktop mientras estamos en "resumen", 
+    // volver al paso de pago para mantener consistencia
+    if (!this.esModoMovil && this.pasoActual === 'resumen') {
+      this.pasoActual = 'pago';
+    }
+  }
+
+  /**
+   * Verifica si un paso está completado
+   */
+  pasoCompletado(paso: string): boolean {
+    const pasos = ['direccion', 'detalles', 'pago'];
+    const indiceActual = pasos.indexOf(this.pasoActual);
+    const indicePaso = pasos.indexOf(paso);
+    
+    return indicePaso < indiceActual;
+  }
+
+  /**
+   * Obtiene el paso anterior al actual
+   */
+  obtenerPasoAnterior(): string | null {
+    const pasos = ['direccion', 'detalles', 'pago'];
+    const indiceActual = pasos.indexOf(this.pasoActual);
+    
+    if (indiceActual > 0) {
+      return pasos[indiceActual - 1];
+    }
+    
+    return null;
+  }
+
+  /**
+   * Navega al siguiente paso
+   */
+  siguientePaso(): void {
+    if (this.pasoActual === 'direccion') {
+      this.pasoActual = 'detalles';
+    } else if (this.pasoActual === 'detalles') {
+      this.pasoActual = 'pago';
+    }
+    
+    // Scroll al inicio
+    window.scrollTo(0, 0);
+  }
+
+  /**
+   * Obtiene si el botón debe estar habilitado según el paso actual
+   */
+  obtenerBotonHabilitado(): boolean {
+    if (this.pasoActual === 'detalles') {
+      return true; // En paso detalles siempre habilitado
+    } else if (this.pasoActual === 'pago') {
+      return this.validarPasoCompleto(); // En paso pago usar validación normal
+    }
+    return false;
+  }
+
+  /**
+   * Obtiene la función correcta a ejecutar según el paso actual
+   */
+  obtenerAccionProcesar(): () => void {
+    // Usar procesarONavegar para manejar navegación de detalles a pago y para confirmar pago
+    if (this.pasoActual === 'detalles' || this.pasoActual === 'pago') {
+      return () => this.procesarONavegar();
+    }
+    return () => {};
+  }
+
+  /**
+   * Navega al paso anterior
+   */
+  pasoAnterior(): void {
+    if (this.pasoActual === 'pago') {
+      // Si estamos en paso pago y hay bricks activos, cerrarlos primero
+      if (this.resumenCompraMovil) {
+        this.resumenCompraMovil.cerrarBricksDesdeMovil();
+      }
+      this.pasoActual = 'detalles';
+    } else if (this.pasoActual === 'detalles') {
+      this.pasoActual = 'direccion';
+    }
+    
+    // Scroll al inicio
+    window.scrollTo(0, 0);
+  }
+
+  /**
+   * Navega al siguiente paso en móvil
+   */
+  siguientePasoMovil(): void {
+    if (!this.validarPasoCompleto()) {
+      return;
+    }
+
+    if (this.pasoActual === 'direccion') {
+      this.router.navigate(['comprar/checkout/pago']);
+    } else if (this.pasoActual === 'pago') {
+      // En móvil, el paso "resumen" es mostrar el componente resumen-compra
+      this.pasoActual = 'resumen';
+    }
+    
+    // Scroll al inicio
+    window.scrollTo(0, 0);
+  }
+
+  /**
+   * Navega al paso anterior en móvil
+   */
+  pasoAnteriorMovil(): void {
+    if (this.pasoActual === 'resumen') {
+      // Volver a la ruta de pago sin cambiar la URL, solo el estado
+      this.pasoActual = 'pago';
+    } else if (this.pasoActual === 'pago') {
+      this.router.navigate(['comprar/checkout/seleccionar-direccion']);
+    }
+    
+    // Scroll al inicio
+    window.scrollTo(0, 0);
+  }
+
+  /**
+   * Maneja el evento cuando se cierra el formulario de MercadoPago
+   * Navega de vuelta a detalles-compra
+   */
+  onCerrarBricks(): void {
+    console.log('🔙 MercadoPago cerrado, navegando a detalles-compra');
+    this.router.navigate(['comprar/checkout/detalles-compra']);
+  }
+
   //-------------------------------------
   ngOnDestroy(): void {
     if (this.subscription) {

@@ -183,8 +183,8 @@ export class DatosProductoComponent implements OnInit, OnChanges {
     }
     try {
       await this.comprarService.prepararCompraRapida(this.producto, this.unidades, this.tamanioSelec);
-      // Navegar al flujo de checkout actualizado: direccion -> pago -> confirmación
-      this.router.navigate(['comprar/checkout/direccion']);
+      // Navegar al flujo de checkout actualizado: seleccionar-direccion -> detalles-compra -> pago
+      this.router.navigate(['comprar/checkout/seleccionar-direccion']);
     } catch (e) {
       console.error('Error preparando compra rápida', e);
       alert('No fue posible iniciar la compra. Intenta nuevamente.');

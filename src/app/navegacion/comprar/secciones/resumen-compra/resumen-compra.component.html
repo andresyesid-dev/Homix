@@ -1,6 +1,6 @@
-<div class="resumen-lateral">
-  <!-- Resumen de precios - Solo se muestra cuando NO está el brick -->
-  <div *ngIf="!mostrarBrickPago" class="resumen-container">
+<div class="resumen-lateral" [class.solo-brick-movil]="esModoMovil && pasoActual === 'pago'">
+  <!-- Resumen de precios - Solo se muestra cuando NO está el brick O no estamos en paso pago móvil -->
+  <div *ngIf="!mostrarBrickPago && !(esModoMovil && pasoActual === 'pago')" class="resumen-container resumen-productos">
     <div class="resumen-header">
       <h3>Resumen de tu compra</h3>
     </div>
@@ -27,13 +27,14 @@
     <div class="total-container">
       <div class="detalle-item total">
         <span class="label">Total</span>
-        <span class="valor">$ {{ (+precioProductos) + (+precioEnvios) | number: '1.0-0' }}</span>
+        <span class="valor valor-total">$ {{ (+precioProductos) + (+precioEnvios) | number: '1.0-0' }}</span>
       </div>
       <p class="moneda-aclaracion">Pesos colombianos (COP)</p>
     </div>
 
-    <!-- Botón principal -->
+    <!-- Botón principal - No se muestra en móvil paso 3 (pago) -->
     <button 
+      *ngIf="!(esModoMovil && pasoActual === 'pago')"
       class="btn-procesar"
       (click)="onProcesarCompra()" 
       [ngClass]="{'cargando': cargando, 'success': actualizacionExitosa, 'disabled': !botonHabilitado}"
@@ -46,10 +47,18 @@
 
   <!-- Payment Brick de MercadoPago -->
   <div class="payment-brick-section" *ngIf="mostrarBrickPago">
-    <div class="brick-header">
+    <div class="brick-header" *ngIf="!esModoMovil">
       <h3>Completa tu pago</h3>
-      <button class="btn-cerrar" (click)="cerrarBrick()" *ngIf="!procestandoPago && !cargandoBrick" aria-label="Cerrar formulario de pago">
-        <span>✕</span>
+      <button 
+        class="btn-cerrar-mejorado" 
+        (click)="cerrarBrick()" 
+        *ngIf="!procestandoPago" 
+        [disabled]="cargandoBrick"
+        aria-label="Cerrar formulario de pago"
+        type="button">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+        </svg>
       </button>
     </div>
 
@@ -57,17 +66,15 @@
     <div class="brick-loading" *ngIf="cargandoBrick && !errorPago">
       <div class="spinner"></div>
       <p>Cargando formulario de pago...</p>
-      <p class="small">Espera un momento</p>
     </div>
 
     <!-- Contenedor del Payment Brick - Solo visible cuando NO está cargando y NO está procesando -->
-    <div id="payment-brick-container" [style.display]="cargandoBrick || procestandoPago ? 'none' : 'block'"></div>
+    <div [id]="brickContainerId" [style.display]="cargandoBrick || procestandoPago ? 'none' : 'block'"></div>
 
     <!-- Mensaje de procesamiento -->
     <div class="processing" *ngIf="procestandoPago">
       <div class="spinner"></div>
       <p>Procesando tu pago...</p>
-      <p class="small">No cierres ni actualices esta ventana</p>
     </div>
 
     <!-- Mensaje de error -->

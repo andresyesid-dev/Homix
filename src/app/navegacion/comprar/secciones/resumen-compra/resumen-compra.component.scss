@@ -1,7 +1,7 @@
 .resumen-lateral {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 7px;
+  box-shadow: 0 1px 8px -2px rgba(0, 0, 0, 0.19);
   border: 1px solid rgba(0, 0, 0, 0.06);
   position: sticky;
   top: 20px;
@@ -9,25 +9,16 @@
   transition: all 0.3s ease;
 
   .resumen-container {
+    background-color: white;
     .resumen-header {
-      padding: 1.75rem 1.75rem 1.25rem 1.75rem;
+      padding: 28px 28px 20px 28px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-      background: linear-gradient(to bottom, #fafafa 0%, #ffffff 100%);
+      background: white;
       position: relative;
-
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #d6d6d6 0%, #eee 100%);
-      }
 
       h3 {
         margin: 0;
-        font-size: 1.25rem;
+        font-size: 20px;
         font-weight: 600;
         color: #333;
         letter-spacing: -0.01em;
@@ -35,20 +26,22 @@
     }
 
     .resumen-detalles {
-      padding: 1.25rem 1.75rem 0.75rem 1.75rem;
+      padding: 20px 28px 12px 28px;
+      background-color: white;
     }
 
     .detalle-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.875rem 0;
+      padding: 8px 0;
+      background-color: white;
 
       .label {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 0.9375rem;
+        gap: 8px;
+        font-size: 15px;
         color: rgba(0, 0, 0, 0.7);
         font-weight: 400;
 
@@ -62,20 +55,20 @@
           justify-content: center;
           min-width: 24px;
           height: 20px;
-          padding: 0 0.375rem;
+          padding: 0 6px;
           background: linear-gradient(135deg, #3483fa 0%, #4ba3ff 100%);
           color: white;
-          border-radius: 10px;
-          font-size: 0.75rem;
+          border-radius: 5px;
+          font-size: 12px;
           font-weight: 700;
           box-shadow: 0 2px 4px rgba(52, 131, 250, 0.25);
         }
       }
 
       .valor {
-        font-size: 1rem;
+        font-size: 16px;
         color: #333;
-        font-weight: 600;
+        font-weight: 500;
         letter-spacing: -0.01em;
 
         &.envio {
@@ -84,17 +77,17 @@
       }
 
       &.total {
-        padding: 1.25rem 0 0.5rem 0;
+        padding: 20px 0 8px 0;
 
         .label {
-          font-size: 1.25rem;
+          font-size: 20px;
           font-weight: 600;
           color: #333;
         }
 
         .valor {
-          font-size: 1.75rem;
-          font-weight: 700;
+          font-size: 20px;
+          font-weight: 600;
           color: #333;
           letter-spacing: -0.02em;
         }
@@ -104,15 +97,16 @@
     .linea-separador {
       height: 1px;
       background: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.1) 50%, transparent 100%);
-      margin: 0.75rem 1.75rem;
+      margin: 4px 28px;
     }
 
     .total-container {
-      padding: 0 1.75rem 1rem 1.75rem;
+      padding: 0 28px 16px 28px;
+      background-color: white;
 
       .moneda-aclaracion {
-        margin: 0.5rem 0 0 0;
-        font-size: 0.75rem;
+        margin: 8px 0 0 0;
+        font-size: 12px;
         color: rgba(0, 0, 0, 0.45);
         text-align: right;
         font-weight: 400;
@@ -120,16 +114,16 @@
     }
 
     .btn-procesar {
-      width: calc(100% - 3.5rem);
-      margin: 0 1.75rem 1.25rem 1.75rem;
+      width: calc(100% - 56px);
+      margin: 0 28px 20px 28px;
       height: 52px;
       padding: 0;
       font-weight: 700;
-      font-size: 1.0625rem;
+      font-size: 17px;
       color: white;
       background: linear-gradient(135deg, #ff9c59 0%, #ffb27d 100%);
       border: none;
-      border-radius: 10px;
+      border-radius: 5px;
       cursor: pointer;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       position: relative;
@@ -143,7 +137,7 @@
         content: '';
         position: absolute;
         inset: 0;
-        border-radius: 10px;
+        border-radius: 5px;
         padding: 2px;
         background: linear-gradient(135deg, #ffb27d 0%, #ff9c59 100%);
         -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
@@ -244,7 +238,7 @@
   }
 
   ng-icon {
-    font-size: 1.75rem;
+    font-size: 28px;
     animation: check-icon 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
 }
@@ -280,16 +274,18 @@
 
 // Estilos para Payment Brick de MercadoPago
 .payment-brick-section {
-  padding: 1.75rem;
+  padding: 28px;
+  background-color: white;
   
   .brick-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.25rem;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     position: relative;
+    background-color: white;
 
     &::before {
       content: '';
@@ -304,7 +300,7 @@
 
     h3 {
       margin: 0;
-      font-size: 1.25rem;
+      font-size: 20px;
       font-weight: 600;
       color: #333;
       letter-spacing: -0.01em;
@@ -322,7 +318,7 @@
       align-items: center;
       justify-content: center;
       transition: all 0.3s ease;
-      font-size: 1.375rem;
+      font-size: 22px;
       padding: 0;
 
       span {
@@ -341,13 +337,69 @@
         transform: rotate(90deg) scale(0.95);
       }
     }
+
+    .btn-cerrar-mejorado {
+      background: rgba(0, 0, 0, 0.03);
+      color: rgba(0, 0, 0, 0.5);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      padding: 0;
+      position: relative;
+
+      svg {
+        width: 20px;
+        height: 20px;
+        transition: all 0.2s ease;
+      }
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.08);
+        color: rgba(239, 68, 68, 0.8);
+        transform: scale(1.05);
+
+        svg {
+          transform: rotate(90deg);
+        }
+      }
+
+      &:active {
+        transform: scale(0.95);
+        background: rgba(239, 68, 68, 0.15);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+      }
+    }
   }
 
   #payment-brick-container {
     min-height: 400px;
     margin: 0;
     padding: 0;
-    // Eliminar margin del formulario de MercadoPago
+    background-color: white;
+    
+    // Solo remover margin y padding del formulario específico
+    ::ng-deep .mp-checkout-bricks__payment-form {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+  
+  // También aplicar a contenedores dinámicos
+  [id^="payment-brick-container"] {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    
     ::ng-deep .mp-checkout-bricks__payment-form {
       margin: 0 !important;
       padding: 0 !important;
@@ -355,13 +407,15 @@
   }
 
   .brick-loading,
-  .processing {
+  .processing,
+  .cerrando-brick {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 4rem 1.75rem;
-    gap: 1.25rem;
+    padding: 64px 28px;
+    gap: 20px;
+    background-color: white;
 
     .spinner {
       width: 52px;
@@ -371,19 +425,30 @@
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
     }
+  }
+
+  .cerrando-brick {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 7px;
+    margin: 16px 0;
+
+    .spinner {
+      border: 4px solid rgba(245, 158, 11, 0.2);
+      border-top: 4px solid #f59e0b;
+    }
 
     p {
       margin: 0;
       color: rgba(0, 0, 0, 0.7);
-      font-size: 1rem;
+      font-size: 16px;
       font-weight: 600;
       text-align: center;
 
       &.small {
-        font-size: 0.875rem;
+        font-size: 14px;
         color: rgba(0, 0, 0, 0.5);
         font-weight: 400;
-        margin-top: 0.25rem;
+        margin-top: 4px;
       }
     }
   }
@@ -391,17 +456,17 @@
   .error-pago {
     background: linear-gradient(135deg, #fff5f5 0%, #fffafa 100%);
     border: 1.5px solid rgba(220, 38, 38, 0.3);
-    border-radius: 12px;
-    padding: 2rem 1.75rem;
+    border-radius: 7px;
+    padding: 32px 28px;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
+    gap: 20px;
     box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
 
     .error-icon {
-      font-size: 3.5rem;
+      font-size: 56px;
       line-height: 1;
       animation: shake 0.5s ease-in-out;
     }
@@ -410,7 +475,7 @@
       color: #dc2626;
       margin: 0;
       font-weight: 600;
-      font-size: 1rem;
+      font-size: 16px;
       line-height: 1.5;
     }
 
@@ -418,10 +483,10 @@
       background: linear-gradient(135deg, #3483fa 0%, #4ba3ff 100%);
       color: white;
       border: none;
-      padding: 0.875rem 1.75rem;
-      border-radius: 10px;
+      padding: 14px 28px;
+      border-radius: 5px;
       cursor: pointer;
-      font-size: 0.9375rem;
+      font-size: 15px;
       font-weight: 700;
       transition: all 0.3s ease;
       box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
@@ -456,107 +521,107 @@
   .resumen-lateral {
     position: relative;
     top: 0;
-    border-radius: 10px;
+    border-radius: 5px;
 
     .resumen-container {
       .resumen-header {
-        padding: 1.5rem 1.5rem 1rem 1.5rem;
+        padding: 24px 24px 16px 24px;
 
         h3 {
-          font-size: 1.125rem;
+          font-size: 18px;
         }
       }
 
       .resumen-detalles {
-        padding: 1rem 1.5rem 0.5rem 1.5rem;
+        padding: 16px 24px 8px 24px;
       }
 
       .detalle-item {
-        padding: 0.75rem 0;
+        padding: 12px 0;
 
         .label {
-          font-size: 0.875rem;
+          font-size: 14px;
 
           .badge-cantidad {
             min-width: 22px;
             height: 18px;
-            font-size: 0.6875rem;
+            font-size: 11px;
           }
         }
 
         .valor {
-          font-size: 0.9375rem;
+          font-size: 15px;
         }
 
         &.total {
-          padding: 1rem 0 0.375rem 0;
+          padding: 16px 0 6px 0;
 
           .label {
-            font-size: 1.125rem;
+            font-size: 18px;
           }
 
           .valor {
-            font-size: 1.5rem;
+            font-size: 24px;
           }
         }
       }
 
       .linea-separador {
-        margin: 0.625rem 1.5rem;
+        margin: 10px 24px;
       }
 
       .total-container {
-        padding: 0 1.5rem 0.875rem 1.5rem;
+        padding: 0 24px 14px 24px;
 
         .moneda-aclaracion {
-          font-size: 0.5rem;
+          font-size: 8px;
         }
       }
 
       .mensaje-info {
-        margin: 0 1.5rem 1rem 1.5rem;
-        padding: 0.875rem 1rem;
+        margin: 0 24px 16px 24px;
+        padding: 14px 16px;
 
         .icono-info {
-          font-size: 1.125rem;
+          font-size: 18px;
         }
 
         p {
-          font-size: 0.8125rem;
+          font-size: 13px;
         }
       }
 
       .btn-procesar {
-        width: calc(100% - 3rem);
-        margin: 0 1.5rem 1rem 1.5rem;
+        width: calc(100% - 48px);
+        margin: 0 24px 16px 24px;
         height: 48px;
-        font-size: 1rem;
-        border-radius: 10px;
+        font-size: 16px;
+        border-radius: 5px;
       }
 
       .garantia-seguridad {
-        padding: 0 1.5rem 1.25rem 1.5rem;
+        padding: 0 24px 20px 24px;
 
         .garantia-item {
-          padding: 0.5rem 0.875rem;
+          padding: 8px 14px;
 
           .icono {
-            font-size: 1rem;
+            font-size: 16px;
           }
 
           .texto {
-            font-size: 0.75rem;
+            font-size: 12px;
           }
         }
       }
     }
 
     .payment-brick-section {
-      padding: 1.5rem;
+      padding: 24px;
 
       .brick-header {
-        margin-bottom: 1.25rem;
-        padding-bottom: 1rem;
+        margin-bottom: 20px;
+        padding-bottom: 16px;
 
         &::before {
           width: 50px;
@@ -564,23 +629,23 @@
         }
 
         h3 {
-          font-size: 1.125rem;
+          font-size: 18px;
         }
 
         .btn-cerrar {
           width: 32px;
           height: 32px;
-          font-size: 1.25rem;
+          font-size: 20px;
         }
       }
 
       #payment-brick-container {
-        margin-top: 1rem;
+        margin-top: 16px;
       }
 
       .brick-loading,
       .processing {
-        padding: 3rem 1.5rem;
+        padding: 48px 24px;
 
         .spinner {
           width: 44px;
@@ -588,63 +653,588 @@
         }
 
         p {
-          font-size: 0.9375rem;
+          font-size: 15px;
 
           &.small {
-            font-size: 0.8125rem;
+            font-size: 13px;
           }
         }
       }
 
       .error-pago {
-        padding: 1.75rem 1.5rem;
-        border-radius: 10px;
+        padding: 28px 24px;
+        border-radius: 5px;
 
         .error-icon {
-          font-size: 3rem;
+          font-size: 48px;
         }
 
         .error-mensaje {
-          font-size: 0.9375rem;
+          font-size: 15px;
         }
 
         .btn-reintentar {
-          padding: 0.75rem 1.5rem;
-          font-size: 0.875rem;
+          padding: 12px 24px;
+          font-size: 14px;
         }
       }
     }
   }
 }
 
-// Tablet
-@media (min-width: 769px) and (max-width: 1024px) {
+// Estilo especial para móvil cuando solo se muestran los bricks
+.resumen-lateral.solo-brick-movil {
+  @media (max-width: 768px) {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    position: static;
+    
+    .payment-brick-section {
+      margin: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      
+      .brick-header {
+        background: #32c65e;
+        color: white;
+        
+        h3 {
+          color: white;
+        }
+        
+        .btn-cerrar-mejorado {
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+          }
+        }
+      }
+    }
+  }
+}
+
+
+//---- Animaciones boton ----
+.cargando {
+  cursor: wait !important;
+  background: linear-gradient(135deg, #2968c8 0%, #3483fa 100%) !important;
+  animation: pulse-button 1.5s ease-in-out infinite !important;
+
+  &:hover {
+    transform: none !important;
+    box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3) !important;
+  }
+}
+
+.loading {
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin-loader 0.7s linear infinite;
+}
+
+@keyframes spin-loader {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse-button {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.success {
+  background: linear-gradient(135deg, #00a650 0%, #00c853 100%) !important;
+  animation: success-bounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+
+  &:hover {
+    background: linear-gradient(135deg, #00a650 0%, #00c853 100%) !important;
+    box-shadow: 0 6px 20px rgba(0, 166, 80, 0.4) !important;
+    transform: translateY(-2px) !important;
+  }
+
+  ng-icon {
+    font-size: 28px;
+    animation: check-icon 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+}
+
+@keyframes success-bounce {
+  0% {
+    transform: scale(0.92);
+  }
+  40% {
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes check-icon {
+  0% {
+    transform: scale(0) rotate(-45deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.3) rotate(10deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+// Estilos para Payment Brick de MercadoPago
+.payment-brick-section {
+  padding: 28px;
+  
+  .brick-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #3483fa 0%, #4ba3ff 100%);
+      border-radius: 2px;
+    }
+
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      letter-spacing: -0.01em;
+    }
+
+    .btn-cerrar {
+      background: transparent;
+      color: rgba(0, 0, 0, 0.45);
+      border: 1.5px solid rgba(0, 0, 0, 0.15);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      font-size: 22px;
+      padding: 0;
+
+      span {
+        line-height: 1;
+        transform: translateY(-1px);
+      }
+
+      &:hover {
+        background: #fff5f5;
+        border-color: #ff4444;
+        color: #ff4444;
+        transform: rotate(90deg);
+      }
+
+      &:active {
+        transform: rotate(90deg) scale(0.95);
+      }
+    }
+
+    .btn-cerrar-mejorado {
+      background: rgba(0, 0, 0, 0.03);
+      color: rgba(0, 0, 0, 0.5);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 5px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      padding: 0;
+      position: relative;
+
+      svg {
+        width: 20px;
+        height: 20px;
+        transition: all 0.2s ease;
+      }
+
+      &:hover {
+        background: rgba(239, 68, 68, 0.08);
+        color: rgba(239, 68, 68, 0.8);
+        transform: scale(1.05);
+
+        svg {
+          transform: rotate(90deg);
+        }
+      }
+
+      &:active {
+        transform: scale(0.95);
+        background: rgba(239, 68, 68, 0.15);
+      }
+
+      &:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+      }
+    }
+  }
+
+  #payment-brick-container {
+    min-height: 400px;
+    margin: 0;
+    padding: 0;
+    
+    // Solo remover margin y padding del formulario específico
+    ::ng-deep .mp-checkout-bricks__payment-form {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+  
+  // También aplicar a contenedores dinámicos
+  [id^="payment-brick-container"] {
+    margin: 0;
+    padding: 0;
+    
+    ::ng-deep .mp-checkout-bricks__payment-form {
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+  }
+
+  .brick-loading,
+  .processing,
+  .cerrando-brick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 64px 28px;
+    gap: 20px;
+
+    .spinner {
+      width: 52px;
+      height: 52px;
+      border: 4px solid rgba(52, 131, 250, 0.15);
+      border-top: 4px solid #ff9c59;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+  }
+
+  .cerrando-brick {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 7px;
+    margin: 16px 0;
+
+    .spinner {
+      border: 4px solid rgba(245, 158, 11, 0.2);
+      border-top: 4px solid #f59e0b;
+    }
+
+    p {
+      margin: 0;
+      color: rgba(0, 0, 0, 0.7);
+      font-size: 16px;
+      font-weight: 600;
+      text-align: center;
+
+      &.small {
+        font-size: 14px;
+        color: rgba(0, 0, 0, 0.5);
+        font-weight: 400;
+        margin-top: 4px;
+      }
+    }
+  }
+
+  .error-pago {
+    background: linear-gradient(135deg, #fff5f5 0%, #fffafa 100%);
+    border: 1.5px solid rgba(220, 38, 38, 0.3);
+    border-radius: 7px;
+    padding: 32px 28px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.1);
+
+    .error-icon {
+      font-size: 56px;
+      line-height: 1;
+      animation: shake 0.5s ease-in-out;
+    }
+
+    .error-mensaje {
+      color: #dc2626;
+      margin: 0;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .btn-reintentar {
+      background: linear-gradient(135deg, #3483fa 0%, #4ba3ff 100%);
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(52, 131, 250, 0.3);
+      letter-spacing: -0.01em;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(52, 131, 250, 0.4);
+      }
+
+      &:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 8px rgba(52, 131, 250, 0.3);
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+  20%, 40%, 60%, 80% { transform: translateX(5px); }
+}
+
+// Responsive
+@media (max-width: 768px) {
   .resumen-lateral {
+    position: relative;
+    top: 0;
+    border-radius: 5px;
+
     .resumen-container {
       .resumen-header {
-        padding: 1.625rem 1.625rem 1.125rem 1.625rem;
+        padding: 24px 24px 16px 24px;
+
+        h3 {
+          font-size: 18px;
+        }
       }
 
       .resumen-detalles {
-        padding: 1.125rem 1.625rem 0.625rem 1.625rem;
+        padding: 16px 24px 8px 24px;
+      }
+
+      .detalle-item {
+        padding: 12px 0;
+
+        .label {
+          font-size: 14px;
+
+          .badge-cantidad {
+            min-width: 22px;
+            height: 18px;
+            font-size: 11px;
+          }
+        }
+
+        .valor {
+          font-size: 15px;
+        }
+
+        &.total {
+          padding: 16px 0 6px 0;
+
+          .label {
+            font-size: 18px;
+          }
+
+          .valor {
+            font-size: 24px;
+          }
+        }
+      }
+
+      .linea-separador {
+        margin: 10px 24px;
       }
 
       .total-container {
-        padding: 0 1.625rem 1rem 1.625rem;
+        padding: 0 24px 14px 24px;
+
+        .moneda-aclaracion {
+          font-size: 8px;
+        }
       }
 
-      .mensaje-info,
-      .btn-procesar {
-        margin-left: 1.625rem;
-        margin-right: 1.625rem;
+      .mensaje-info {
+        margin: 0 24px 16px 24px;
+        padding: 14px 16px;
+
+        .icono-info {
+          font-size: 18px;
+        }
+
+        p {
+          font-size: 13px;
+        }
       }
 
       .btn-procesar {
-        width: calc(100% - 3.25rem);
+        width: calc(100% - 48px);
+        margin: 0 24px 16px 24px;
+        height: 48px;
+        font-size: 16px;
+        border-radius: 5px;
       }
 
       .garantia-seguridad {
-        padding: 0 1.625rem 1.375rem 1.625rem;
+        padding: 0 24px 20px 24px;
+
+        .garantia-item {
+          padding: 8px 14px;
+
+          .icono {
+            font-size: 16px;
+          }
+
+          .texto {
+            font-size: 12px;
+          }
+        }
+      }
+    }
+
+    .payment-brick-section {
+      padding: 24px;
+
+      .brick-header {
+        margin-bottom: 20px;
+        padding-bottom: 16px;
+
+        &::before {
+          width: 50px;
+          height: 2px;
+        }
+
+        h3 {
+          font-size: 18px;
+        }
+
+        .btn-cerrar {
+          width: 32px;
+          height: 32px;
+          font-size: 20px;
+        }
+      }
+
+      #payment-brick-container {
+        margin-top: 16px;
+      }
+
+      .brick-loading,
+      .processing {
+        padding: 48px 24px;
+
+        .spinner {
+          width: 44px;
+          height: 44px;
+        }
+
+        p {
+          font-size: 15px;
+
+          &.small {
+            font-size: 13px;
+          }
+        }
+      }
+
+      .error-pago {
+        padding: 28px 24px;
+        border-radius: 5px;
+
+        .error-icon {
+          font-size: 48px;
+        }
+
+        .error-mensaje {
+          font-size: 15px;
+        }
+
+        .btn-reintentar {
+          padding: 12px 24px;
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
+
+// Estilo especial para móvil cuando solo se muestran los bricks
+.resumen-lateral.solo-brick-movil {
+  @media (max-width: 768px) {
+    background: transparent;
+    box-shadow: none;
+    border: none;
+    position: static;
+    
+    .payment-brick-section {
+      margin: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      
+      .brick-header {
+        background: #32c65e;
+        color: white;
+        
+        h3 {
+          color: white;
+        }
+        
+        .btn-cerrar-mejorado {
+          color: white;
+          border: 1px solid rgba(255, 255, 255, 0.3);
+          
+          &:hover {
+            background: rgba(255, 255, 255, 0.1);
+          }
+        }
       }
     }
   }

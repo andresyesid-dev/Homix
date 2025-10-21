@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
@@ -6,13 +6,13 @@ import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
 import { Usuario } from 'src/app/interfaces/usuario/usuario';
 import { Direccion } from 'src/app/interfaces/usuario/subInterfaces/direccion';
 import { provideIcons } from '@ng-icons/core';
-import { heroMapPin, heroPlus, heroHome, heroPhone, heroInformationCircle } from '@ng-icons/heroicons/outline';
+import { heroMapPin, heroPlus, heroHome, heroPhone, heroInformationCircle, heroPencil, heroTrash } from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-selector-direcciones',
   templateUrl: './selector-direcciones.component.html',
   styleUrls: ['./selector-direcciones.component.scss'],
-  providers: [provideIcons({heroMapPin, heroPlus, heroHome, heroPhone, heroInformationCircle})]
+  providers: [provideIcons({heroMapPin, heroPlus, heroHome, heroPhone, heroInformationCircle, heroPencil, heroTrash})]
 })
 export class SelectorDireccionesComponent implements OnInit {
   usuario!: Usuario;
@@ -20,6 +20,17 @@ export class SelectorDireccionesComponent implements OnInit {
   direccionSeleccionada?: Direccion;
   cargando: boolean = true;
   mostrarFormulario: boolean = false;
+  esModoMovil: boolean = window.innerWidth < 768;
+  
+  // Propiedades para modo edición
+  modoEdicion: boolean = false;
+  direccionParaEditar?: Direccion;
+  indiceEdicion?: number;
+  
+  // Propiedades para modal de confirmación
+  mostrarModalConfirmacion: boolean = false;
+  direccionAEliminar?: Direccion;
+  indiceAEliminar?: number;
 
   constructor(
     private auth: Auth,
@@ -28,12 +39,18 @@ export class SelectorDireccionesComponent implements OnInit {
     private router: Router
   ) { }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(event: any) {
+    this.esModoMovil = event.target.innerWidth < 768;
+  }
+
   async ngOnInit(): Promise<void> {
     await this.cargarDireccionesUsuario();
   }
 
   async cargarDireccionesUsuario(): Promise<void> {
     this.cargando = true;
+    this.comprarService.clearDireccionEnvio(); // Limpiar dirección al iniciar
     
     try {
       if (!this.auth.currentUser) {
@@ -53,13 +70,16 @@ export class SelectorDireccionesComponent implements OnInit {
         console.log('✅ Se asignaron', this.direcciones.length, 'direcciones al componente');
         console.log('🏠 Direcciones:', this.direcciones);
         
-        // Seleccionar la dirección predeterminada si existe
-        const direccionPredeterminada = this.direcciones.find(dir => dir.direccionPredeterminada);
+        // Seleccionar la dirección predeterminada si existe o limpiar la selección
+        const direccionPredeterminada = this.direcciones.find((dir: Direccion) => dir.direccionPredeterminada);
         if (direccionPredeterminada) {
-          this.direccionSeleccionada = direccionPredeterminada;
+          this.seleccionarDireccion(direccionPredeterminada);
           console.log('⭐ Dirección predeterminada seleccionada:', direccionPredeterminada);
         } else {
-          console.log('ℹ️ No hay dirección predeterminada');
+          // Si no hay predeterminada, limpiar la selección local y del servicio
+          this.direccionSeleccionada = undefined;
+          this.comprarService.clearDireccionEnvio();
+          console.log('ℹ️ No hay dirección predeterminada, selección limpiada.');
         }
         
         this.mostrarFormulario = false;
@@ -90,15 +110,61 @@ export class SelectorDireccionesComponent implements OnInit {
   }
 
   agregarNuevaDireccion(): void {
-    this.mostrarFormulario = true;
+    this.router.navigate(['/comprar/checkout/agregar-direccion']);
   }
 
   direccionAgregada(direccion: Direccion): void {
-    // Recargar direcciones del usuario
-    this.cargarDireccionesUsuario();
+    this.direcciones.push(direccion);
     this.mostrarFormulario = false;
-    // Seleccionar automáticamente la dirección recién agregada
     this.seleccionarDireccion(direccion);
+    this.cargarDireccionesUsuario();
+  }
+
+  direccionActualizada(event: { direccion: Direccion, indice: number }): void {
+    this.direcciones[event.indice] = event.direccion;
+    this.mostrarFormulario = false;
+    this.modoEdicion = false;
+    if (this.direccionSeleccionada && this.indiceEdicion === this.direcciones.indexOf(this.direccionSeleccionada)) {
+      this.seleccionarDireccion(event.direccion);
+    }
+    this.cargarDireccionesUsuario();
+  }
+
+  editarDireccion(direccion: Direccion, index: number): void {
+    this.router.navigate(['/comprar/checkout/actualizar-direccion', index]);
+  }
+
+  confirmarEliminarDireccion(direccion: Direccion, index: number): void {
+    this.mostrarModalConfirmacion = true;
+    this.direccionAEliminar = direccion;
+    this.indiceAEliminar = index;
+  }
+
+  async onConfirmarEliminacion(): Promise<void> {
+    if (this.direccionAEliminar && this.auth.currentUser && this.indiceAEliminar !== undefined) {
+      try {
+        await this.comprarService.eliminarDireccion(this.usuario, this.indiceAEliminar);
+        
+        this.direcciones.splice(this.indiceAEliminar, 1);
+
+        if (this.direccionSeleccionada === this.direccionAEliminar) {
+          this.direccionSeleccionada = undefined;
+          this.comprarService.clearDireccionEnvio();
+        }
+
+      } catch (error) {
+        console.error('Error al eliminar la dirección:', error);
+      } finally {
+        this.onCancelarEliminacion();
+        this.cargarDireccionesUsuario();
+      }
+    }
+  }
+
+  onCancelarEliminacion(): void {
+    this.mostrarModalConfirmacion = false;
+    this.direccionAEliminar = undefined;
+    this.indiceAEliminar = undefined;
   }
 
   cancelarFormulario(): void {
