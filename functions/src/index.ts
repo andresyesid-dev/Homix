@@ -37,8 +37,11 @@ export const enviarWhatsApp = onCall(
 
       const client = twilio(accountSid, authToken);
       
+      // Usar el número del sandbox de Twilio o el número configurado en .env
+      const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+      
       const message = await client.messages.create({
-        from: 'whatsapp:+16592465522',
+        from: twilioWhatsAppNumber,
         to: `whatsapp:${numero}`,
         body: `Tu código de verificación es: ${codigo}`
       });
