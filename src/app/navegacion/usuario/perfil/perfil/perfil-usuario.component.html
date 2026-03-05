@@ -4,7 +4,7 @@
         <img src="assets/img/usuarios/user.svg" class="picPerfil" alt="Image">
         <div>
             <p class="nombre nombreCompletoPerfil">{{datosUsuario?.usuario!}} <span *ngIf="datosUsuario?.diasComoVendedor" class="seguidores">{{datosUsuario?.seguidores!}}<span>seguidores</span></span> </p>
-            <p *ngIf="datosUsuario?.diasComoVendedor" class="dias-vendiendo">{{diasJoum}} como vendedor</p>
+            <p *ngIf="datosUsuario?.diasComoVendedor" class="dias-vendiendo">{{diasHomix}} como vendedor</p>
             <p *ngIf="!datosUsuario?.diasComoVendedor" class="seguidores">{{datosUsuario?.seguidores!}}<span>seguidores</span></p>
         </div>
         <div *ngIf="usuarioDiferente">

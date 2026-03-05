@@ -1,103 +1,307 @@
-import { Component, NgZone, OnDestroy, OnInit } from '@angular/core';
-import { Auth } from '@angular/fire/auth';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { provideIcons } from '@ng-icons/core';
-import { heroMapPin } from '@ng-icons/heroicons/outline';
-import { ionChevronDown } from '@ng-icons/ionicons';
-import { first, firstValueFrom } from 'rxjs';
-import { Producto } from 'src/app/interfaces/producto/producto';
-import { Direccion } from 'src/app/interfaces/usuario/subInterfaces/direccion';
-import { Usuario } from 'src/app/interfaces/usuario/usuario';
 import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
-import { AuthService } from 'src/app/servicios/usuarios/auth.service';
+import { Producto } from 'src/app/interfaces/producto/producto';
+import { Subscription } from 'rxjs';
+import { provideIcons } from '@ng-icons/core';
+import { heroTruck, heroCheckBadge, heroXMark, heroArrowPath } from '@ng-icons/heroicons/outline';
+import { ionChevronDown } from '@ng-icons/ionicons';
+
+declare let MercadoPago: any;
 
 @Component({
   selector: 'app-datos-envio',
   templateUrl: './datos-envio.component.html',
   styleUrls: ['./datos-envio.component.scss'],
-  providers: [provideIcons({heroMapPin, ionChevronDown})]
+  providers: [provideIcons({heroTruck, heroCheckBadge, heroXMark, heroArrowPath, ionChevronDown})]
 })
-export class DatosEnvioComponent implements OnInit, OnDestroy{
-  constructor(private zone: NgZone, private router: Router, private fb: FormBuilder, private comprarService: ComprarService, private auth: Auth, private authService: AuthService){}
-  private usuario!: Usuario;
-  form!: FormGroup;
-  direccion!: Direccion;
-  async ngOnInit(): Promise<void> {
-    await this.obtenerUsuario();
-    if(this.comprarService.modificarDir){
-      this.obtenerDireccion();
-    }else if(this.comprarService.agregarDir){
-      this.asignarFormulario();
-    }else{
-      this.router.navigate(['comprar/checkout/resumen']);
-    }
-  }
-  async obtenerUsuario(){
-    const usuario$ = this.authService.getUsuarioId(this.auth.currentUser?.uid!);
-    const usuario = await firstValueFrom(usuario$);
-    this.usuario = usuario;
-  }
+export class DatosEnvioComponent implements OnInit, OnDestroy {
 
-  async obtenerDireccion(){
-    this.direccion = this.usuario.direcciones![this.comprarService.direccionIndex];
-    this.direccion.direccionPredeterminada = true;
-    this.asignarFormulario(this.direccion)
-  }
+  form?: FormGroup;
+  
+  // Propiedades del producto
+  productoCompra?: Producto;
+  unidades: number = 1;
+  tamanioSelec: number = 0;
+  
+  // Propiedades del pago
+  procestandoPago: boolean = false;
+  pagoCompletado: boolean = false;
+  errorPago: string = '';
+  
+  private subscriptions: Subscription[] = [];
 
-  asignarFormulario(direccion?: any){
-    this.form = this.fb.group({
-      nombresApellidos: [ direccion ? direccion.nombresApellidos : '', [Validators.required, Validators.minLength(8), Validators.maxLength(50), Validators.pattern('^[a-zA-Z ]*$'), Validators.pattern('^.*\\s.*$')] ],
-      telefono: [ direccion ? direccion.telefono : '', [Validators.required, Validators.pattern('^[0-9]{10}$')] ],
-      tipoIdentidad: [ direccion ? direccion.tipoIdentidad : '', [Validators.required] ],
-      numeroIdentificacion: [ direccion ? direccion.numeroIdentificacion : '', [Validators.required, Validators.pattern('^\\d{10}$')] ],
-      municipioLocalidad: [ direccion ? direccion.municipioLocalidad : '', [Validators.required] ],
-      barrio: [ direccion ? direccion.barrio : '', [Validators.required, Validators.minLength(4), Validators.maxLength(30)] ],
-      tipoCalle: [ direccion ? direccion.direccion[0] : '', [Validators.required] ],
-      calle: [ direccion ? direccion.direccion[1] : '', [Validators.required, Validators.maxLength(10)]],
-      numero: [ direccion ? direccion.direccion[2] : '', [Validators.required, Validators.maxLength(10)]],
-      guion: [ direccion ? direccion.direccion[3] : '', [Validators.maxLength(10)]],
-      detalle: [ direccion ? direccion.detalle : '', [Validators.required, Validators.minLength(2), Validators.maxLength(100)] ],
-      indicaciones: [ direccion ? direccion.indicaciones : '', [Validators.maxLength(100)]]
-    });      
-}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private comprarService: ComprarService
+  ) { }
 
+  ngOnInit(): void {
+    this.createForm();
+    this.cargarDatosProducto();
+    this.configurarMercadoPago();
 
-  invalid(field: string) {
-    return this.form.controls[field].invalid && this.form.controls[field].touched;
-  }
-
-  async submit(){
-    Object.values(this.form.controls).forEach(control => {
-      if (typeof control.value === 'string') {
-        control.setValue(control.value.trim());
+    // Suscribirse a los cambios de validez del formulario
+    const formValidSub = this.form?.statusChanges.subscribe(() => {
+      if (this.form?.valid && !this.procestandoPago && !this.pagoCompletado) {
+        setTimeout(() => this.inicializarBrick(), 100);
       }
-      control.markAsTouched();
     });
-    if (this.form.valid) {
-      const { tipoCalle, calle, numero, guion, ...rest } = this.form.value;
-      const direccion = [tipoCalle, calle, numero, guion];
-      let newValues = { ...rest, direccion };
-      newValues.direccionPredeterminada = true;
-      if(this.direccion){
-        await this.comprarService.modificarDireccion(this.usuario, newValues);
-      }else{
-        await this.comprarService.agregarDireccion(this.usuario, newValues);
-      }
-      this.router.navigate(['comprar/checkout/resumen']);
+    if (formValidSub) {
+      this.subscriptions.push(formValidSub);
     }
-  }
-
-  navegar(ruta : any[], event:Event){
-    event.preventDefault();
-    this.zone.run(()=>{
-      this.router.navigate(ruta);
-      scroll(0,0)
-    })
   }
 
   ngOnDestroy(): void {
-    this.comprarService.agregarDir = false;
-    this.comprarService.modificarDir = false;
+    this.subscriptions.forEach(sub => sub.unsubscribe());
   }
+
+  createForm(){
+    this.form = this.fb.group({
+      nombresApellidos: ['', [Validators.required, Validators.minLength(6)]],
+      telefono: ['', [Validators.required, Validators.minLength(10), Validators.maxLength(10)]],
+      tipoIdentidad: ['', Validators.required],
+      numeroIdentificacion: ['', [Validators.required, Validators.minLength(7)]],
+      municipioLocalidad: ['', Validators.required],
+      barrio: ['', Validators.required],
+      tipoCalle: ['', Validators.required],
+      calle: ['', Validators.required],
+      numero: ['', Validators.required],
+      guion: ['', Validators.required],
+      detalle: ['', Validators.required],
+      indicaciones: ['']
+    })
+  }
+
+  cargarDatosProducto(): void {
+    const datosProducto = this.comprarService.getProductoCompra();
+    if (datosProducto) {
+      this.productoCompra = datosProducto.producto || undefined;
+      this.unidades = datosProducto.unidades;
+      this.tamanioSelec = datosProducto.tamanioSelec;
+    } else {
+      // Si no hay datos del producto, redirigir al inicio
+      this.router.navigate(['/inicio']);
+    }
+  }
+
+  obtenerImagenProducto(): string {
+    if (!this.productoCompra || !this.productoCompra.fotos || this.productoCompra.fotos.length === 0) {
+      return 'assets/img/productos/producto-default.png';
+    }
+    return this.comprarService.buildRutaFotoProducto(this.productoCompra.fotos[0]);
+  }
+
+  onImageError(event: Event): void {
+    const target = event.target as HTMLImageElement;
+    target.src = 'assets/img/productos/producto-default.png';
+  }
+
+  calcularTotal(): number {
+    if (!this.productoCompra) return 0;
+    
+    const precio = this.productoCompra.tamanios 
+      ? this.productoCompra.tamanios[this.tamanioSelec].precio 
+      : this.productoCompra.precio;
+    
+    return precio * this.unidades;
+  }
+
+  invalid(input: string): boolean {
+    const inputForm = this.form?.get(input);
+    return !!(inputForm?.invalid && (inputForm?.dirty || inputForm?.touched));
+  }
+
+  configurarMercadoPago(): void {
+    if (typeof MercadoPago === 'undefined') {
+      const script = document.createElement('script');
+      script.src = 'https://sdk.mercadopago.com/js/v2';
+      script.onload = () => {
+        this.inicializarMercadoPago();
+      };
+      document.head.appendChild(script);
+    } else {
+      this.inicializarMercadoPago();
+    }
+  }
+
+  inicializarMercadoPago(): void {
+    MercadoPago.initialize('APP_USR-c9b7f319-d38d-4f02-bb9e-9b7446907b9d');
+  }
+
+  inicializarBrick(): void {
+    if (!this.form?.valid || this.procestandoPago || this.pagoCompletado) {
+      return;
+    }
+
+    const brickContainer = document.getElementById('brick-container');
+    if (brickContainer) {
+      brickContainer.innerHTML = '';
+    }
+
+    const bricksBuilder = MercadoPago.bricks();
+    
+    bricksBuilder.create('payment', 'brick-container', {
+      initialization: {
+        amount: this.calcularTotal(),
+        preferenceId: null,
+        payer: {
+          firstName: '',
+          lastName: '',
+          email: ''
+        }
+      },
+      customization: {
+        visual: {
+          style: {
+            theme: 'flat',
+            customVariables: {
+              formBackgroundColor: '#ffffff',
+              baseColor: '#FF9C53',
+              baseColorFirstVariant: '#ff8533',
+              baseColorSecondVariant: '#ffb373',
+              errorColor: '#f44336',
+              successColor: '#4caf50',
+              outlinePrimaryColor: '#FF9C53',
+              outlineSecondaryColor: '#e0e0e0',
+              fontSizeExtraSmall: '12px',
+              fontSizeSmall: '14px',
+              fontSizeMedium: '16px',
+              fontSizeLarge: '18px',
+              fontWeight: '400',
+              fontWeightSemiBold: '600',
+              formInputsTextTransform: 'none',
+              inputBackgroundColor: '#ffffff',
+              inputFocusedBackgroundColor: '#ffffff',
+              inputBorderColor: '#e0e0e0',
+              inputFocusedBorderColor: '#FF9C53',
+              inputBorderWidth: '1px',
+              inputBorderRadius: '8px',
+              inputVerticalPadding: '12px',
+              inputHorizontalPadding: '16px',
+              formSubmitBackgroundColor: '#FF9C53',
+              formSubmitDisabledBackgroundColor: '#cccccc',
+              formSubmitFocusedBackgroundColor: '#ff8533',
+              formSubmitHoverBackgroundColor: '#ff8533',
+              formSubmitBorderColor: '#FF9C53',
+              formSubmitBorderWidth: '0px',
+              formSubmitBorderRadius: '8px',
+              formSubmitVerticalPadding: '14px',
+              formSubmitHorizontalPadding: '24px',
+              secondaryColor: '#757575',
+              warningColor: '#ff9800',
+              fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, sans-serif'
+            }
+          }
+        },
+        paymentMethods: {
+          creditCard: 'all',
+          debitCard: 'all',
+          ticket: 'all',
+          bankTransfer: ['pse'],
+          atm: ['efecty'],
+          mercadoPago: 'all'
+        },
+        texts: {
+          formTitle: 'Completa tu información',
+          emailSectionTitle: 'Email de contacto',
+          cardholderName: {
+            label: 'Nombre completo',
+            placeholder: 'Ingresa tu nombre completo'
+          },
+          email: {
+            label: 'Email',
+            placeholder: 'Ingresa tu email'
+          },
+          cardholderIdentification: {
+            label: 'Número de documento'
+          },
+          cardNumber: {
+            label: 'Número de tarjeta',
+            placeholder: '0000 0000 0000 0000'
+          },
+          expirationDate: {
+            label: 'Fecha de vencimiento',
+            placeholder: 'MM/AA'
+          },
+          securityCode: {
+            label: 'Código de seguridad',
+            placeholder: '123'
+          }
+        }
+      },
+      callbacks: {
+        onReady: () => {
+          console.log('Brick de pago listo');
+        },
+        onSubmit: (cardFormData: any) => {
+          return this.procesarPago(cardFormData);
+        },
+        onError: (error: any) => {
+          console.error('Error en el brick de pago:', error);
+          this.errorPago = 'Error al cargar el formulario de pago';
+        }
+      }
+    });
+  }
+
+  async procesarPago(formData: any): Promise<void> {
+    if (!this.form?.valid || !this.productoCompra) {
+      throw new Error('Datos incompletos');
+    }
+
+    this.procestandoPago = true;
+    this.errorPago = '';
+
+    try {
+      const datosPago = {
+        producto: this.productoCompra,
+        unidades: this.unidades,
+        tamanioSelec: this.tamanioSelec,
+        total: this.calcularTotal(),
+        datosEnvio: this.form.value,
+        datosPago: formData
+      };
+
+      const resultado = await this.comprarService.procesarPagoCompleto(datosPago);
+      
+      if (resultado && resultado.success && resultado.payment?.status === 'approved') {
+        this.pagoCompletado = true;
+        
+        setTimeout(() => {
+          this.router.navigate(['comprar/checkout/resumen'], {
+            queryParams: { payment_id: resultado.payment?.id }
+          });
+        }, 2000);
+      } else {
+        throw new Error('El pago no fue aprobado');
+      }
+    } catch (error: any) {
+      console.error('Error procesando el pago:', error);
+      this.errorPago = error.message || 'Error al procesar el pago. Inténtalo nuevamente.';
+    } finally {
+      this.procestandoPago = false;
+    }
+  }
+
+  async iniciarProcesoPago(): Promise<void> {
+    this.errorPago = '';
+    this.procestandoPago = false;
+    this.pagoCompletado = false;
+    
+    if (this.form?.valid) {
+      setTimeout(() => this.inicializarBrick(), 100);
+    }
+  }
+
+  submit() {
+    if (this.form?.valid) {
+      // El submit ahora solo valida el formulario
+      // El pago se maneja a través del brick de MercadoPago
+      console.log('Formulario válido, inicializando pago...');
+    }
+  }
+
 }

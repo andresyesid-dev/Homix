@@ -30,7 +30,7 @@ export class PerfilUsuarioComponent implements OnInit, OnDestroy{
   public userUsuario!: string;
   private usuario!: Usuario;
   public datosUsuario!: any;
-  public diasJoum!: string;
+  public diasHomix!: string;
 
   usuarioDiferente!: boolean;
   usuariosSiguiendo: string[] = []; //Mi usuario
@@ -77,7 +77,7 @@ export class PerfilUsuarioComponent implements OnInit, OnDestroy{
       if(user){
         this.usuario = user;
         this.datosPublicosUsuario();
-        this.diasJoum = this.obtenerTiempoTranscurrido(this.usuario?.diasComoVendedor!);
+        this.diasHomix = this.obtenerTiempoTranscurrido(this.usuario?.diasComoVendedor!);
         if(this.usuariosSiguiendo){
           this.siguiendo = this.usuariosSiguiendo.some(seguidor => seguidor === user.id)
         }

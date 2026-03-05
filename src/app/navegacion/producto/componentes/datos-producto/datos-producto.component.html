@@ -46,11 +46,11 @@
                 <ng-icon name="heroChevronRight"></ng-icon>
             </div>
         </ng-container>
-        <!-- Botones de compra con MercadoPago -->
+        
+        <!-- Botones de compra -->
         <div class="botones-compra" *ngIf="producto">
             <button class="btn-comprar-directo" (click)="comprar()">
-                <span *ngIf="!procestandoPago">Comprar ahora</span>
-                <span *ngIf="procestandoPago">Procesando...</span>
+                Comprar ahora
             </button>
             <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">
                 Agregar al carrito

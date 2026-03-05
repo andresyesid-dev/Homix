@@ -49,33 +49,48 @@ export const enviarWhatsApp = onCall(
   }
 );
 
-export const crearPagoMercadoPago = onRequest(async (req, res) => {
-  try {
-    if (req.method !== 'POST') {
-      res.status(405).send('Method not allowed');
-      return;
-    }
+export const crearPagoMercadoPago = onCall(
+  {
+    region: 'us-central1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  async (request) => {
+    try {
+      console.log('🚀 Función crearPagoMercadoPago iniciada');
+      console.log('📋 Datos recibidos:', JSON.stringify(request.data, null, 2));
 
-    const {
-      token,
-      amount,
-      description,
-      installments,
-      payment_method_id,
-      payer
-    } = req.body;
+      const {
+        token,
+        amount,
+        description,
+        installments,
+        payment_method_id,
+        payer
+      } = request.data;
 
-    if (!token || !amount || !payer?.email) {
-      res.status(400).json({ error: 'Datos incompletos para procesar el pago' });
-      return;
-    }
+      console.log('🔍 Validando datos...');
+      console.log('Token presente:', !!token);
+      console.log('Amount presente:', !!amount);
+      console.log('Payer email presente:', !!payer?.email);
+
+      if (!token || !amount || !payer?.email) {
+        console.error('❌ Datos incompletos:', { token: !!token, amount: !!amount, payerEmail: !!payer?.email });
+        throw new HttpsError('invalid-argument', 'Datos incompletos para procesar el pago');
+      }
 
     const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+    console.log('🔑 Access Token presente:', !!accessToken);
+    
+    if (!accessToken) {
+      console.error('❌ ACCESS_TOKEN no configurado');
+      throw new HttpsError('failed-precondition', 'Credenciales de MercadoPago no configuradas');
+    }
 
     const paymentData = {
       transaction_amount: parseFloat(amount),
       token,
-      description: description || 'Compra en Joum',
+      description: description || 'Compra en Homix',
       installments: installments || 1,
       payment_method_id,
       payer: {
@@ -87,16 +102,25 @@ export const crearPagoMercadoPago = onRequest(async (req, res) => {
       }
     };
 
+    console.log('💰 Datos del pago preparados:', JSON.stringify(paymentData, null, 2));
+    console.log('🌐 Enviando solicitud a MercadoPago API...');
+
+    // Generar clave de idempotencia única
+    const idempotencyKey = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+
     const response = await fetch('https://api.mercadopago.com/v1/payments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`
+        'Authorization': `Bearer ${accessToken}`,
+        'X-Idempotency-Key': idempotencyKey
       },
       body: JSON.stringify(paymentData)
     });
 
+    console.log('📡 Respuesta HTTP status:', response.status);
     const result = await response.json();
+    console.log('📨 Respuesta de MercadoPago:', JSON.stringify(result, null, 2));
 
     if (response.ok) {
       // Guardar en Firestore si deseas seguimiento
@@ -108,15 +132,18 @@ export const crearPagoMercadoPago = onRequest(async (req, res) => {
         createdAt: new Date()
       });
 
-      res.json({ success: true, payment: result });
+      return { success: true, payment: result };
     } else {
       console.error('Error en pago:', result);
-      res.status(500).json({ error: 'Error al procesar el pago', details: result });
+      throw new HttpsError('internal', 'Error al procesar el pago', result);
     }
 
   } catch (err: any) {
     console.error('💥 ERROR GLOBAL:', err);
-    res.status(500).json({ error: 'Error interno', message: err.message });
+    if (err instanceof HttpsError) {
+      throw err;
+    }
+    throw new HttpsError('internal', err.message || 'Error interno');
   }
 });
 

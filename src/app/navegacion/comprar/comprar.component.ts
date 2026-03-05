@@ -38,9 +38,23 @@ export class ComprarComponent implements OnInit, OnDestroy{
         if(!this.cargando){
           this.usuario = usuario;
           if(usuario.referenciaCompra && usuario.referenciaCompra.length !== 0){
-            this.obtenerProductos()
+            this.obtenerProductos();
           }else{
-            this.router.navigate(['']);
+            // Posible condición de carrera: referencia aún no sincronizada
+            const memoria = this.comprarService.getProductoCompra();
+            if(memoria.producto){
+              setTimeout(async ()=>{
+                const refrescado = await this.authService.getUsuarioIdPromise(user.uid);
+                if(refrescado.referenciaCompra && refrescado.referenciaCompra.length !== 0){
+                  this.usuario = refrescado;
+                  this.obtenerProductos();
+                }else{
+                  this.router.navigate(['']);
+                }
+              }, 350);
+            }else{
+              this.router.navigate(['']);
+            }
           }
         }
       } else {

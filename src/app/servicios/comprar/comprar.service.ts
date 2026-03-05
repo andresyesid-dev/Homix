@@ -23,6 +23,11 @@ export class ComprarService {
   modificarDir = false;
   direccionIndex!: number;
 
+  // Variables para el flujo de compra
+  private productoCompra: Producto | null = null;
+  private unidadesCompra: number = 1;
+  private tamanioSeleccionado: number = 0;
+
   get $obtenerReferencias(): Observable<referenciaCompra[]>{
     return this.authService.getUsuarioId(this.auth.currentUser?.uid!).pipe(
       map(usuario => usuario.referenciaCompra!)
@@ -38,6 +43,73 @@ export class ComprarService {
   get $obtenerGuardado(): Observable<referenciaCompra[]>{
     return this.authService.getUsuarioId(this.auth.currentUser?.uid!).pipe(
       map(usuario => usuario.guardados!)
+    );
+  }
+
+  // Métodos para manejar el flujo de compra
+  setProductoCompra(producto: Producto, unidades: number, tamanioSelec: number = 0): void {
+    this.productoCompra = producto;
+    this.unidadesCompra = unidades;
+    this.tamanioSeleccionado = tamanioSelec;
+  }
+
+  getProductoCompra(): { producto: Producto | null, unidades: number, tamanioSelec: number } {
+    return {
+      producto: this.productoCompra,
+      unidades: this.unidadesCompra,
+      tamanioSelec: this.tamanioSeleccionado
+    };
+  }
+
+  /**
+   * Construye la ruta dentro de assets para una foto de producto cuando solo se guarda el identificador base.
+   * Si la foto ya parece ser una URL absoluta o ruta assets válida, se retorna sin cambios.
+   */
+  buildRutaFotoProducto(foto: string | undefined | null): string {
+    if(!foto){
+      return 'assets/img/productos/producto-default.png';
+    }
+    if(/^https?:\/\//i.test(foto) || /^data:/i.test(foto)){
+      return foto;
+    }
+    if(/^assets\//.test(foto)){
+      return foto;
+    }
+    // Si la cadena ya trae extensión
+    if(/\.(png|jpg|jpeg|webp|gif|svg)$/i.test(foto)){
+      return `assets/img/productos/${foto}`;
+    }
+    // Agregar .png por convención
+    return `assets/img/productos/${foto}.png`;
+  }
+
+  clearProductoCompra(): void {
+    this.productoCompra = null;
+    this.unidadesCompra = 1;
+    this.tamanioSeleccionado = 0;
+  }
+  
+  /**
+   * Prepara el flujo de "Comprar ahora":
+   * 1. Guarda en memoria el producto (para render inmediato en checkout)
+   * 2. Persiste referenciaCompra en Firestore (fuente de verdad para el resto del flujo)
+   * Evita condición de carrera donde checkout se monta antes de que Firestore propague la referencia.
+   */
+  async prepararCompraRapida(producto: Producto, unidades: number, tamanioSelec: number = 0): Promise<void> {
+    if(!producto?.id){
+      throw new Error('Producto inválido: falta ID');
+    }
+    if(!this.auth.currentUser){
+      throw new Error('Usuario no autenticado');
+    }
+    // Guardar en memoria inmediatamente
+    this.setProductoCompra(producto, unidades, tamanioSelec);
+    // Persistir en Firestore (sobrescribe compra rápida anterior)
+    await this.agregarReferenciaCompra(
+      producto.id,
+      this.auth.currentUser.uid,
+      unidades,
+      (producto.tamanios && producto.tamanios.length > 0) ? tamanioSelec : undefined
     );
   }
 //-----------------------------------------
@@ -284,8 +356,9 @@ export class ComprarService {
         script.src = 'https://sdk.mercadopago.com/js/v2';
         script.onload = () => {
           try {
+            // Inicializar MercadoPago correctamente
             window.MercadoPago = new (window as any).MercadoPago(publicKey);
-            console.log('✅ MercadoPago SDK cargado e inicializado');
+            console.log('✅ MercadoPago SDK cargado e inicializado con clave:', publicKey);
             resolve();
           } catch (error: any) {
             console.error('❌ Error inicializando MercadoPago:', error);
@@ -298,8 +371,48 @@ export class ComprarService {
         document.head.appendChild(script);
       });
     } else {
-      console.log('✅ MercadoPago ya estaba inicializado');
-      return Promise.resolve();
+      try {
+        // Re-inicializar con la nueva clave pública
+        window.MercadoPago = new (window as any).MercadoPago(publicKey);
+        console.log('✅ MercadoPago re-inicializado con clave:', publicKey);
+        return Promise.resolve();
+      } catch (error: any) {
+        console.error('❌ Error re-inicializando MercadoPago:', error);
+        return Promise.reject(new Error('Error re-inicializando MercadoPago: ' + error.message));
+      }
+    }
+  }
+
+  /**
+   * Método completo para procesar el pago en la página de checkout
+   */
+  async procesarPagoCompleto(datosPago: any): Promise<MercadoPagoPaymentResponse> {
+    try {
+      // Construir los datos para MercadoPago
+      const paymentData: MercadoPagoPaymentData = {
+        token: datosPago.datosPago.token,
+        amount: datosPago.total,
+        description: `${datosPago.producto.nombre} - ${datosPago.unidades} unidades`,
+        installments: datosPago.datosPago.installments || 1,
+        payment_method_id: datosPago.datosPago.payment_method_id,
+        payer: {
+          email: datosPago.datosPago.payer.email,
+          identification: datosPago.datosPago.payer.identification ? {
+            type: datosPago.datosPago.payer.identification.type || 'CC',
+            number: datosPago.datosPago.payer.identification.number
+          } : undefined
+        }
+      };
+
+      // Procesar el pago usando el método existente
+      const resultado = await this.procesarPagoMercadoPago(paymentData);
+      
+      console.log('✅ Pago procesado exitosamente:', resultado);
+      return resultado;
+      
+    } catch (error: any) {
+      console.error('❌ Error procesando pago completo:', error);
+      throw new Error(error.message || 'Error al procesar el pago completo');
     }
   }
 

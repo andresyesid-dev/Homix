@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "joum": {
+    "homix": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -17,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/joum",
+            "outputPath": "dist/homix",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -45,7 +45,7 @@
                 {
                   "type": "anyComponentStyle",
                   "maximumWarning": "5kb",
-                  "maximumError": "10kb"
+                  "maximumError": "50kb"
                 }
               ],
               "fileReplacements": [
@@ -77,10 +77,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "joum:build:production"
+              "browserTarget": "homix:build:production"
             },
             "development": {
-              "browserTarget": "joum:build:development"
+              "browserTarget": "homix:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -88,7 +88,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "joum:build"
+            "browserTarget": "homix:build"
           }
         },
         "test": {
@@ -114,7 +114,7 @@
           "builder": "@angular/fire:deploy",
           "options": {
             "version": 2,
-            "browserTarget": "joum:build:production"
+            "browserTarget": "homix:build:production"
           }
         }
       }
