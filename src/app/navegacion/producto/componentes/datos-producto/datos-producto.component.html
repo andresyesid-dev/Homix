@@ -26,28 +26,49 @@
         </div>
 
         <ng-container *ngIf="producto">
-            <div class="linea-Menu" *ngIf="anchoPagina > 800 && (producto.colores || producto.estilos)"></div>
-            <div class="sabores" *ngIf="producto.colores">
-                <label for="estilos">Colores:</label><br>
-                <select id="estilos" (change)="seleccionarColor($event)">
+            <div class="linea-Menu" *ngIf="anchoPagina > 800 && ((producto.colores && producto.colores.length > 1) || (producto.estilos && producto.estilos.length > 1))"></div>
+            <div class="sabores" *ngIf="producto.colores && producto.colores.length > 1">
+                <label for="colores">Colores:</label><br>
+                <select id="colores" (change)="seleccionarColor($event)">
                     <ng-container *ngFor="let color of producto.colores; let index = index">
                         <option [value]="index">{{color.color}}</option>
                     </ng-container>
                 </select>
                 <ng-icon name="heroChevronRight"></ng-icon>
             </div>
-            <div class="sabores" *ngIf="producto.estilos">
+            <div class="sabores" *ngIf="producto.estilos && producto.estilos.length > 1">
                 <label for="estilos">Estilos:</label><br>
-                <select id="estilos" (change)="seleccionarEstilo($event)">
+                <select id="estilos" [(ngModel)]="selectEstilo" (change)="seleccionarEstilo($event)">
                     <ng-container *ngFor="let estilo of producto.estilos; let index = index">
-                        <option [value]="index">{{estilo.estilo}}</option>
+                        <option [value]="index">{{estilo.nombre}}</option>
                     </ng-container>
                 </select>
                 <ng-icon name="heroChevronRight"></ng-icon>
             </div>
+            
+            <!-- Selector de unidades (si el estilo tiene unidades) -->
+            <div class="sabores" *ngIf="producto.estilos && producto.estilos.length > 0 && producto.estilos[selectEstilo]?.unidades && producto.estilos[selectEstilo].unidades! > 0">
+                <label for="unidades">Unidades:</label><br>
+                <select id="unidades" [style.width.px]="unaUnidad ? 90 : 117" (change)="cambiarUnidades($event)">
+                    <option value="1" selected>1 unidad</option>
+                    <option *ngFor="let i of crearArrayUnidades(producto.estilos[selectEstilo].unidades!); let index = index" [value]="index + 2">
+                        {{ index + 2 }} unidad{{ index + 1 !== 0 ? 'es' : '' }}
+                    </option>
+                </select>
+                <ng-icon name="heroChevronRight"></ng-icon>
+                <p class="disponibles">(<span>{{producto.estilos[selectEstilo].unidades}}</span> disponibles)</p>
+            </div>
         </ng-container>
-        <app-boton-compra  *ngIf="producto.estado" [id]="producto.botonCompra!.id" [idDocumento]="producto.botonCompra!.idDocumento" [variante]="producto.botonCompra!.variante ? producto.botonCompra!.variante : '' "></app-boton-compra>
-        <app-boton-carrito  *ngIf="producto.estado" [id]="producto.botonCompra!.id" [idDocumento]="producto.botonCompra!.idDocumento" [variante]="producto.botonCompra!.variante ? producto.botonCompra!.variante : '' "></app-boton-carrito>
+        
+        <!-- Botones de compra -->
+        <div class="botones-compra" *ngIf="producto">
+            <button class="btn-comprar-directo" (click)="comprar()">
+                Comprar ahora
+            </button>
+            <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">
+                Agregar al carrito
+            </button>
+        </div>
         <!--
         <div class="linea-botones"></div>
         <button class="btnComprar" *ngIf="producto.estado">
@@ -59,5 +80,49 @@
         -->
         <div (click)="$event.stopPropagation()" class="btnAgotado" *ngIf="!producto.estado"><p>Agotado</p></div>
         <div class="proteccionCompra">Compra protegida:<span> Obtén lo que esperabas o recupera tu dinero.</span><ng-icon name="matGppGoodOutline"></ng-icon></div>
+    </div>
+</div>
+
+<!-- Modal de pago MercadoPago -->
+<div class="modal-overlay" *ngIf="mostrarModalPago" (click)="cerrarModalPago()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Completar pago</h3>
+            <button class="btn-close" (click)="cerrarModalPago()">
+                <ng-icon name="heroXMark"></ng-icon>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Resumen del producto -->
+            <div class="resumen-compra">
+                <h4>Resumen de compra</h4>
+                <div class="producto-resumen">
+                    <p><strong>{{producto.nombre}}</strong></p>
+                    <p>Cantidad: {{unidades}}</p>
+                    <p class="precio-total">Total: ${{calcularTotal() | number:'1.0-0'}} COP</p>
+                </div>
+            </div>
+
+            <!-- Estado del pago -->
+            <div class="payment-status" *ngIf="procestandoPago">
+                <app-cargando></app-cargando>
+                <p>Procesando pago...</p>
+            </div>
+
+            <div class="payment-success" *ngIf="pagoCompletado">
+                <ng-icon name="heroCheckBadge" class="success-icon"></ng-icon>
+                <p>¡Pago completado exitosamente!</p>
+                <p class="redirect-message">Serás redirigido al resumen de compra...</p>
+            </div>
+
+            <div class="payment-error" *ngIf="errorPago">
+                <p class="error-message">{{errorPago}}</p>
+                <button class="btn-retry" (click)="iniciarProcesoPago()">Intentar nuevamente</button>
+            </div>
+
+            <!-- Contenedor del brick de MercadoPago -->
+            <div id="brick-container" *ngIf="!procestandoPago && !pagoCompletado && !errorPago"></div>
+        </div>
     </div>
 </div>

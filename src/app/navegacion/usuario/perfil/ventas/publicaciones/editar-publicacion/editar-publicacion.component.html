@@ -1,0 +1,48 @@
+<h1>Editar publicación</h1>
+<div class="datos">
+    <div> <!-- Parte izquierda -->
+        <div [ngClass]="{'selected': selected == 'titulo'}" (click)="cambiarInformacion('titulo')">
+            <h4>Titulo</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'datos-principales'}" (click)="cambiarInformacion('datos-principales')">
+            <h4>Datos principales</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'estilos'}" (click)="cambiarInformacion('estilos')">
+            <h4>Estilos</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'detalles'}" (click)="cambiarInformacion('detalles')">
+            <h4>Detalles</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'descripcion'}" (click)="cambiarInformacion('descripcion')">
+            <h4>Descripción</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'precio'}" (click)="cambiarInformacion('precio')">
+            <h4>Precio</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'envio'}" (click)="cambiarInformacion('envio')">
+            <h4>Envío</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+        <div [ngClass]="{'selected': selected == 'tipo-publicacion'}" (click)="cambiarInformacion('tipo-publicacion')">
+            <h4>Tipo de publicación</h4>
+            <ng-icon class="row" name="iconoirNavArrowRight"></ng-icon>
+        </div>
+    </div>
+    <div *ngIf="producto">
+        <app-titulo *ngIf=" selected == 'titulo' " [titulo]="producto.nombre" [productoId]="producto.id!"></app-titulo>
+        <app-datos-principales *ngIf=" selected == 'datos-principales' " [autoria]="producto.autoria" [marca]="producto.marca" [modelo]="producto.modelo" [productoId]="producto.id!"></app-datos-principales>
+        <app-estilos *ngIf=" selected == 'estilos' " [estilos]="estilos" [categoria]="producto.categoria" [productoId]="producto.id!" [nuevosEstilos]="estilosActualizados"></app-estilos>
+        <app-fotos *ngIf=" selected == 'estilos' " [tipoPublicacion]="producto.tipoPublicacion" [productoId]="producto.id!" (nuevosDatos)="nuevosDatos()"></app-fotos>
+        <app-detalles *ngIf=" selected == 'detalles' " [detallesProducto]="producto.detalles" [categoria]="producto.categoria" [productoId]="producto.id!"></app-detalles>
+        <app-descripcion *ngIf=" selected == 'descripcion' " [descripcion]="producto.descripcion" [productoId]="producto.id!"></app-descripcion>
+        <app-precio *ngIf=" selected == 'precio' " [precio]="producto.precio" [productoId]="producto.id!"></app-precio>
+        <app-envio *ngIf=" selected == 'envio' " [precio]="producto.precio" [envioGratis]="producto.envioGratis" [productoId]="producto.id!"></app-envio>
+        <app-tipo-publicacion *ngIf="selected == 'tipo-publicacion' " [estilos]="estilos" [tipoPublicacion]="producto.tipoPublicacion" [precio]="producto.precio"  [productoId]="producto.id!"></app-tipo-publicacion>
+    </div>
+</div>

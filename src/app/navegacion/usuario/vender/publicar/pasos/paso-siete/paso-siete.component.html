@@ -1,0 +1,17 @@
+<div class="contenido">
+    <button class="back" (click)='atras()'><ng-icon name="heroArrowSmallLeft"></ng-icon></button>
+    <form (submit)='submit()' class="paso2" novalidate>
+
+        <h1>Descripción</h1>
+        <p>¿Tienes más detalles para compartir? Este es el lugar para hacerlo.</p>
+    
+        <div class="message-input" contenteditable="true" (paste)="onPaste($event)" (input)="onInputChange($event)" (click)="focus()">
+            <div *ngIf="descripcion == null" class="placeholder">Escribe tu descripción aquí...</div>
+            <div class="texto" [innerHTML]="nuevoTexto"></div>
+        </div>
+
+        <div class="center-content">
+            <button type="submit" class="botonInvalid" value="Continuar" name="boton" [disabled]='!submitValue' [ngClass]="{'botonValid': submitValue}">Continuar</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,18 @@
+<div class="contenido">
+    <form (submit)='submit()' novalidate>
+
+        <h1>Descripción</h1>
+    
+        <div class="message-input" contenteditable="true" (paste)="onPaste($event)" (input)="onInputChange($event)" (click)="focus()">
+            <div *ngIf="descripcion == null" class="placeholder">Escribe tu descripción aquí...</div>
+            <div class="texto" [innerHTML]="nuevoTexto"></div>
+        </div>
+
+        <div class="center-content">
+            <button class="botonInvalid" [disabled]="!cambios" type="submit" [ngClass]="{'success': actualizacionExitosa, 'botonValid': cambios}">
+                <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+            </button>
+        </div>
+    </form>
+</div>

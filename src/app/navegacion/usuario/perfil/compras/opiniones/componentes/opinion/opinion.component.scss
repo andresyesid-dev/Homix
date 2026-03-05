@@ -1,0 +1,69 @@
+.opinion-card {
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 20px;
+    
+    .producto-info {
+        display: flex;
+        gap: 15px;
+        flex: 1;
+        
+        img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        
+        .info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            h3 {
+                font-size: 16px;
+                font-weight: 500;
+                color: #333;
+                margin: 0 0 5px 0;
+            }
+            
+            .fecha {
+                font-size: 14px;
+                color: #888;
+                margin: 0;
+            }
+        }
+    }
+    
+    .opinion-content {
+        flex: 2;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        
+        .calificacion {
+            display: flex;
+            gap: 5px;
+            
+            ng-icon {
+                font-size: 20px;
+                color: #ddd;
+                
+                &.filled {
+                    color: #ffc107;
+                }
+            }
+        }
+        
+        .comentario {
+            font-size: 15px;
+            color: #555;
+            margin: 0;
+            line-height: 1.5;
+        }
+    }
+}

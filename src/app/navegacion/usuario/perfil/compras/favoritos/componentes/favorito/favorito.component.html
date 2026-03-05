@@ -1,13 +1,19 @@
-<div (click)="navegar(['prod/'+ favorito.id], $event)"class="contenedor">
-    <img [src]="'assets/img/productos/'+ favorito.fotos[0] + '.png'">
+<div (click)="navegar(['prod/'+ favorito.id], $event)" class="contenedor">
+    <div class="imgContainer">
+        <img *ngIf="fotoUrl" 
+             [src]="fotoUrl" 
+             [alt]="imagenCargada ? favorito.nombre : ''"
+             (load)="onImageLoad()"
+             [class.loaded]="imagenCargada">
+    </div>
     <div>
         <p>{{favorito.nombre}}</p>
         <div *ngIf="favorito.descuento">
-            <p class="precio-anterior ">$ {{ favorito.precioComparacion | number:'1.0-0'}}</p>
-            <p class="oferta"> Oferta</p>
+            <p class="precio-anterior">$ {{ favorito.precioComparacion | number:'1.0-0'}}</p>
+            <p class="oferta">Oferta</p>
         </div>
         <p class="precio">$ {{ favorito.precio | number:'1.0-0'}} <span>COP</span></p>
-        <p class="envioGratis">Envío gratis</p>
+        <p *ngIf="favorito.envioGratis" class="envioGratis">Envío gratis</p>
     </div>
     <ng-icon name="matDelete" (click)="eliminar(); $event.stopPropagation()" class="eliminar"></ng-icon>
 </div>

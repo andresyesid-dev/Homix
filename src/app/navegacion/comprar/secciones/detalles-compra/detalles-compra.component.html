@@ -1,0 +1,74 @@
+<div class="detalles-compra-container">
+  <!-- Mostrar dirección de envío seleccionada -->
+  <div class="seccion direccion-confirmacion" *ngIf="direccionEnvio">
+    <div class="header-section">
+      <h2 class="titulo-seccion">Dirección de envío</h2>
+      <p class="descripcion">Confirma que esta información es correcta</p>
+    </div>
+    
+    <div class="direccion-card">
+      <div class="direccion-contenido">
+        <div class="direccion-principal">
+          <div class="icon-ubicacion">
+            <ng-icon name="heroMapPin"></ng-icon>
+          </div>
+          <div class="direccion-info">
+            <h3>{{direccionEnvio.nombresApellidos}}</h3>
+            <p class="direccion-completa">{{formatearDireccion(direccionEnvio)}}</p>
+            <p class="barrio-ciudad">{{direccionEnvio.barrio}}, {{direccionEnvio.municipioLocalidad}}</p>
+            <p class="telefono">
+              <ng-icon name="heroPhone"></ng-icon>
+              {{direccionEnvio.telefono}}
+            </p>
+            <p class="detalle" *ngIf="direccionEnvio.detalle">{{direccionEnvio.detalle}}</p>
+          </div>
+        </div>
+      </div>
+      
+      <button class="btn-cambiar" (click)="volverADireccion()">
+        <ng-icon name="heroPencil"></ng-icon>
+        Cambiar
+      </button>
+    </div>
+  </div>
+
+  <!-- Sección de productos -->
+  <div class="seccion productos-compra">
+    <div class="header-section">
+      <h2 class="titulo-seccion">Tu pedido</h2>
+      <p class="descripcion">{{productos.length}} {{productos.length === 1 ? 'producto' : 'productos'}} en tu carrito</p>
+    </div>
+    
+    <div class="productos-lista" *ngIf="!cargandoProductos && productos.length > 0">
+      <div class="producto-card" *ngFor="let producto of productos">
+        <div class="producto-imagen">
+          <img [src]="obtenerPrimeraFoto(producto)" [alt]="producto.nombre" />
+        </div>
+        <div class="producto-info">
+          <h3 class="producto-nombre">{{producto.nombre}}</h3>
+          <p class="producto-cantidad">{{obtenerCantidad(producto.id!)}} {{obtenerCantidad(producto.id!) === 1 ? 'unidad' : 'unidades'}}</p>
+          <p class="producto-precio">${{obtenerPrecioTotal(producto) | number:'1.0-0'}}</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cargando-productos" *ngIf="cargandoProductos">
+      <p>Cargando productos...</p>
+    </div>
+    
+    <div class="sin-productos" *ngIf="!cargandoProductos && productos.length === 0">
+      <p>No se encontraron productos</p>
+    </div>
+  </div>
+
+  <!-- Sección de pago -->
+  <div class="mensaje-container">
+        <div class="icono-check">
+          <ng-icon name="heroCheckCircle"></ng-icon>
+        </div>
+        <div class="mensaje-texto">
+          <h3>¡Todo listo para procesar tu pago!</h3>
+          <p class="descripcion">Haz clic en <strong>"Procesar compra"</strong> en el resumen a la derecha para continuar al pago seguro con MercadoPago</p>
+        </div>
+  </div>
+</div>

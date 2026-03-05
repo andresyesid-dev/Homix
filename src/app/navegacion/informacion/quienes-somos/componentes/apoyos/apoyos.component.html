@@ -2,22 +2,22 @@
     <section class="apoyo">
         <section>
             <h2>Contribuciones</h2>
-            <p>Como una nueva plataforma, Joum agradece profundamente el apoyo de su comunidad. Cada gesto de ayuda nos impulsa hacia adelante.</p>
+            <p>Como una nueva plataforma, Homix agradece profundamente el apoyo de su comunidad. Cada gesto de ayuda nos impulsa hacia adelante.</p>
             <div class="circulo"></div><div class="circuloDos"></div>
         </section>
         <section>
             <div>
                 <h3>Referir</h3>
-                <p>Ayúdanos a crecer compartiendo Joum con tus amigos y familiares. Cada recomendación nos acerca a más personas.</p>
+                <p>Ayúdanos a crecer compartiendo Homix con tus amigos y familiares. Cada recomendación nos acerca a más personas.</p>
             </div>
             <div>
                 <h3>Sugerencias</h3>
-                <p>Nos encantaría escuchar tus ideas y sugerencias. Tu feedback puede ayudarnos a hacer de Joum una plataforma aún mejor para todos.</p>
+                <p>Nos encantaría escuchar tus ideas y sugerencias. Tu feedback puede ayudarnos a hacer de Homix una plataforma aún mejor para todos.</p>
                 <button (click)="enviarSugerencia = true; $event.stopPropagation()">Enviar</button>
             </div>
             <div>
                 <h3>Económico</h3>
-                <p>Cada contribución económica nos permite seguir mejorando Joum, creando una experiencia más rica y gratificante para nuestra creciente comunidad.</p>
+                <p>Cada contribución económica nos permite seguir mejorando Homix, creando una experiencia más rica y gratificante para nuestra creciente comunidad.</p>
                 <button (click)="enviarApoyo = true; $event.stopPropagation()">Enviar</button>
             </div>
         </section>
@@ -25,7 +25,7 @@
     <section class="economico" *ngIf="enviarApoyo" (click)="$event.stopPropagation()">
         <ng-icon class="salir" name="heroXMark" (click)="cerrarVentanas()"></ng-icon>
         <h2>Contribución económica</h2>
-        <p>Cualquier contribución ayudará a Joum crecer y llegar a más personas.</p>
+        <p>Cualquier contribución ayudará a Homix crecer y llegar a más personas.</p>
         <h3>COP {{precio | customNumber}}</h3>
         <div class="contenido-barra">
             <div class="barra">

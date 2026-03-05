@@ -1,0 +1,665 @@
+.selector-direcciones-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+  margin-bottom: 70px;
+  background-color: transparent;
+  min-height: 60vh;
+
+  .cargando {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 32px;
+    gap: 24px;
+    background: white;
+    border-radius: 12px;
+    margin: 0 0 20px 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #ff9c59;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    p {
+      font-size: 17px;
+      color: #ff9c59;
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  .contenido {
+    .header-section {
+      background: transparent;
+      padding: 0 8px 24px 8px;
+      margin: 0 0 20px 0;
+
+      .titulo-seccion {
+        font-size: 26px;
+        font-weight: 500;
+        color: #555;
+        margin: 0 0 10px 0;
+        letter-spacing: -0.02em;
+      }
+
+      .descripcion {
+        font-size: 16px;
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+    }
+
+    .lista-direcciones {
+      background: white;
+      border-radius: 7px;
+      padding: 28px;
+      box-shadow: 0 2px 9px -2px rgba(0, 0, 0, 0.16);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #ccc 0%, #ddd 100%);
+      }
+
+      .btn-agregar-direccion {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background: white;
+        border: 1.5px dashed rgba(0, 0, 0, 0.2);
+        color: #666;
+        padding: 16px 20px;
+        border-radius: 5px;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        letter-spacing: -0.01em;
+        margin-bottom: 20px;
+
+        ng-icon {
+          font-size: 22px;
+          transition: all 0.3s ease;
+        }
+
+        span {
+          font-weight: 600;
+        }
+
+        &:hover {
+          background: linear-gradient(135deg, #f5f9ff 0%, #eef6ff 100%);
+          border-color: #3483fa;
+          color: #3483fa;
+          border-style: solid;
+          border-width: 1.5px;
+          box-shadow: 0 3px 8px rgba(52, 131, 250, 0.15);
+          transform: translateY(-1px);
+
+          ng-icon {
+            transform: rotate(90deg) scale(1.1);
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .direcciones-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+
+        .direccion-card {
+          background: white;
+          border: 1.5px solid rgba(0, 0, 0, 0.08);
+          border-radius: 6px;
+          padding: 20px 20px;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          gap: 16px;
+          position: relative;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+          overflow: hidden;
+          animation: fadeIn 0.4s ease-in-out;
+
+          @for $i from 1 through 10 {
+            &:nth-child(#{$i}) {
+              animation-delay: #{$i * 0.05}s;
+            }
+          }
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, rgba(229, 229, 229, 0.5) 0%, rgba(208, 208, 208, 0.5) 100%);
+            transition: all 0.3s ease;
+            opacity: 0.6;
+          }
+
+          &:hover {
+            border-color: rgba(255, 156, 89, 0.3);
+            box-shadow: 0 3px 12px rgba(255, 156, 89, 0.1);
+            transform: translateY(-2px);
+
+            &::before {
+              background: linear-gradient(180deg, rgba(255, 156, 89, 0.6) 0%, rgba(255, 178, 125, 0.6) 100%);
+              opacity: 1;
+            }
+          }
+
+          &.seleccionada {
+            border-color: rgba(255, 156, 89, 0.4);
+            background: linear-gradient(135deg, #fffbf8 0%, #ffffff 100%);
+            box-shadow: 0 4px 16px rgba(255, 156, 89, 0.12);
+
+            &::before {
+              width: 5px;
+              background: linear-gradient(180deg, rgba(255, 156, 89, 0.8) 0%, rgba(255, 178, 125, 0.8) 100%);
+              opacity: 1;
+            }
+          }
+
+          .direccion-radio {
+            flex-shrink: 0;
+            padding-top: 2px;
+
+            input[type="radio"] {
+              width: 22px;
+              height: 22px;
+              cursor: pointer;
+              accent-color: #ff9c59;
+              margin: 0;
+              transition: transform 0.2s ease;
+              appearance: none;
+              -webkit-appearance: none;
+              -moz-appearance: none;
+              border: none;
+              outline: none;
+              background: white;
+              border-radius: 50%;
+              position: relative;
+              box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+              
+              &:checked {
+                background: #ff9c59;
+                box-shadow: 0 0 0 1px #ff9c59;
+                
+                &::after {
+                  content: '';
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  width: 10px;
+                  height: 10px;
+                  background: white;
+                  border-radius: 50%;
+                }
+              }
+
+              &:hover {
+                transform: scale(1.1);
+              }
+
+              &:focus {
+                outline: 3px solid #ff9c59;
+                outline-offset: 3px;
+              }
+            }
+          }
+
+          .direccion-contenido {
+            flex: 1;
+            min-width: 0;
+
+            .direccion-titulo {
+              display: flex;
+              align-items: flex-start;
+              justify-content: flex-start;
+              letter-spacing: 0.5px;
+              margin-bottom: 16px;
+              padding-right: 120px; // Espacio para los botones de acción
+
+              h3 {
+                font-size: 17px;
+                font-weight: 600;
+                color: #555;
+                margin: 0;
+                flex: 1;
+                letter-spacing: -0.01em;
+              }
+            }
+
+            .direccion-detalles {
+              display: flex;
+              flex-direction: column;
+              gap: 6px;
+
+              .direccion-linea {
+                font-size: 15px;
+                color: rgba(0, 0, 0, 0.7);
+                margin: 0;
+                line-height: 1.4;
+                font-weight: 500;
+                letter-spacing: 0.5px;
+
+                &:first-child {
+                  font-weight: 600;
+                  color: #333;
+                  font-size: 15px;
+                }
+              }
+
+              .telefono {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                font-size: 15px;
+                color: rgba(0, 0, 0, 0.7);
+                margin: 8px 0 0 0;
+                padding: 8px 12px;
+                background: #f8f8f8;
+                border-radius: 8px;
+                width: fit-content;
+                font-weight: 500;
+
+                ng-icon {
+                  font-size: 18px;
+                  color: #ff9c59;
+                }
+              }
+
+              .detalle {
+                font-size: 14px;
+                color: rgba(0, 0, 0, 0.6);
+                margin: 6px 0 0 0;
+                font-style: italic;
+                padding: 8px 12px;
+                background: #fafafa;
+                border-radius: 6px;
+                border-left: 3px solid #d0d0d0;
+              }
+
+              .indicaciones {
+                display: flex;
+                align-items: flex-start;
+                gap: 10px;
+                margin-top: 12px;
+                padding: 14px 16px;
+                background: linear-gradient(135deg, #fff9f0 0%, #fffbf5 100%);
+                border-left: 4px solid #ffa726;
+                font-size: 14px;
+                color: rgba(0, 0, 0, 0.75);
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(255, 167, 38, 0.1);
+                line-height: 1.5;
+
+                ng-icon {
+                  font-size: 20px;
+                  color: #ff8c00;
+                  flex-shrink: 0;
+                  margin-top: 1px;
+                }
+              }
+            }
+
+            // Botones de acción (editar y eliminar) - Posición absoluta superior derecha
+            .direccion-acciones {
+              position: absolute;
+              top: 12px;
+              right: 12px;
+              display: flex;
+              align-items: center;
+              gap: 6px;
+              z-index: 2;
+
+              .btn-accion {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                gap: 4px;
+                padding: 6px 10px;
+                border: 1px solid;
+                border-radius: 6px;
+                font-size: 12px;
+                font-weight: 500;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                text-decoration: none;
+                background: white;
+                min-width: auto;
+                white-space: nowrap;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+                ng-icon {
+                  font-size: 14px;
+                  transition: all 0.3s ease;
+                }
+
+                span {
+                  font-weight: 500;
+                  font-size: 12px;
+                  transition: color 0.3s ease;
+                }
+
+                &.btn-editar {
+                  color: #3483fa;
+                  border-color: rgba(52, 131, 250, 0.3);
+                  background: rgba(52, 131, 250, 0.05);
+
+                  ng-icon {
+                    color: #3483fa;
+                  }
+
+                  span {
+                    color: #3483fa;
+                  }
+
+                  &:hover {
+                    background: rgba(52, 131, 250, 0.1);
+                    border-color: rgba(52, 131, 250, 0.5);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(52, 131, 250, 0.2);
+
+                    ng-icon {
+                      transform: scale(1.1);
+                    }
+                  }
+
+                  &:active {
+                    transform: translateY(0);
+                    background: rgba(52, 131, 250, 0.15);
+                  }
+                }
+
+                &.btn-eliminar {
+                  color: #dc2626;
+                  border-color: rgba(220, 38, 38, 0.3);
+                  background: rgba(220, 38, 38, 0.05);
+
+                  ng-icon {
+                    color: #dc2626;
+                  }
+
+                  span {
+                    color: #dc2626;
+                  }
+
+                  &:hover {
+                    background: rgba(220, 38, 38, 0.1);
+                    border-color: rgba(220, 38, 38, 0.5);
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.2);
+
+                    ng-icon {
+                      transform: scale(1.1);
+                    }
+                  }
+
+                  &:active {
+                    transform: translateY(0);
+                    background: rgba(220, 38, 38, 0.15);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .formulario-seccion {
+      .formulario-wrapper {
+        background: white;
+        border-radius: 6px;
+        padding: 32px;
+        box-shadow: 0 2px 9px -2px rgba(0, 0, 0, 0.16);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #ccc 0%, #ddd 100%);
+        }
+
+        .header-section {
+          padding: 0 0 28px 0;
+          margin: 0 0 24px 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+          .titulo-seccion {
+            font-size: 24px;
+            font-weight: 500;
+            color: #555;
+            margin: 0 0 10px 0;
+            letter-spacing: -0.02em;
+          }
+
+          .descripcion {
+            font-size: 15px;
+            color: rgba(0, 0, 0, 0.6);
+            margin: 0;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+          }
+        }
+
+        app-formulario-direccion {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .selector-direcciones-container {
+    padding: 0 8px;
+
+    .cargando {
+      margin: 0 0 16px 0;
+      padding: 64px 24px;
+      border-radius: 5px;
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+      }
+
+      p {
+        font-size: 16px;
+      }
+    }
+
+    .contenido {
+      .header-section {
+        padding: 0 8px 20px 8px;
+        
+        .titulo-seccion {
+          font-size: 22px;
+          color: #555;
+        }
+
+        .descripcion {
+          font-size: 14px;
+        }
+      }
+
+      .lista-direcciones {
+        .direcciones-grid {
+          gap: 14px;
+          margin-bottom: 16px;
+
+          .direccion-card {
+            padding: 24px 20px;
+            border-radius: 5px;
+            gap: 16px;
+
+            &::before {
+              width: 4px;
+            }
+
+            &.seleccionada::before {
+              width: 5px;
+            }
+
+            .direccion-radio {
+              input[type="radio"] {
+                width: 20px;
+                height: 20px;
+              }
+            }
+
+            .direccion-contenido {
+              .direccion-titulo {
+                margin-bottom: 14px;
+                padding-right: 80px; // Menos espacio en móviles
+
+                h3 {
+                  font-size: 15px;
+                }
+              }
+
+              .direccion-detalles {
+                gap: 8px;
+
+                .direccion-linea {
+                  font-size: 14px;
+
+                  &:first-child {
+                    font-size: 15px;
+                  }
+                }
+
+                .telefono {
+                  font-size: 14px;
+                  padding: 8px 10px;
+
+                  ng-icon {
+                    font-size: 16px;
+                  }
+                }
+
+                .detalle {
+                  font-size: 13px;
+                }
+
+                .indicaciones {
+                  font-size: 13px;
+                  padding: 12px 14px;
+
+                  ng-icon {
+                    font-size: 18px;
+                  }
+                }
+              }
+
+              // Estilos responsive para botones de acción en móviles
+              .direccion-acciones {
+                top: 8px;
+                right: 8px;
+                gap: 4px;
+
+                .btn-accion {
+                  padding: 5px 8px;
+                  font-size: 11px;
+                  gap: 3px;
+                  min-width: auto;
+
+                  ng-icon {
+                    font-size: 12px;
+                  }
+
+                  span {
+                    font-size: 11px;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .btn-agregar-direccion {
+          font-size: 14px;
+          padding: 16px;
+          border-radius: 5px;
+
+          ng-icon {
+            font-size: 20px;
+          }
+        }
+      }
+
+      .formulario-seccion {
+        .formulario-wrapper {
+          padding: 24px 20px;
+          border-radius: 5px;
+
+          .header-section {
+            padding: 0 0 20px 0;
+            margin: 0 0 20px 0;
+
+            .titulo-seccion {
+              font-size: 22px;
+              color: #555;
+            }
+
+            .descripcion {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,12 @@
+<h1>Opiniones</h1>
+<section *ngIf="!datosCargados" class="cargando"><app-cargando></app-cargando></section>
+<ng-container *ngIf="datosCargados">
+    <div class="contenedor" *ngIf="opiniones && opiniones.length > 0">
+        <app-opinion [opinion]="opinion" *ngFor="let opinion of opiniones"></app-opinion>
+    </div>
+    <div class="sinOpiniones" *ngIf="!opiniones || opiniones.length === 0">
+        <img src="assets/img/logo/iconos/empty-opinions.svg" alt="Sin opiniones">
+        <p>No tienes opiniones pendientes</p>
+        <p class="descripcion">Las opiniones de productos que compres aparecerán aquí</p>
+    </div>
+</ng-container>

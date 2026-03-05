@@ -20,6 +20,7 @@ export class DireccionesComponent implements OnInit, OnChanges{
 
   ngOnInit(): void {
     if(this.direcciones){
+      console.log(this.direcciones)
       this.obtenerDireccionString();
       this.direcciones.forEach(()=>{
         this.subMenu.push(false);

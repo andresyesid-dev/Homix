@@ -1,0 +1,20 @@
+<h1>Facturas y Reportes</h1>
+
+<div class="cargando" *ngIf="!datosCargados">
+    <app-cargando></app-cargando>
+</div>
+
+<div class="contenedor" *ngIf="datosCargados">
+    <div class="lista-facturas" *ngIf="facturasReportes.length > 0">
+        <app-factura-reporte 
+            *ngFor="let item of facturasReportes" 
+            [facturaReporte]="item">
+        </app-factura-reporte>
+    </div>
+
+    <div class="sinFacturas" *ngIf="facturasReportes.length === 0">
+        <ng-icon name="heroDocumentText" size="96"></ng-icon>
+        <p>No hay facturas ni reportes</p>
+        <p class="descripcion">Aquí aparecerán tus facturas y reportes fiscales cuando realices ventas</p>
+    </div>
+</div>

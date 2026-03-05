@@ -51,8 +51,8 @@ ng-icon.cart{
 
 /*---- Logo ----*/
 .logo{
-	width: 126px;
-	padding: 4px 0 0 25px;
+	width: 142px;
+	padding: 11px 0 0 20px;
 	user-select: none;
 	-webkit-user-select: none;
 	-moz-user-select: none;
@@ -103,7 +103,7 @@ ng-icon.cart{
 	padding: 0 16px;
 	width: 530px;
 	height: 35px;
-	margin: 11px 0px 10px 40px;
+	margin: 11px 0px 10px 30px;
 	border: 1px solid #fff;
 	border-radius: 4px 0px 0px 4px;
 	color: #505050;
@@ -124,8 +124,8 @@ ng-icon.cart{
 	min-width: 38px;
 	height: 35px;
 	margin: 11px 40px 10px 0;
-	background: #FF9C53;
-	border: 1px solid #FF9C53;
+	background: #FF9C59;
+	border: 1px solid #FF9C59;
 	border-radius: 0px 4px 4px 0px; 
 	font-size: 20px;
 	color: white;
@@ -218,7 +218,7 @@ ng-icon.cart{
 	border-radius: 5px;
 	font-size: 15px;
 	cursor: pointer;
-	background: #FF9C53;
+	background: #FF9C59;
 	color: white;
 	border: none;
 	transition: .3s;
@@ -226,8 +226,8 @@ ng-icon.cart{
 }
 #dos button:hover{
 	background: white;
-	color: #FF9C53;
-	border: 1px #FF9C53 solid;
+	color: #FF9C59;
+	border: 1px #FF9C59 solid;
 }
 .botones a{
 	cursor:default;
@@ -607,7 +607,7 @@ ng-icon.cart{
 	.sinLogo{
 		width: 5px;
 		overflow: hidden;
-		animation: logo 0.5s;
+		animation: logo 0.3s;
 	}
 
 	.logo{

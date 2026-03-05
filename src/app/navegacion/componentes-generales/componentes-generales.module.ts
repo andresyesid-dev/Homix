@@ -4,7 +4,6 @@ import { NgIconsModule } from '@ng-icons/core';
 import { FormsModule } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BarraMenuComponent } from './barra-menu/barra-menu.component';
 import { FooterComponent } from './footer/footer.component';
 import { MenuLateralComponent } from './barra-menu/menu-lateral/menu-lateral.component';
@@ -13,6 +12,7 @@ import { NotificacionComponent } from './barra-menu/notificacion/notificacion.co
 import { CargandoComponent } from './cargando/cargando.component';
 import { BotonCompraComponent } from './boton-compra/boton-compra.component';
 import { BotonCarritoComponent } from './boton-carrito/boton-carrito.component';
+import { ModalConfirmacionComponent } from './modal-confirmacion/modal-confirmacion.component';
 
 @NgModule({
   declarations: [
@@ -23,10 +23,10 @@ import { BotonCarritoComponent } from './boton-carrito/boton-carrito.component';
     NotificacionComponent,
     CargandoComponent,
     BotonCompraComponent,
-    BotonCarritoComponent
+    BotonCarritoComponent,
+    ModalConfirmacionComponent
   ],
   imports: [
-    BrowserAnimationsModule,
     CommonModule,
     NgIconsModule,
     FormsModule,
@@ -39,7 +39,8 @@ import { BotonCarritoComponent } from './boton-carrito/boton-carrito.component';
     MenuLateralComponent,
     CargandoComponent,
     BotonCompraComponent,
-    BotonCarritoComponent
+    BotonCarritoComponent,
+    ModalConfirmacionComponent
   ]
 })
 export class ComponentesGeneralesModule { }

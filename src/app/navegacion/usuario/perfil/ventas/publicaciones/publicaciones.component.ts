@@ -31,27 +31,65 @@ export class PublicacionesComponent implements OnInit, OnDestroy{
   }
 
   async obtenerusuario(usuario: string){
-    await this.authService.getUsuarioUser(usuario).then((usuario)=>{
-      if(usuario){
-        this.usuario = usuario;
-        this.obtenerProductos();
+    try {
+      const usuarioData = await this.authService.getUsuarioUser(usuario);
+      if(usuarioData){
+        this.usuario = usuarioData;
+        await this.obtenerProductos();
+      } else {
+        console.error('Usuario no encontrado');
+        this.datosCargados = true;
       }
-    })
+    } catch (error) {
+      console.error('Error obteniendo usuario:', error);
+      this.datosCargados = true;
+    }
   }
 
   async obtenerProductos() {
-    if (this.usuario.publicaciones && this.usuario.publicaciones.length !== 0) {
-      const productosSnapshot = await Promise.all(this.usuario?.publicaciones.map((ref:any) => getDoc(ref)));
-      this.publicaciones = productosSnapshot.map((productoSnapshot)=>{
-        const prd = productoSnapshot.data() as Producto;
-        if(!prd){
-          console.log(productoSnapshot)
-        }
-        prd.id = productoSnapshot.id;
-        return prd
-      })
+    try {
+      if (this.usuario.publicaciones && this.usuario.publicaciones.length !== 0) {
+        const productosSnapshot = await Promise.all(this.usuario?.publicaciones.map((ref:any) => getDoc(ref)));
+        this.publicaciones = productosSnapshot.map((productoSnapshot)=>{
+          const prd = productoSnapshot.data() as Producto;
+          if(!prd){
+            console.log('Producto snapshot sin data:', productoSnapshot)
+          }
+          prd.id = productoSnapshot.id;
+          return prd
+        })
+      }
+    } catch (error) {
+      console.error('Error obteniendo productos:', error);
+    } finally {
+      this.datosCargados = true;
     }
-    this.datosCargados = true;
+  }
+
+  async eliminarProducto(producto: Producto) {
+    try {
+      if (!producto.id || !this.usuario.id || !this.usuario.publicaciones) {
+        console.error('Datos insuficientes para eliminar el producto');
+        return;
+      }
+
+      await this.productosService.eliminarProducto(
+        producto.id, 
+        this.usuario.id, 
+        this.usuario.publicaciones
+      );
+
+      // Actualizar la lista local eliminando el producto
+      this.publicaciones = this.publicaciones.filter(p => p.id !== producto.id);
+      
+      // Actualizar el objeto usuario local
+      this.usuario.publicaciones = this.usuario.publicaciones.filter(ref => ref.id !== producto.id);
+      
+      console.log('Producto eliminado exitosamente');
+    } catch (error) {
+      console.error('Error al eliminar el producto:', error);
+      alert('Hubo un error al eliminar el producto. Por favor, intenta de nuevo.');
+    }
   }
 
 

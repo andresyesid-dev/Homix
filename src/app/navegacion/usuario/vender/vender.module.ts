@@ -10,6 +10,8 @@ import { EncabezadoVenderComponent } from './encabezado-vender/encabezado-vender
 import { AgendarLlamadaComponent } from './agendar-llamada/agendar-llamada.component';
 import { FormularioAgendamientoComponent } from './agendar-llamada/componentes/formulario-agendamiento/formulario-agendamiento.component';
 import { AgendaDisponibleComponent } from './agendar-llamada/componentes/agenda-disponible/agenda-disponible.component';
+import { PasosVenderComponent } from './pasos-vender/pasos-vender.component';
+import { ParteSuperiorVenderComponent } from './parte-superior-vender/parte-superior-vender.component';
 
 
 @NgModule({
@@ -18,7 +20,9 @@ import { AgendaDisponibleComponent } from './agendar-llamada/componentes/agenda-
     EncabezadoVenderComponent,
     AgendarLlamadaComponent,
     FormularioAgendamientoComponent,
-    AgendaDisponibleComponent
+    AgendaDisponibleComponent,
+    PasosVenderComponent,
+    ParteSuperiorVenderComponent
   ],
   imports: [
     ReactiveFormsModule,

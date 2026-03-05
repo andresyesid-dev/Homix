@@ -1,0 +1,20 @@
+<h1>Retenciones</h1>
+
+<div class="cargando" *ngIf="!datosCargados">
+    <app-cargando></app-cargando>
+</div>
+
+<div class="contenedor" *ngIf="datosCargados">
+    <div class="lista-retenciones" *ngIf="retenciones.length > 0">
+        <app-retencion 
+            *ngFor="let retencion of retenciones" 
+            [retencion]="retencion">
+        </app-retencion>
+    </div>
+
+    <div class="sinRetenciones" *ngIf="retenciones.length === 0">
+        <ng-icon name="heroReceiptPercent" size="96"></ng-icon>
+        <p>No hay retenciones registradas</p>
+        <p class="descripcion">Aquí aparecerán las retenciones fiscales aplicadas a tus ventas</p>
+    </div>
+</div>

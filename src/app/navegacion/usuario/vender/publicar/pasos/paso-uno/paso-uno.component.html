@@ -1,0 +1,34 @@
+<form #formPaso1='ngForm' (submit)='submit(formPaso1)' class="paso1" novalidate>
+  <div class="container">
+
+    <div class="text">
+      <h1>Categoría</h1>
+      <p>Selecciona la categoría que más se adapte a tu producto</p>
+    </div>
+
+    <div class="seleccion">
+      <input *ngFor="let box of boxes; index as i;" #radiobtn type="radio" [id]="box" name="categoria" class="check" [value]="titulos[i]" [(ngModel)]="formValue" required>
+      <label (click)='changeDisabled($event, i, titulos[i])' *ngFor="let box of boxes; index as i;" [class]="box + ' box'" [for]="box">
+        <img [src]="images[i]" alt="Image">
+        <p>{{ titulos[i] }}</p>
+      </label>
+    </div>
+
+    <div class="alerta" *ngIf="alerta" (click)="alert(false)">
+      <div class="content" (click)="$event.stopPropagation()">
+        <h1>¿Quieres cambiar la categoría?</h1>
+        <p>perderás todo el progreso y la información que ingresaste</p>
+        <div>
+          <button (click)="alert(true)">Aceptar</button>
+          <button (click)="alert(false)">Cancelar</button>
+        </div>
+        <p class="close" (click)="alert(false)">x</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="center-content">
+    <input type="submit" [disabled]='disabled' id="btn-Siguiente" value="Continuar">
+  </div>
+</form>

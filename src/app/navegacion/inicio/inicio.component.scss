@@ -143,13 +143,13 @@
 	  letter-spacing: 1px;
 	  width: 130px;
 	  height: 39px;
-	  background: #FF9C53;
+	  background: #FF9C59;
 	  border: none;
 	  cursor: pointer;
 	  border-radius: 5px;
   
 	  &:hover {
-		background-color: #FF9C53;
+		background-color: #FF9C59;
 	  }
 	}
 	@media (max-width: 550px) {
@@ -199,7 +199,7 @@
 			width: 100px;
 			height: 36px;
 			border: none;
-			background: #FF9C53;
+			background: #FF9C59;
 			border-radius: 6px;
 			color: #fff;
 			font-size: 16px;
@@ -208,7 +208,7 @@
 			cursor: pointer;
 			&:hover {
 				background: #fff;
-				color: #FF9C53;
+				color: #FF9C59;
 			}
 		}
 	}

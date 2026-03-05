@@ -3,10 +3,10 @@
         <div (click)="sombraBool = false" class="sombra"></div>
         <ng-icon name="heroChevronLeftSolid" (click)="fotoPrev()"></ng-icon>
         <div class="cuadro" (click)="sombraBool = false">
-            <img [src]="'assets/img/productos/'+ producto.fotos[indexFoto] + '.png'">
+            <img [src]="fotosActuales[indexFoto]">
         </div>
         <ng-icon name="heroChevronRightSolid" (click)="fotoNex()"></ng-icon>
-        <div class="cantidadFotos">{{ indexFoto + 1 }}/{{ producto.fotos.length }}</div>
+        <div class="cantidadFotos">{{ indexFoto + 1 }}/{{ fotosActuales.length }}</div>
         <div (click)="sombraBool = false" class="x">X</div>
     </div>
     <div *ngIf="sombraOpinion" class="contenidoFotos">
@@ -17,7 +17,7 @@
         <div class="cantidadFotos">1/1</div>
         <div (click)="sombraOpinion = false" class="x">X</div>
     </div>
-    <!-- <div class="productoPropio" *ngIf="productoPropio" [ngClass]="{'productoPropioFixed': productoPropioFixed}"><p>Tu producto</p></div>-->
+    <div class="productoPropio" *ngIf="productoPropio" [ngClass]="{'productoPropioFixed': productoPropioFixed}"><p>Tu producto</p></div>
     <app-barra-menu></app-barra-menu>
     <ng-container *ngIf="producto">
         <app-tiempo *ngIf="producto.soloPorHoy"></app-tiempo>
@@ -32,7 +32,7 @@
                 <ng-icon class="carrito" name="matAddShoppingCart" [class.carrito-click-over] = "enCarrito == true" (click)="editarCarrito()" *ngIf="!productoPropio && producto.estado"></ng-icon>
                 <ng-icon class="carrito-full" name="matShoppingCart" [class.carrito-click] = "enCarrito == true" *ngIf="!productoPropio && producto.estado"></ng-icon>
     
-                <app-fotos-producto *ngIf="producto" [producto]="producto" [fotos]="producto.fotos" [sombraPadre]="sombraBool" [indexPadre]="indexFoto" (sombraHijo)="nuevoDatoHijoSombra($event)" (fotoIndex)="nuevoIndex($event)" ></app-fotos-producto>
+                <app-fotos-producto *ngIf="producto" [producto]="producto" [fotos]="fotosActuales" [sombraPadre]="sombraBool" [indexPadre]="indexFoto" (sombraHijo)="nuevoDatoHijoSombra($event)" (fotoIndex)="nuevoIndex($event)" ></app-fotos-producto>
                 <div class="linea-Menu"></div>
                 <h1 class="titulos">Productos similares que te podrían gustar</h1>
                 <div class="carrusel">
@@ -73,7 +73,7 @@
             <ng-icon class="corazon" name="heroHeart" (click)="editarFavorito()" *ngIf="anchoPagina <= 800"></ng-icon>
             <ng-icon class="corazon-full" name="heroHeartSolid" [class.corazon-click] = "enFavoritos == true" *ngIf="anchoPagina <= 800"></ng-icon>
 
-            <app-fotos-producto *ngIf="producto" [producto]="producto" [fotos]="producto.fotos" [sombraPadre]="sombraBool" [indexPadre]="indexFoto" (sombraHijo)="nuevoDatoHijoSombra($event)" (fotoIndex)="nuevoIndex($event)" ></app-fotos-producto>
+            <app-fotos-producto *ngIf="producto" [producto]="producto" [fotos]="fotosActuales" [sombraPadre]="sombraBool" [indexPadre]="indexFoto" (sombraHijo)="nuevoDatoHijoSombra($event)" (fotoIndex)="nuevoIndex($event)" ></app-fotos-producto>
             <app-datos-producto [productoCargado]="productoCargado" [producto]="producto" (unidadeS)="unidades = $event" (seleccionarColr)="seleccionarColor($event)" (seleccionarEstl)="seleccionarEstilo($event)" (ventasHechas)="asignarVentas($event)"></app-datos-producto>
             <!-------------------------->
             <app-video [url]="producto.videos[0].url" [titulo]="producto.videos[0].titulo" *ngIf="producto.videos"></app-video>

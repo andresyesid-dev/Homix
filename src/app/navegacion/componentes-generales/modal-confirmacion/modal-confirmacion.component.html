@@ -1,0 +1,23 @@
+<div *ngIf="mostrar" class="modal-overlay" (click)="onCerrar()" [@modalAnimation]>
+  <div class="modal-content" (click)="stopPropagation($event)" [@modalContentAnimation]>
+    <div class="modal-header" [ngClass]="tipoAlerta">
+      <h3>{{ titulo }}</h3>
+      <button class="close-btn" (click)="onCerrar()">
+        <span>&times;</span>
+      </button>
+    </div>
+    
+    <div class="modal-body">
+      <p>{{ mensaje }}</p>
+    </div>
+    
+    <div class="modal-footer">
+      <button class="btn btn-cancelar" (click)="onCancelar()">
+        {{ textoCancelar }}
+      </button>
+      <button class="btn btn-confirmar" [ngClass]="tipoAlerta" (click)="onConfirmar()">
+        {{ textoConfirmar }}
+      </button>
+    </div>
+  </div>
+</div>

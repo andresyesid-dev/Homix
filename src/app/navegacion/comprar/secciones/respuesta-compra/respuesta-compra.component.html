@@ -1,0 +1,169 @@
+<div class="respuesta-compra-container">
+  <div class="exito-container" [class]="'estado-' + (estadoPago?.status || 'approved')">
+    
+    <!-- Icono según estado -->
+    <div class="icono-estado">
+      <ng-icon 
+        *ngIf="estadoPago?.status === 'approved'" 
+        name="heroCheckCircle">
+      </ng-icon>
+      <ng-icon 
+        *ngIf="estadoPago?.status === 'pending' || estadoPago?.status === 'in_process'" 
+        name="heroClock">
+      </ng-icon>
+      <ng-icon 
+        *ngIf="estadoPago?.status === 'rejected'" 
+        name="heroXCircle">
+      </ng-icon>
+    </div>
+
+    <!-- Título según estado -->
+    <h1 class="titulo-principal">
+      <span *ngIf="estadoPago?.status === 'approved'">¡Compra realizada exitosamente!</span>
+      <span *ngIf="(estadoPago?.status === 'pending' || estadoPago?.status === 'in_process') && esPSE">
+        Pago PSE iniciado
+      </span>
+      <span *ngIf="(estadoPago?.status === 'pending' || estadoPago?.status === 'in_process') && esEfecty">
+        Código de pago generado
+      </span>
+      <span *ngIf="(estadoPago?.status === 'pending' || estadoPago?.status === 'in_process') && !esPSE && !esEfecty">
+        Tu pago está pendiente
+      </span>
+      <span *ngIf="estadoPago?.status === 'rejected'">Pago rechazado</span>
+    </h1>
+
+    <!-- Indicador de venta en proceso -->
+    <div class="creando-venta" *ngIf="creandoVenta && estadoPago?.status === 'approved'">
+      <div class="spinner"></div>
+      <p>Registrando tu compra...</p>
+    </div>
+
+    <!-- Mensaje de venta creada -->
+    <div class="venta-creada-msg" *ngIf="ventaCreada && estadoPago?.status === 'approved'">
+      <ng-icon name="heroCheckBadge"></ng-icon>
+      <p>¡Tu compra ha sido registrada exitosamente!</p>
+    </div>
+
+    <!-- Mensaje descriptivo según estado -->
+    <p class="mensaje-estado">
+      <span *ngIf="estadoPago?.status === 'approved' && !creandoVenta">
+        Tu compra ha sido confirmada y procesada correctamente.
+      </span>
+      
+      <!-- Mensajes específicos para PSE -->
+      <span *ngIf="(estadoPago?.status === 'pending' || estadoPago?.status === 'in_process') && esPSE">
+        Tu transacción PSE está siendo procesada por tu banco. 
+        <strong>Recibirás una confirmación cuando se complete el pago.</strong>
+        Este proceso puede tomar hasta 24 horas hábiles.
+      </span>
+      
+      <!-- Mensajes específicos para Efecty -->
+      <span *ngIf="(estadoPago?.status === 'pending' || estadoPago?.status === 'in_process') && esEfecty">
+        Dirígete a cualquier punto de pago con tu código de referencia. 
+        <strong>Tu compra se confirmará una vez realices el pago.</strong>
+        Tienes 3 días para completar el pago.
+      </span>
+      
+      <!-- Mensajes genéricos para otros métodos pendientes -->
+      <span *ngIf="(estadoPago?.status === 'pending' || estadoPago?.status === 'in_process') && !esPSE && !esEfecty">
+        Tu pago está siendo procesado. Te notificaremos cuando se confirme.
+      </span>
+      
+      <!-- Mensaje de rechazo -->
+      <span *ngIf="estadoPago?.status === 'rejected'">
+        <span *ngIf="estadoPago?.error_message">{{ estadoPago.error_message }}</span>
+        <span *ngIf="!estadoPago?.error_message">No pudimos procesar tu pago. Por favor, intenta nuevamente con otro método de pago.</span>
+      </span>
+    </p>
+    
+    <!-- Información del pago -->
+    <div class="info-pago" *ngIf="estadoPago">
+      <h2 class="titulo-seccion">Detalles del pago</h2>
+      <div class="detalle-pago">
+        <div class="detalle-item">
+          <span class="label">Estado:</span>
+          <span class="valor" [class]="'estado-badge-' + estadoPago.status">{{estadoPago.mensaje}}</span>
+        </div>
+        
+        <!-- ID de pago / Código de referencia -->
+        <div class="detalle-item" *ngIf="estadoPago.payment_id">
+          <span class="label">
+            <span *ngIf="esEfecty">Código de referencia:</span>
+            <span *ngIf="!esEfecty">ID de pago:</span>
+          </span>
+          <span class="valor codigo-referencia" [class.destacado]="esEfecty">
+            {{estadoPago.payment_id}}
+          </span>
+        </div>
+        
+        <div class="detalle-item" *ngIf="estadoPago.payment_method">
+          <span class="label">Método de pago:</span>
+          <span class="valor">{{estadoPago.payment_method | uppercase}}</span>
+        </div>
+        <div class="detalle-item" *ngIf="estadoPago.transaction_amount">
+          <span class="label">Monto a pagar:</span>
+          <span class="valor precio">$ {{estadoPago.transaction_amount | number:'1.0-0'}} COP</span>
+        </div>
+        <div class="detalle-item" *ngIf="estadoPago.status === 'rejected' && !estadoPago.payment_id">
+          <span class="label">Motivo:</span>
+          <span class="valor">Error en el procesamiento del pago</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Instrucciones adicionales para Efecty -->
+    <div class="instrucciones-efecty" *ngIf="esEfecty && (estadoPago?.status === 'pending' || estadoPago?.status === 'in_process')">
+      <h3>📍 ¿Dónde puedes pagar?</h3>
+      <ul>
+        <li>Efecty</li>
+        <li>Baloto</li>
+        <li>PuntoRed</li>
+        <li>Otros puntos autorizados</li>
+      </ul>
+      <p class="nota-importante">
+        <strong>Importante:</strong> Lleva tu código de referencia y el monto exacto. 
+        El pago debe realizarse dentro de los próximos 3 días.
+      </p>
+    </div>
+    
+    <!-- Instrucciones adicionales para PSE -->
+    <div class="instrucciones-pse" *ngIf="esPSE && (estadoPago?.status === 'pending' || estadoPago?.status === 'in_process')">
+      <h3>🏦 Próximos pasos</h3>
+      <p class="nota-importante">
+        Tu transacción está siendo procesada por tu entidad bancaria. 
+        Recibirás una notificación por correo electrónico cuando se confirme el pago.
+        Si tienes dudas, puedes contactar directamente con tu banco.
+      </p>
+    </div>
+    
+    <!-- Mensaje de notificación (solo para approved, pending y in_process) -->
+    <p class="mensaje-notificacion" *ngIf="estadoPago?.status === 'approved' || estadoPago?.status === 'pending' || estadoPago?.status === 'in_process'">
+      <ng-icon name="heroEnvelope"></ng-icon>
+      <span *ngIf="estadoPago?.status === 'approved'">Te notificaremos por correo cuando enviemos tu producto.</span>
+      <span *ngIf="estadoPago?.status === 'pending' || estadoPago?.status === 'in_process'">
+        Te notificaremos por correo cuando se confirme tu pago y procesemos tu pedido.
+      </span>
+    </p>
+    
+    <div class="botones-accion">
+      <button 
+        class="btn-primario" 
+        *ngIf="estadoPago?.status === 'approved' || estadoPago?.status === 'pending'"
+        (click)="verMisCompras()">
+        <ng-icon name="heroShoppingBag"></ng-icon>
+        Ver mis compras
+      </button>
+      <button 
+        class="btn-primario btn-reintentar" 
+        *ngIf="estadoPago?.status === 'rejected'"
+        (click)="volverAIntentar()">
+        <ng-icon name="heroArrowPath"></ng-icon>
+        Volver a intentar
+      </button>
+      <button class="btn-secundario" (click)="volverInicio()">
+        <ng-icon name="heroHome"></ng-icon>
+        Volver al inicio
+      </button>
+    </div>
+  </div>
+</div>

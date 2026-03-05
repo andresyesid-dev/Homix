@@ -1,6 +1,10 @@
 <div class="content">
     <div class="contenedor" [ngClass]="{'masUnidades': unidades, 'pausada': !estado, 'masUnidadesDosFilas': unidadesMasEstilos}">
-        <img [src]="'assets/img/productos/'+ publicacion.fotos[0] + '.png'">
+        <img [src]="fotoUrl" 
+             [alt]="imagenCargada ? publicacion.nombre : ''"
+             (load)="onImageLoad()"
+             [class.loaded]="imagenCargada"
+             *ngIf="fotoUrl">
         <div>
             <p>{{publicacion.nombre}}</p>
             <p>#{{publicacion.id}}</p>
@@ -30,7 +34,21 @@
         <img (click)="desplegarSubMenu($event)"  src="assets/img/logo/iconos/ver-mas-full.svg">
     </div>
     <div *ngIf="subMenu" class="submenu">
+        <p (click)="editarProducto()">Editar</p>
         <p (click)="navegar(['prod/'+ publicacion.id],$event)">Ver publicación</p>
-        <p>Eliminar</p>
+        <p (click)="abrirModalEliminar($event)">Eliminar</p>
     </div>  
 </div>
+
+<!-- Modal de confirmación -->
+<app-modal-confirmacion
+  [mostrar]="mostrarModalEliminar"
+  titulo="¿Eliminar producto?"
+  [mensaje]="'¿Estás seguro de que deseas eliminar ' + publicacion.nombre + '? Esta acción no se puede deshacer.'"
+  textoConfirmar="Eliminar"
+  textoCancelar="Cancelar"
+  tipoAlerta="danger"
+  (confirmar)="confirmarEliminar()"
+  (cancelar)="cancelarEliminar()"
+  (cerrar)="cerrarModal()">
+</app-modal-confirmacion>

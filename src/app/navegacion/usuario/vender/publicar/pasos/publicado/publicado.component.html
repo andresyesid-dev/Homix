@@ -1,0 +1,18 @@
+<div class="body">
+    <app-menu-simple></app-menu-simple>
+    <div class="contenido">
+        <h1>¡Publicación exitosa!</h1>
+        <div class="producto">
+            <img [src]="foto">
+            <div>
+                <h2>{{nombre}}</h2>
+                <button (click)="navegar('prod/' + productoId)">Ver publicación</button>
+            </div>
+        </div>
+        <div class="botones">
+            <button (click)="navegar(usuario + '/publicaciones')">Publicaciones</button>
+            <button (click)="navegar(usuario + '/metricas/negocio')">Métricas</button>
+            <button (click)="navegar('ayuda')">Ayuda</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,17 @@
+<div class="contenido">
+    <form *ngIf="form" [formGroup]='form' (ngSubmit)="submit()" novalidate>
+
+        <h1>Titulo de la publicación</h1>
+    
+        <div class="field-container">
+            <input formControlName='titulo' type="text" class="field" placeholder="Ej.: Cuadros Decorativos Para Sala 150cm Ancho * 90cm Alto" id="Titulo" (input)="cambios = true"> <br />
+        </div>
+    
+        <div class="center-content">
+            <button class="botonInvalid" [disabled]="form.invalid || actualizacionExitosa || !cambios" type="submit" [ngClass]="{'success': actualizacionExitosa, 'botonValid': form.valid && cambios}">
+                <span *ngIf="!actualizacionExitosa">Actualizar</span> 
+                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+            </button>
+        </div>
+    </form>
+</div>

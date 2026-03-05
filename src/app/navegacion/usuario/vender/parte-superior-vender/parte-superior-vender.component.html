@@ -1,0 +1,37 @@
+<div class="content">
+    <section class="header">
+        <div>
+            <div>
+                <h1>¡Crea con pasión, vende con éxito! Únete a Joum y comparte tu arte con el mundo.</h1>
+                <button (click)="navegar('/publicar/formulario/paso1')">Empezar a vender</button>
+            </div>
+             <div>
+                <img src="assets/img/logo/iconos/open-store.svg">
+            </div>
+        </div>
+    </section>
+    <section class="requisitos">
+        <h2>¿Que necesitas para vender?</h2>
+        <ul>
+            <li>Realizar tres sencillos pasos: Crear una cuenta en Joum, verificar tu correo electrónico y agregar tu documento de identidad desde tu perfil.</li>
+            <li>Las ganas de mostrar arte al mundo</li>
+        </ul>
+        <div>
+            <section>
+                <img src="assets/img/logo/iconos/in-user-check.svg" *ngIf="usuario !== undefined && usuario ">
+                <img src="assets/img/logo/iconos/in-user-x.svg" *ngIf="usuario !== undefined && !usuario ">
+                <h3>Usuario registrado</h3>
+            </section>
+            <section>
+                <img src="assets/img/logo/iconos/email-verify-check.svg" *ngIf="correoVerificado !== undefined && correoVerificado ">
+                <img src="assets/img/logo/iconos/email-verify-x.svg" *ngIf="correoVerificado !== undefined && !correoVerificado ">
+                <h3>Correo verificado</h3>
+            </section>
+            <section>
+                <img src="assets/img/logo/iconos/document-check.svg" *ngIf="documento !== undefined && documento ">
+                <img src="assets/img/logo/iconos/document-x.svg" *ngIf="documento !== undefined && !documento ">
+                <h3>Agregar documento</h3>
+            </section>
+        </div>
+    </section>
+</div>

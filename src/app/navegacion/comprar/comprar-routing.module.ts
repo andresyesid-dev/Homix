@@ -1,9 +1,9 @@
 import { ComprarComponent } from './comprar.component'
 import { Routes } from '@angular/router';
-import { DatosEnvioComponent } from './secciones/datos-envio/datos-envio.component';
-import { MetodoPagoComponent } from './secciones/metodo-pago/metodo-pago.component';
-import { ResumenComponent } from './secciones/resumen/resumen.component';
-import { CambiarDireccionComponent } from './secciones/cambiar-direccion/cambiar-direccion.component';
+import { SelectorDireccionesComponent } from './secciones/selector-direcciones/selector-direcciones.component';
+import { DetallesCompraComponent } from './secciones/detalles-compra/detalles-compra.component';
+import { RespuestaCompraComponent } from './secciones/respuesta-compra/respuesta-compra.component';
+import { FormularioDireccionComponent } from './secciones/formulario-direccion/formulario-direccion.component';
 
 export const routes: Routes = [
   {
@@ -11,20 +11,33 @@ export const routes: Routes = [
     component: ComprarComponent,
     children: [
       {
-        path: 'detalles-envio',
-        component: DatosEnvioComponent
+        path: '',
+        redirectTo: 'seleccionar-direccion',
+        pathMatch: 'full'
       },
       {
-        path: 'payment',
-        component: MetodoPagoComponent
+        path: 'seleccionar-direccion',
+        component: SelectorDireccionesComponent
       },
       {
-        path: 'resumen',
-        component: ResumenComponent
+        path: 'agregar-direccion',
+        component: FormularioDireccionComponent
       },
       {
-        path: 'cambiar-direccion',
-        component: CambiarDireccionComponent
+        path: 'actualizar-direccion/:id',
+        component: FormularioDireccionComponent
+      },
+      {
+        path: 'detalles-compra',
+        component: DetallesCompraComponent
+      },
+      {
+        path: 'pago',
+        component: DetallesCompraComponent
+      },
+      {
+        path: 'response',
+        component: RespuestaCompraComponent
       },
     ]
   }

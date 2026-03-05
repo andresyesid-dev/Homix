@@ -1,4 +1,4 @@
-import { Component, EventEmitter, HostListener, Input, NgZone, OnChanges,OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, HostListener, Input, NgZone, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { Producto } from '../../../../interfaces/producto/producto';
 
@@ -7,40 +7,53 @@ import { matStarRound } from '@ng-icons/material-icons/round';
 import { ionLogoWhatsapp } from '@ng-icons/ionicons';
 import { heroTruck } from '@ng-icons/heroicons/outline';
 import { matGppGoodOutline } from '@ng-icons/material-icons/outline';
-import { heroXMark } from '@ng-icons/heroicons/outline';
-import { heroCheckBadge } from '@ng-icons/heroicons/outline';
 import { heroChevronRight } from '@ng-icons/heroicons/outline';
 import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
 import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { DocumentData, DocumentReference, Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { first } from 'rxjs';
+import { MercadoPagoPaymentData, MercadoPagoBrickConfig } from 'src/app/interfaces/mercadopago';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-datos-producto',
   templateUrl: './datos-producto.component.html',
   styleUrls: ['./datos-producto.component.scss'],
-  providers: [provideIcons({matStarRound, heroTruck, matGppGoodOutline, heroXMark, heroCheckBadge, heroChevronRight, ionLogoWhatsapp})]
+  providers: [provideIcons({matStarRound, heroTruck, matGppGoodOutline, heroChevronRight, ionLogoWhatsapp})]
 })
-export class DatosProductoComponent implements OnInit,OnChanges{
-  constructor(private zone: NgZone, private router: Router, private comprarService: ComprarService, private auth: Auth, private authService: AuthService, private firestore: Firestore){}
+export class DatosProductoComponent implements OnInit, OnChanges {
+  constructor(
+    private zone: NgZone, 
+    private router: Router, 
+    private comprarService: ComprarService, 
+    private auth: Auth, 
+    private authService: AuthService, 
+    private firestore: Firestore
+  ) {}
+
   @Input() producto!: Producto;
   @Output() ventasHechas = new EventEmitter<string>();
   @Output() unidadeS = new EventEmitter<number>();
   @Output() seleccionarColr = new EventEmitter<number>();
   @Output() seleccionarEstl = new EventEmitter<number>();
   @Input() productoCargado!: boolean;
+  
   entrega: string = '';
-
   unidades: number = 1;
   unaUnidad = true;
-
   vendidos!: string;
-
   productoPropio!: boolean;
   tamanioSelec = 0;
-
+  selectEstilo: number = 0; // Índice del estilo seleccionado
   anchoPagina: number = window.innerWidth;
+
+  // MercadoPago properties
+  mostrarModalPago = false;
+  procestandoPago = false;
+  pagoCompletado = false;
+  errorPago: string | null = null;
+  brickController: any = null;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
@@ -51,7 +64,6 @@ export class DatosProductoComponent implements OnInit,OnChanges{
     this.fechaEntregas();
   }
   
-
   fechaEntregas(){
     let hoy = new Date();
     let meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -68,11 +80,13 @@ export class DatosProductoComponent implements OnInit,OnChanges{
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes['producto'] && changes['producto'].currentValue) {
+      console.log(this.producto)
       this.vendidos = this.calcularVentas(this.producto.ventas);
       this.ventasHechas.emit(this.vendidos);
       this.unidades= 1;
       this.productoPropio = false;
       this.tamanioSelec = 0;
+      this.selectEstilo = 0; // Reset estilo seleccionado
       if(this.auth.currentUser){
         if(this.producto.idUsuario == this.auth.currentUser.uid){
           this.productoPropio = true;
@@ -88,6 +102,12 @@ export class DatosProductoComponent implements OnInit,OnChanges{
     this.unaUnidad = true;
   }
 
+  // Método helper para crear array de unidades
+  crearArrayUnidades(unidadesDisponibles: number): any[] {
+    const max = unidadesDisponibles > 10 ? 9 : unidadesDisponibles - 1;
+    return Array(max);
+  }
+
   calcularVentas(ventas: number): string {
     if(ventas == 0){
       return "nuevo producto"
@@ -96,24 +116,9 @@ export class DatosProductoComponent implements OnInit,OnChanges{
     }else{
       return `${ventas} vendidos`;
     }
-    //if (ventas <= 9 || ventas % 10 === 0 || ventas % 50 === 0 || ventas % 100 === 0) {
-    //  if(ventas == 0){
-    //    return "nuevo producto"
-    //  }else if(ventas == 1){
-    //    return `${ventas} vendido`;
-    //  }else{
-    //    return `${ventas} vendidos`;
-    //  }
-    //} else if (ventas < 100) {
-    //  return `+ ${Math.floor(ventas / 10) * 10} vendidos`;
-    //} else if (ventas < 1000) {
-    //  return `+ ${Math.floor(ventas / 50) * 50} vendidos`;
-    //} else {
-    //  return `+ ${Math.floor(ventas / 100) * 100} vendidos`;
-    //}
   }
 
-//------------------------------------------------------
+  //------------------------------------------------------
   saboresBatidos: any = {
     vainilla: 'prod/0MDi2sGNF4mLVTzaQJpD',
     fresa: 'prod/2iUqgXkQd7Ya7szCNKtB',
@@ -153,25 +158,16 @@ export class DatosProductoComponent implements OnInit,OnChanges{
     dulcedelechecremoso: 'prod/kfc3oui1335AH8UYGXON'
   }
   
-
   async seleccionarColor(htmlSelect: any){
     let index = htmlSelect.target.value;
     if(this.producto.colores && this.producto.colores.length !== 1){
       this.seleccionarColr.emit(index);
-      this.producto.botonCompra!.id = this.producto.colores[index].idBoton;
-      this.producto.botonCompra!.idDocumento = this.producto.colores[index].idBotonDocumento;
-      this.producto.botonCompra!.variante = this.producto.colores[index].variante;
     }
   }
 
   async seleccionarEstilo(htmlSelect: any){
-    let index = htmlSelect.target.value;
-    if(this.producto.estilos && this.producto.estilos.length !== 1){
-      this.seleccionarEstl.emit(index);
-      this.producto.botonCompra!.id = this.producto.estilos[index].idBoton;
-      this.producto.botonCompra!.idDocumento = this.producto.estilos[index].idBotonDocumento;
-      this.producto.botonCompra!.variante = this.producto.estilos[index].variante;
-    }
+    this.selectEstilo = Number(htmlSelect.target.value);
+    this.seleccionarEstl.emit(this.selectEstilo);
   }
 
   cambiarUnidades(event: any) {
@@ -181,30 +177,60 @@ export class DatosProductoComponent implements OnInit,OnChanges{
   }
 
   async comprar(){
-    if(this.productoCargado){
-      if(this.producto){ //verificar que el producto ah cargado para no enviar datos undefined
-        if(this.auth.currentUser){
-          if(this.productoPropio){
-            //Este es tu producto
-          }else{
-            if(this.producto.tamanios){
-              this.comprarService.agregarReferenciaCompra(this.producto.id!, this.auth.currentUser.uid, Number(this.unidades), this.tamanioSelec);
-            }else{
-              this.comprarService.agregarReferenciaCompra(this.producto.id!, this.auth.currentUser.uid, Number(this.unidades));
-            }
-            this.authService.getUsuarioId(this.auth.currentUser.uid).pipe(first()).subscribe((usuario)=>{
-              if(usuario.direcciones && usuario.direcciones.length !== 0){
-                this.router.navigate(['comprar/checkout/resumen']);
-              }else{
-                this.comprarService.agregarDir = true;
-                this.router.navigate(['comprar/checkout/detalles-envio']);
-              }
-            })
+    console.log('🚀 Iniciando flujo Comprar Ahora');
+    if(!this.producto){
+      alert('El producto aún no está cargado. Espera un momento.');
+      return;
+    }
+    if(!this.auth.currentUser){
+      this.router.navigate(['cuenta/crear-cuenta']);
+      return;
+    }
+    if(this.productoPropio){
+      alert('Este es tu propio producto');
+      return;
+    }
+    try {
+      await this.comprarService.prepararCompraRapida(this.producto, this.unidades, this.tamanioSelec);
+      // Navegar al flujo de checkout actualizado: seleccionar-direccion -> detalles-compra -> pago
+      this.router.navigate(['comprar/checkout/seleccionar-direccion']);
+    } catch (e) {
+      console.error('Error preparando compra rápida', e);
+      alert('No fue posible iniciar la compra. Intenta nuevamente.');
+    }
+  }
+
+  async agregarAlCarrito() {
+    console.log('🛒 Agregando producto al carrito...');
+    
+    if (this.producto) {
+      if (this.auth.currentUser) {
+        if (this.productoPropio) {
+          console.log('❌ Este es tu propio producto');
+          alert('No puedes agregar tu propio producto al carrito');
+        } else {
+          try {
+            // Agregar al carrito usando el servicio
+            await this.comprarService.agregarReferenciaCarrito(
+              this.producto.id!,
+              this.auth.currentUser.uid,
+              this.unidades,
+              this.producto.tamanios ? this.tamanioSelec : undefined
+            );
+            console.log('✅ Producto agregado al carrito');
+            alert('Producto agregado al carrito exitosamente');
+          } catch (error) {
+            console.error('❌ Error al agregar al carrito:', error);
+            alert('Error al agregar el producto al carrito');
           }
-        }else{
-          this.router.navigate(['cuenta/crear-cuenta']);
         }
+      } else {
+        console.log('❌ Usuario no autenticado');
+        this.router.navigate(['cuenta/crear-cuenta']);
       }
+    } else {
+      console.log('❌ Producto no cargado');
+      alert('El producto aún no está cargado');
     }
   }
 
@@ -215,6 +241,7 @@ export class DatosProductoComponent implements OnInit,OnChanges{
       window.scroll(0,0)
     })
   }
+
   opiniones(){
     window.scroll(0,3000)
   }

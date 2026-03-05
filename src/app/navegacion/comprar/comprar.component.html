@@ -1,32 +1,91 @@
 <app-menu-simple></app-menu-simple>
 <div class="body" *ngIf="productos.length !== 0">
-    <section class="contenido-compra" *ngIf="!compraExitosa">
+    <!-- VERSIÓN DESKTOP: Layout de dos columnas -->
+    <section class="contenido-compra desktop-layout" *ngIf="!enRutaRespuesta && !esModoMovil">
         <div class="izquierda">
             <router-outlet></router-outlet>
         </div>
-        <div class="derecha">
-            <button (click)="comprar()" [ngClass]="{'cargando': cargando, 'success': actualizacionExitosa}">
-                <span *ngIf="!cargando">Procesar compra</span> 
-                <span class="loading" *ngIf="cargando && !actualizacionExitosa"></span>
-                <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
-            </button>
-            <div>
-                <p>Producto<span *ngIf="productosLenght !== 1">s ({{productosLenght}})</span></p><p>$ {{precioProductos | number: '1.0-0'}}</p>
-            </div>
-            <div>
-                <p>Envio</p><p>$ {{precioEnvios | number: '1.0-0'}}</p>
-            </div>
-            <div class="linea"></div>
-            <div>
-                <p>Total</p><p>$ {{ (+precioProductos) + (+precioEnvios) | number: '1.0-0' }}</p>
-            </div>
+        <div class="derecha" *ngIf="!compraExitosa">
+            <app-resumen-compra
+                [productosLenght]="productosLenght"
+                [precioProductos]="precioProductos"
+                [precioEnvios]="precioEnvios"
+                [cargando]="cargando"
+                [actualizacionExitosa]="actualizacionExitosa"
+                [botonHabilitado]="validarPasoCompleto()"
+                [pasoActual]="pasoActual"
+                (procesarCompra)="procesarONavegar()"
+                (cerrarBricks)="onCerrarBricks()">>
+            </app-resumen-compra>
         </div>
     </section>
-    <section *ngIf="compraExitosa" class="compra-exitosa">
-        <h1>¡Compra exitosa! Te notificaremos cuando enviemos tu producto.</h1>
-        <button (click)="navegar([usuario.usuario + '/compras'])">Ver mis compras</button>
-        <button (click)="navegar([''])">Inicio</button>
+
+    <!-- VERSIÓN MÓVIL: Layout paso a paso -->
+    <section class="contenido-compra mobile-layout" *ngIf="!enRutaRespuesta && esModoMovil">
+        <!-- Indicador de pasos -->
+        <div class="pasos-indicador">
+            <div class="paso" 
+                 *ngFor="let paso of pasos" 
+                 [class.activo]="pasoActual === paso.id"
+                 [class.completado]="pasoCompletado(paso.id)">
+                <div class="paso-numero">{{ paso.numero }}</div>
+                <div class="paso-titulo">{{ paso.titulo }}</div>
+            </div>
+        </div>
+
+        <!-- Contenido del paso actual -->
+        <div class="paso-contenido">
+            <!-- Paso 1: Selección de dirección -->
+            <div class="paso-1" *ngIf="pasoActual === 'direccion'">
+                <router-outlet></router-outlet>
+                <div class="botones-navegacion" *ngIf="mostrarBotonPaso1">
+                    <button type="button" 
+                            class="btn-continuar"
+                            [disabled]="!validarPasoCompleto()"
+                            (click)="procesarONavegar()">
+                        Continuar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 2: Detalles y resumen -->
+            <div class="paso-2" *ngIf="pasoActual === 'detalles'">
+                <app-detalles-compra></app-detalles-compra>
+                <div class="botones-navegacion" *ngIf="mostrarBotonPaso2">
+                    <button type="button" 
+                            class="btn-continuar"
+                            (click)="procesarONavegar()">
+                        Ir al pago
+                    </button>
+                </div>
+            </div>
+
+            <!-- Componente resumen único para pasos 2 y 3 -->
+            <div class="resumen-compra-container" *ngIf="pasoActual === 'detalles' || pasoActual === 'pago'">
+                <app-resumen-compra
+                    #resumenCompraMovil
+                    [productosLenght]="productosLenght"
+                    [precioProductos]="precioProductos"
+                    [precioEnvios]="precioEnvios"
+                    [cargando]="cargando"
+                    [actualizacionExitosa]="actualizacionExitosa"
+                    [botonHabilitado]="obtenerBotonHabilitado()"
+                    [pasoActual]="pasoActual"
+                    [esModoMovil]="true"
+                    (procesarCompra)="obtenerAccionProcesar()()"
+                    (cerrarBricks)="onCerrarBricks()">>
+                </app-resumen-compra>
+            </div>
+            
+        </div>
     </section>
 
-    <app-footer></app-footer>
+
+
+    <!-- Layout de ancho completo para la página de respuesta -->
+    <section class="contenido-respuesta" *ngIf="enRutaRespuesta">
+        <router-outlet></router-outlet>
+    </section>
+
+    <app-footer *ngIf="!esModoMovil"></app-footer>
 </div>

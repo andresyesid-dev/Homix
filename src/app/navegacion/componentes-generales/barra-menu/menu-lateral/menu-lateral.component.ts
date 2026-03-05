@@ -50,6 +50,7 @@ import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { InformacionPerfilService } from 'src/app/servicios/informacionPerfil/informacion-perfil.service';
 import { Firestore, doc, getDoc } from '@angular/fire/firestore';
+import { VendedorService } from 'src/app/servicios/vendedor/vendedor.service';
 
 @Component({
   selector: 'app-menu-lateral',
@@ -59,13 +60,14 @@ import { Firestore, doc, getDoc } from '@angular/fire/firestore';
   providers: [provideIcons({iconoirViewStructureUp, heroBars3Solid, ionNotificationsOutline, heroTruck, heroUserCircleSolid,aspectsContactCard, heroArrowSmallLeft, ionClose, heroSquares2x2Solid, aspectsDeliver, heroNewspaper, heroCheckBadge, heroArrowUturnLeft, heroUsers, heroCalendarDays,/*-iconos- perfil*/ heroArrowSmallLeftMini, heroChevronRightMini, heroCheckCircle, heroQuestionMarkCircle, aspectsLineChart, heroLockClosed, heroFingerPrint, heroArrowRightOnRectangle, heroShoppingCart, heroStar, heroDocumentCheck, heroChatBubbleBottomCenterText, heroBanknotes,heroCurrencyDollar, heroRectangleGroup, heroBell, heroBuildingStorefront, heroChatBubbleLeftRight, heroBanknotesMini, heroDocumentChartBar, heroArrowTrendingUp, heroDocumentText})]
 })
 export class MenuLateralComponent implements OnInit{
-  constructor(private auth: Auth, private authService: AuthService, private changeDetector: ChangeDetectorRef, private zone: NgZone, private router: Router, private perfilService: InformacionPerfilService, private firestore: Firestore){}
+  constructor(private auth: Auth, private authService: AuthService, private changeDetector: ChangeDetectorRef, private zone: NgZone, private router: Router, private perfilService: InformacionPerfilService, private firestore: Firestore, private vendedorService: VendedorService){}
   user!: string;
   idUsuario!: string;
   state = 'inactive';
   submenuState: Array<string> = ['inactive', 'inactive', 'inactive'];
   sinUsuario = false;
   usuarioInterno = false;
+  usuarioVendedor = false;
 
   ngOnInit(): void {
     this.auth.onAuthStateChanged(async (user)=>{
@@ -73,10 +75,15 @@ export class MenuLateralComponent implements OnInit{
         const usuario = await this.authService.getUsuarioIdPromise(user.uid);
         this.user = usuario.usuario;
         this.idUsuario = usuario.id!;
+        
+        // Verificar si es usuario interno
         const usuarioInternoSnapshot = await getDoc(doc(this.firestore, `usuarios-internos/${usuario.id}`));
         if(usuarioInternoSnapshot.exists()){
           this.usuarioInterno = true;
         }
+
+        // Verificar si es vendedor activo usando el servicio
+        this.usuarioVendedor = await this.vendedorService.esVendedorActivo(usuario);
       }else{
         this.sinUsuario = true;
       }

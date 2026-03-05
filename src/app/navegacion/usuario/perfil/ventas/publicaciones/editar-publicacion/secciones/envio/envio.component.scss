@@ -1,0 +1,194 @@
+.contenido{
+	position: relative;
+	width: 550px;
+	background-color: white;
+	box-shadow: 0 -0.1px 2.6px rgba(0,0,0,0.17), 0 3.1px 2.3px rgba(0,0,0,0.05);
+	border-radius: 10px;
+	padding-bottom: 90px;
+	button.back{
+		width: 34px;
+		height: 34px;
+		background-color: #e9e9e9;
+		border-radius: 50%;
+		border: none;
+		position: absolute;
+		left: 20px;
+		top: 25px;
+		cursor: pointer;
+		transition: .2s;
+		ng-icon{
+			color: #666;
+			font-size: 21px;
+			padding: 3px 1px;
+		}
+		&:hover{
+			background-color: #ffad72;
+			ng-icon{
+				color: white;
+			}
+		}
+	}
+}
+form{
+	width: 100%;
+	h1 {
+		color: #666;
+		font-size: 24px;
+		letter-spacing: 0.7px;
+		word-spacing: 1.2px;
+		font-weight: 500;
+		text-align: center;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+		margin-bottom: 30px;
+        padding: 10.5px 0;
+	}
+	p {
+		width: 87%;
+		color: #777;
+		word-spacing: 1px;
+		font-weight: 450;
+		letter-spacing: 0.5px;
+		margin: auto;
+		text-align: center;
+	}
+
+	.inputs{
+		background-color: #fdfdfc;
+		border: 1px solid #eee;
+		margin-top: 10px;
+		margin-bottom: 15px;
+		padding: 20px;
+		width: calc(100% - 140px);
+		margin-left: 50px;
+		border-radius: 5px;
+		p{
+			text-align: left;
+			margin-left: 25px;
+			padding-top: 5px;
+			font-size: 13px;
+		}
+	}
+
+	.checkedBox{
+		&::before{
+			content: "";
+			border-color: #ccc;
+			transition: border-color 0.3s; 
+			background-color: white;
+		}
+		&::after{
+			content: "";
+			transition: border-color 0.3s; 
+			background-color: #ffa96c;
+			z-index: 1;
+			display: inline-block;
+		}
+	}
+	input{
+		position: absolute;
+		left: 63px;
+		width: 13px;
+		height: 13px;
+		cursor: pointer;
+		&::before{
+			content: "";
+			display: inline-block;
+			width: calc(145%);
+			height: calc(147%);
+			margin-left: -22.5%;
+			margin-top: -22.5% ;
+			border: 1px solid #b4b4b4; /* Cambio del borde a rojo */
+			border-radius: 50%; /* Bordes redondeados */
+			transition: border-color 0.3s; /* Transición suave */
+			background-color: #ffffff;
+		}
+		&::after{
+			position: absolute;
+			content: "";
+			width: calc(100%);
+			height: calc(100%);
+			top: 1px;
+			left: 1px;
+			border-radius: 50%; /* Bordes redondeados */
+			transition: border-color 0.3s; /* Transición suave */
+			display: none;
+		}
+	}
+
+	label{
+		margin-left: 25px;
+		color: #666;
+		word-spacing: 1px;
+		font-weight: 450;
+		letter-spacing: 0.5px;
+		cursor: pointer;
+	}
+
+	.botonInvalid {
+		width: 190px;
+		float: right;
+		background: white;
+		height: 40px;
+		border: 1px solid #aaa;
+		color: #888;
+		border-radius: 6px;
+		font-size: 16px;
+		margin: 20px 50px;
+		text-align: center;
+		cursor: default;
+		transition: .2s;
+	}
+
+	.botonValid {
+		width: 200px;
+		background: #ffad72;
+		border: none;
+		color: white;
+		font-size: 16px;
+		cursor: pointer;
+		&:hover{
+			background: #ffa462;
+		}
+	}
+}
+.success{
+    background-color: #3fd06b !important;
+    animation: botonCheck .5s;
+    &:hover{
+        background-color: #3fd06b !important;
+    }
+    ng-icon{
+        margin-top: 3px;
+        font-size: 28px;
+        animation: check .8s;
+		color: white;
+    }
+}
+
+@keyframes botonCheck {
+	0%{
+		transform: scale(.8);
+	}
+    65%{
+        transform: scale(1.05);
+    }
+	100%{
+		transform: scale(1);
+	}
+}
+
+@keyframes check {
+	0%{
+		transform: scale(.0);
+	}
+    40%{
+        transform: scale(.0);
+    }
+    80%{
+        transform: scale(1.3);
+    }
+	100%{
+		transform: scale(1);
+	}
+}

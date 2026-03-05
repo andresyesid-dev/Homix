@@ -1,0 +1,44 @@
+h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+    margin: 0 0 30px 0;
+}
+
+.cargando {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 400px;
+}
+
+.contenedor {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+}
+
+.sinOpiniones {
+    text-align: center;
+    padding: 80px 20px;
+    
+    img {
+        width: 200px;
+        height: 200px;
+        margin-bottom: 30px;
+        opacity: 0.6;
+    }
+    
+    p {
+        font-size: 20px;
+        font-weight: 500;
+        color: #555;
+        margin: 0 0 10px 0;
+        
+        &.descripcion {
+            font-size: 16px;
+            font-weight: 400;
+            color: #888;
+        }
+    }
+}

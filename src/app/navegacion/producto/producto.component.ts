@@ -32,6 +32,8 @@ export class ProductoComponent implements OnInit{
   usuarioVendedor!: Usuario; //Proteger datos
   miUsuario!: Usuario; //Proteger datos
   productos!: Producto[];
+  fotosProducto: string[][] = []; // Fotos obtenidas de Firebase Storage
+  fotosActuales: string[] = []; // Fotos del estilo actual seleccionado
 
   enFavoritos: boolean = false;
   enCarrito: boolean = false;
@@ -181,9 +183,17 @@ export class ProductoComponent implements OnInit{
   }
 
   seleccionarColor(index: number){
+    // Cambiar a las fotos del color seleccionado
+    if (this.fotosProducto && this.fotosProducto.length > index) {
+      this.fotosActuales = this.fotosProducto[index];
+    }
     this.producto.fotos = this.producto.colores![index].fotos;
   }
   seleccionarEstilo(index: number){
+    // Cambiar a las fotos del estilo seleccionado
+    if (this.fotosProducto && this.fotosProducto.length > index) {
+      this.fotosActuales = this.fotosProducto[index];
+    }
     this.producto.fotos = this.producto.estilos![index].fotos;
   }
 
@@ -229,9 +239,37 @@ export class ProductoComponent implements OnInit{
     const producto$ = this.prdService.obtenerProductoId(idProducto);
     const producto = await firstValueFrom(producto$);
     if(producto){
+      // Obtener fotos desde Firebase Storage
+      await this.cargarFotosProducto(producto);
       return producto
     }else{
       return null
+    }
+  }
+
+  async cargarFotosProducto(producto: Producto): Promise<void> {
+    try {
+      // Cargar estilos completos con nombre y unidades (si es formato antiguo)
+      await this.prdService.cargarEstilosCompletos(producto);
+      
+      // Obtener las fotos (ya están cargadas en producto.estilos si es formato antiguo)
+      if (producto.estilos && Array.isArray(producto.estilos) && producto.estilos[0].fotos) {
+        // Formato antiguo: las fotos ya están en los estilos después de cargarEstilosCompletos
+        this.fotosProducto = producto.estilos.map(estilo => estilo.fotos);
+      } else {
+        // Formato nuevo: usar el método original
+        this.fotosProducto = await this.prdService.obtenerFotosProducto(producto);
+      }
+      
+      // Inicializar con las fotos del primer estilo
+      this.fotosActuales = this.fotosProducto.length > 0 ? this.fotosProducto[0] : [];
+    } catch (error) {
+      console.error('Error cargando fotos del producto:', error);
+      // Fallback a fotos locales si falla
+      if (producto.fotos && producto.fotos.length > 0) {
+        this.fotosActuales = producto.fotos.map(foto => `assets/img/productos/${foto}.webp`);
+        this.fotosProducto = [this.fotosActuales];
+      }
     }
   }
 
@@ -332,11 +370,13 @@ export class ProductoComponent implements OnInit{
   }
 
   fotoNex() {
-    this.indexFoto = (this.indexFoto + 1) % this.producto.fotos.length;
+    const totalFotos = this.fotosActuales.length || this.producto.fotos.length;
+    this.indexFoto = (this.indexFoto + 1) % totalFotos;
   }
 
   fotoPrev() {
-    this.indexFoto = (this.indexFoto - 1 + this.producto.fotos.length) % this.producto.fotos.length;
+    const totalFotos = this.fotosActuales.length || this.producto.fotos.length;
+    this.indexFoto = (this.indexFoto - 1 + totalFotos) % totalFotos;
   }
 
   @HostListener('document:keydown', ['$event'])
