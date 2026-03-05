@@ -2,27 +2,363 @@
 .body{
 	position: relative;
 	min-height: 100vh;
-	min-width: 940px;
-	padding-bottom: 430px;
+	padding-bottom: 460px;
+	background: #f8f8f8;
+	min-width: 1200px;
 	overflow: hidden;
-	background-color: #f9f9f9;
-	@media (max-width: 900px) {
-        padding-bottom: 550px;
+}
+.contenidoUsuario{
+	display: grid;
+	grid-template-columns: 60px 1fr;
+	height: auto;
+	padding-bottom: 40px;
+}
+.contenidoInfoUsuario{
+	padding-right: 28px;
+	min-width: 750px;
+	margin: 36px auto 20px auto;
+	margin-top: 25px !important;
+	display: flex;
+	width: 1600px;
+}
+.contenidoInfoUsuario .contenido2{
+	max-width: 1400px;
+	width: 100%;
+	display: block;
+	margin: 0 0 0 5%;
+	border-radius: 5px;
+}
+
+@media (max-width: 1950px){
+	.contenidoUsuario{
+		grid-template-columns: 60px 1fr;
 	}
-	@media (max-width: 560px) {
-		padding-bottom: 850px;
+	.headercuenta ul.principalUL{
+		width: 60px;
+		position: relative;
+		z-index: 20;
+	}
+
+	.headercuenta ul.principalUL li span.menuSmall{
+		display: none;
+	}
+	.headercuenta .principalUL li.titleMenu{
+		padding: 20px;
+	}
+	.headercuenta .principalUL li.titleMenu ng-icon{
+		margin: 25px 0px 22px 0px;
+		font-size: 20px;
+		color: #FFA663;
+		padding: 24 0px;
+	}
+
+	/*--------------------------------*/
+	.menuSmallMouse{
+		width: 260px;
+		position: relative;
+		z-index: 100;
+		overflow-y: auto;
+		overflow-x: hidden;
+		box-shadow: 3px 2px 13px rgba(#000,0.32);
+		animation: widthMenuSmallMouse .3s;
+		li{
+			width: 260px;
+			span.menuSmall{
+				display: inline;
+				animation: displayMenuSmall .5s;
+			}
+			.titleMenu{
+				padding: 40px;
+				ng-icon{
+					color: #555;
+					margin: 0px 12px;
+					font-size: 20px;
+					padding: 0;
+					margin-left: -20px;
+					margin-top: 4px;
+				}
+			}
+		}
 	}
 }
-.contenidoTotal {
-	width: 1400px;
-	margin: auto;
 
-	@media screen and (max-width: 1550px) {
-		width: 90%;
-		margin: auto;
+@media (max-width: 1720px){
+	.contenidoInfoUsuario{
+		margin: 36px 0 20px 0;
+		width: 97%;
 	}
-	@media screen and (max-width: 1000px) {
-		width: 900px;
-		margin: auto;
+}
+@media (max-width: 1000px){
+	.contenidoInfoUsuario{
+		width: 96%;
+	}
+}
+
+/*------------------------------------- LAYOUT ----------------------------------*/
+.headercuenta{
+	top: 100%;
+	left: 0;
+	width: 0%;
+}
+
+.headercuenta .botones{
+	display: flex;
+	margin-top: 10px;
+	margin-left: 12px;
+	width: 140px;
+}
+
+@mixin picUser4 {
+	width: 43px;
+	height: 43px;
+}
+
+.headercuenta ul.principalUL::-webkit-scrollbar{
+	width: 7px;
+	background-color: #ccc;
+}
+.headercuenta ul.principalUL::-webkit-scrollbar-thumb{
+	background-color: #999 ;
+	border-radius: 4px;
+}
+
+.headercuenta ul.principalUL{
+	margin-top:-1px;
+	padding: 0;
+	background: #fdfdfd;
+	width: 260px;
+	height: 1250px;
+	list-style: none;
+	transition: left .4s;
+	overflow-y: auto;
+	overflow-x: hidden;
+	box-shadow: 3px 2px 12px rgba($color: #000000, $alpha: .1);
+	z-index: 60;
+	
+	.IdPicUser4{
+		margin-top: 20px;
+		width: 85px;
+		height: 85px;
+		border-radius: 50%;
+		transition: 3s;
+		object-fit: cover;
+	}
+	
+	@media (max-width: 1950px) {
+		width: 60px;
+		
+		.icono-next{
+			display: none;
+		}
+		.texto{
+			display: none;
+		}
+		.IdPicUser4 {
+			margin-top: 27px;
+			transition: .3s;
+			object-fit: cover;
+			@include picUser4();
+		}
+		
+		&:hover {
+			@extend .menuSmallMouse;
+			.IdPicUser4 {
+				margin-top: 20px;
+				width: 90px;
+				height: 90px;
+				border-radius: 50%;
+				transition: .3s;
+				object-fit: cover;
+				z-index: 2;
+				position: relative;
+			}
+			.icono-submenu{
+				display: block;
+				top: 21px;
+				right: 10px;
+			}
+			.texto{
+				display: block;
+			}
+			.item-submenu-compras p{
+				display: flex;
+			}
+			.item-submenu-ventas p{
+				display: flex;
+			}
+		}
+	}
+}
+
+.sombraMenuSmall{
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	background: rgb(0,0,0,0.46);
+	z-index: 20;
+	opacity: 0;
+	transition: opacity .2s;
+}
+
+.submenu-compras{
+	position: static;
+	background: #ddd;
+	padding: 0;
+	overflow: hidden;
+	li {
+		list-style: none;
+		left: 0;
+	}
+}
+
+.submenu-ventas{
+	position: static;
+	background: #ddd;
+	padding: 0;
+	overflow: hidden;
+	li {
+		list-style: none;
+		left: 0;
+	}
+}
+
+.contenidoHeader4{
+	width: 100%;
+	height: 125px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.headercuenta .principalUL li.titleMenu{
+	padding: 10px 0px 20px 0px;
+	background: #fdfdfd;
+	color: #555;
+	font-size: 20px;
+	text-align: center;
+	font-weight: 550;
+	letter-spacing: .5px;
+	word-spacing: 1px;
+}
+
+.headercuenta .principalUL ng-icon{
+	margin-right: 14px;
+	font-size: 20px;
+	color: #555;
+}
+
+.headercuenta .principalUL a{
+	display: block;
+	padding: 20px;
+	font-size: 16px;
+	font-weight: 450;
+	text-decoration: none;
+	color: #555;
+	margin: 0;
+}
+
+.headercuenta .principalUL li.item-submenu-compras p{
+	padding: 20px;
+	font-size: 16px;
+	font-weight: 450;
+	color: #555;
+	cursor: pointer;
+	margin:0;
+	position: relative;
+	&:hover {
+		background: #f4f4f4;
+		ng-icon {
+			color: #111;
+		}
+	}
+}
+
+.perfil-a:hover{
+	background: #f4f4f4 !important;
+	ng-icon{
+		color: #111 !important;
+	}
+}
+
+.facturacion-a:hover{
+	background: #f4f4f4 !important;
+	ng-icon{
+		color: #111 !important;
+	}
+}
+
+.headercuenta .principalUL li.item-submenu-ventas p{
+	padding: 20px;
+	font-size: 16px;
+	font-weight: 450;
+	color: #555;
+	cursor: pointer;
+	margin:0;
+	position: relative;
+	&:hover {
+		background: #f4f4f4;
+		ng-icon {
+			color: #000;
+		}
+	}
+}
+
+.icono-submenu{
+	display: none;
+}
+
+.headercuenta .principalUL li a ng-icon{
+	margin-right: 12px;
+	font-size: 19px;
+}
+
+.headercuenta .principalUL li a:hover{
+	background: #ccc;
+	ng-icon{
+		color: #111;
+	}
+}
+
+.headercuenta .principalUL li.item-submenu-compras p .icono-submenu{
+	position: absolute;
+}
+
+.headercuenta .principalUL li.item-submenu-ventas p .icono-submenu{
+	position: absolute;
+}
+
+.submenu-compras li a,
+.submenu-ventas li a{
+	padding: 16px 20px 16px 48px !important;
+	font-size: 15px;
+	font-weight: 450;
+	color: #777;
+	ng-icon{
+		margin-right: 12px;
+		font-size: 19px;
+	}
+	&:hover{
+		background: #ccc;
+		ng-icon{
+			color: #111;
+		}
+	}
+}
+
+@keyframes widthMenuSmallMouse {
+	from{
+		width: 60px;
+	}
+	to{
+		width: 260px;
+	}
+}
+
+@keyframes displayMenuSmall {
+	from{
+		opacity: 0;
+	}
+	to{
+		opacity: 1;
 	}
 }

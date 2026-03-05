@@ -3,16 +3,16 @@
     <section *ngIf="!datosCargados" class="cargando"><app-cargando></app-cargando></section>
     <ng-container *ngIf="datosCargados">
         <div class="encabezado">
-            <p *ngIf="favoritos">{{favoritos.length}} favorito<span *ngIf="favoritos.length !== 1">s</span></p>
-            <p *ngIf="!favoritos">0 favoritos</p>
+            <p *ngIf="favoritos && favoritos.length > 0">{{favoritos.length}} favorito<span *ngIf="favoritos.length !== 1">s</span></p>
+            <p *ngIf="!favoritos || favoritos.length === 0">0 favoritos</p>
         </div>
         
         <app-favorito (elimar)="eliminarFavorito($event)" [favorito]="favorito" *ngFor="let favorito of favoritos; let index = index"></app-favorito>
         
-        <div class="sinFavoritos" *ngIf="!favoritos">
+        <div class="sinFavoritos" *ngIf="!favoritos || favoritos.length === 0">
             <img src="assets/img/logo/iconos/favorites-empty.svg">
-            <p>No tienes porductos en tus favoritos</p>
-            <a>Agregar ahora</a>
+            <p>No tienes productos en tus favoritos</p>
+            <a (click)="navegar(['/'], $event)">Agregar ahora</a>
         </div>
     </ng-container>
 </div>

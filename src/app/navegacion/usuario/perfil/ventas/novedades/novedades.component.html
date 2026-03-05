@@ -1,0 +1,12 @@
+<h1>Novedades</h1>
+<section *ngIf="!datosCargados" class="cargando"><app-cargando></app-cargando></section>
+<ng-container *ngIf="datosCargados">
+    <div class="contenedor" *ngIf="novedades && novedades.length > 0">
+        <app-novedad [novedad]="novedad" *ngFor="let novedad of novedades"></app-novedad>
+    </div>
+    <div class="sinNovedades" *ngIf="!novedades || novedades.length === 0">
+        <img src="assets/img/logo/iconos/empty-notifications.svg" alt="Sin novedades">
+        <p>No tienes novedades</p>
+        <p class="descripcion">Las notificaciones importantes sobre tus ventas aparecerán aquí</p>
+    </div>
+</ng-container>

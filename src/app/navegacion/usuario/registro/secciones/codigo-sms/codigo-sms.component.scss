@@ -70,13 +70,13 @@
         cursor: pointer;
         border: none;
         color: #fff;
-        background-color: #FF9C53;
+        background-color: #FF9C59;
         font-weight: 500;
         letter-spacing: .5px;
         word-spacing: 1px;
         height: 40px;
         &:hover{
-            background-color: #FF9C53;
+            background-color: #FF9C59;
         }
     }
     .error{
@@ -99,9 +99,9 @@
 }
 .cargando{
 	cursor: default !important;
-    background-color: #FF9C53 !important;
+    background-color: #FF9C59 !important;
 	&:hover{
-		background: #FF9C53 !important;
+		background: #FF9C59 !important;
 	}
 }
 .loading{

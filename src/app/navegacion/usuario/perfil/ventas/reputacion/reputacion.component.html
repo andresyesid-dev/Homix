@@ -1,0 +1,49 @@
+<h1>Reputación</h1>
+
+<div class="cargando" *ngIf="!datosCargados">
+    <app-cargando></app-cargando>
+</div>
+
+<div class="contenedor-reputacion" *ngIf="datosCargados">
+    <div class="nivel-card">
+        <div class="nivel-badge">
+            <ng-icon name="heroShieldCheck" size="48"></ng-icon>
+            <h2>{{ nivel }}</h2>
+        </div>
+        <p class="nivel-descripcion">Tu nivel como vendedor</p>
+    </div>
+
+    <div class="metricas-grid">
+        <div class="metrica-card">
+            <ng-icon name="heroStar" size="32"></ng-icon>
+            <div class="metrica-info">
+                <span class="metrica-valor">{{ calificacionPromedio | number:'1.1-1' }}</span>
+                <span class="metrica-label">Calificación promedio</span>
+            </div>
+        </div>
+
+        <div class="metrica-card">
+            <ng-icon name="heroShoppingBag" size="32"></ng-icon>
+            <div class="metrica-info">
+                <span class="metrica-valor">{{ totalVentas }}</span>
+                <span class="metrica-label">Total de ventas</span>
+            </div>
+        </div>
+
+        <div class="metrica-card">
+            <ng-icon name="heroCheckCircle" size="32"></ng-icon>
+            <div class="metrica-info">
+                <span class="metrica-valor">{{ ventasExitosas }}</span>
+                <span class="metrica-label">Ventas exitosas</span>
+            </div>
+        </div>
+
+        <div class="metrica-card">
+            <ng-icon name="heroExclamationTriangle" size="32"></ng-icon>
+            <div class="metrica-info">
+                <span class="metrica-valor">{{ reclamos }}</span>
+                <span class="metrica-label">Reclamos</span>
+            </div>
+        </div>
+    </div>
+</div>

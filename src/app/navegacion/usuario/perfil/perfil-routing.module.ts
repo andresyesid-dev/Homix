@@ -16,6 +16,10 @@ import { MetricasComponent } from './ventas/metricas/metricas.component';
 import { PublicacionesComponent } from './ventas/publicaciones/publicaciones.component';
 import { VentasComponent } from './ventas/ventas/ventas.component';
 import { TuDineroComponent } from './perfil/secciones/tu-dinero/tu-dinero.component';
+import { OpinionesComponent } from './compras/opiniones/opiniones.component';
+import { NovedadesComponent } from './ventas/novedades/novedades.component';
+import { ReputacionComponent } from './ventas/reputacion/reputacion.component';
+import { EditarPublicacionComponent } from './ventas/publicaciones/editar-publicacion/editar-publicacion.component';
 
 /*---------  Secciones facturación  -----------*/
 
@@ -46,6 +50,10 @@ import { TuDineroComponent } from './perfil/secciones/tu-dinero/tu-dinero.compon
       {
         path: 'favoritos',
         component: FavoritosComponent
+      },
+      {
+        path: 'opiniones',
+        component: OpinionesComponent
       },/*-----------------------------------------*/
       {
         path: 'metricas',
@@ -70,14 +78,31 @@ import { TuDineroComponent } from './perfil/secciones/tu-dinero/tu-dinero.compon
         component: PublicacionesComponent
       },
       {
+        path: 'editar-publicacion/:id',
+        component: EditarPublicacionComponent
+      },
+      {
         path: 'tu-dinero',
         component: TuDineroComponent
+      },
+      {
+        path: 'novedades',
+        component: NovedadesComponent
+      },
+      {
+        path: 'reputacion',
+        component: ReputacionComponent
       },
 
       /*------- Seccion Ventas-------*/
       {
         path: 'ventas',
         component: VentasComponent
+      },
+      /*------- Seccion Facturación-------*/
+      {
+        path: 'facturacion',
+        loadChildren: () => import('./facturacion/facturacion.module').then(m => m.FacturacionModule)
       },
 
     ]

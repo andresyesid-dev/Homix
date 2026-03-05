@@ -1,9 +1,9 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Auth } from '@angular/fire/auth';
 import { Firestore, arrayUnion, doc, getDoc, setDoc, updateDoc } from '@angular/fire/firestore';
 import { Direccion } from 'src/app/interfaces/usuario/subInterfaces/direccion';
 import { AuthService } from '../usuarios/auth.service';
-import { Observable, map } from 'rxjs';
+import { Observable, Subject, map } from 'rxjs';
 import { Usuario, porComprar, referenciaCompra } from 'src/app/interfaces/usuario/usuario';
 import { Producto } from 'src/app/interfaces/producto/producto';
 import { Venta } from 'src/app/interfaces/venta';
@@ -17,7 +17,8 @@ export class ComprarService {
     private firestore: Firestore, 
     private auth: Auth, 
     private authService: AuthService,
-    private functions: Functions
+    private functions: Functions,
+    private ngZone: NgZone
   ){}
   agregarDir = false;
   modificarDir = false;
@@ -27,6 +28,17 @@ export class ComprarService {
   private productoCompra: Producto | null = null;
   private unidadesCompra: number = 1;
   private tamanioSeleccionado: number = 0;
+  private direccionEnvio: Direccion | null = null;
+  private totalCompra: number = 0;
+  private estadoPago: any = null;
+
+  // Subject para comunicar el inicio del pago con MercadoPago
+  private iniciarPagoSubject = new Subject<void>();
+  public iniciarPago$ = this.iniciarPagoSubject.asObservable();
+
+  // Subject para comunicar que el pago fue aprobado
+  private pagoAprobadoSubject = new Subject<any>();
+  public pagoAprobado$ = this.pagoAprobadoSubject.asObservable();
 
   get $obtenerReferencias(): Observable<referenciaCompra[]>{
     return this.authService.getUsuarioId(this.auth.currentUser?.uid!).pipe(
@@ -87,6 +99,19 @@ export class ComprarService {
     this.productoCompra = null;
     this.unidadesCompra = 1;
     this.tamanioSeleccionado = 0;
+  }
+
+  // Métodos para manejar la dirección de envío
+  setDireccionEnvio(direccion: Direccion): void {
+    this.direccionEnvio = direccion;
+  }
+
+  getDireccionEnvio(): Direccion | null {
+    return this.direccionEnvio;
+  }
+
+  clearDireccionEnvio(): void {
+    this.direccionEnvio = null;
   }
   
   /**
@@ -388,9 +413,18 @@ export class ComprarService {
    */
   async procesarPagoCompleto(datosPago: any): Promise<MercadoPagoPaymentResponse> {
     try {
+      // Determinar si es un pago con token (tarjetas) o sin token (PSE, Efecty, etc.)
+      const tieneToken = datosPago.datosPago.token != null;
+      const esPSE = datosPago.datosPago.payment_method_id === 'pse';
+      
+      console.log('🔍 Procesando pago:', {
+        payment_method_id: datosPago.datosPago.payment_method_id,
+        tiene_token: tieneToken,
+        es_pse: esPSE
+      });
+
       // Construir los datos para MercadoPago
-      const paymentData: MercadoPagoPaymentData = {
-        token: datosPago.datosPago.token,
+      const paymentData: any = {
         amount: datosPago.total,
         description: `${datosPago.producto.nombre} - ${datosPago.unidades} unidades`,
         installments: datosPago.datosPago.installments || 1,
@@ -404,16 +438,123 @@ export class ComprarService {
         }
       };
 
+      // Solo agregar el token si existe (tarjetas de crédito/débito)
+      if (tieneToken) {
+        paymentData.token = datosPago.datosPago.token;
+        console.log('💳 Pago con tarjeta - Token incluido');
+      } else {
+        console.log('🏦 Pago sin token (PSE/Efecty/Ticket)');
+        
+        // Para PSE, agregar entity_type (requerido)
+        if (esPSE) {
+          paymentData.payer.entity_type = datosPago.datosPago.payer.entity_type || 'individual';
+          
+          // Agregar transaction_details si existe
+          if (datosPago.datosPago.transaction_details) {
+            paymentData.transaction_details = datosPago.datosPago.transaction_details;
+          }
+          
+          // Agregar callback_url - MercadoPago requiere HTTPS y dominio público
+          // En desarrollo (localhost), usar URL de producción para evitar errores de validación
+          const baseUrl = window.location.origin;
+          const isLocalhost = baseUrl.includes('localhost') || baseUrl.includes('127.0.0.1');
+          
+          // Si es localhost, usar URL de producción; si no, usar la URL actual
+          const callbackUrl = isLocalhost 
+            ? 'https://homix0523.web.app/comprar/checkout/response'
+            : `${baseUrl}/comprar/checkout/response`;
+            
+          paymentData.callback_url = callbackUrl;
+          console.log('🔗 Callback URL configurado:', paymentData.callback_url);
+          
+          console.log('🏦 PSE - entity_type y transaction_details incluidos');
+        }
+        
+        // Para métodos sin token, pueden venir datos adicionales
+        if (!esPSE && datosPago.datosPago.transaction_details) {
+          paymentData.transaction_details = datosPago.datosPago.transaction_details;
+        }
+      }
+
+      console.log('📤 Enviando a Cloud Function:', JSON.stringify(paymentData, null, 2));
+
       // Procesar el pago usando el método existente
       const resultado = await this.procesarPagoMercadoPago(paymentData);
       
       console.log('✅ Pago procesado exitosamente:', resultado);
+      
+      // Si es PSE, buscar la URL del banco en transaction_details
+      if (esPSE && resultado.payment) {
+        const externalUrl = resultado.payment.transaction_details?.external_resource_url 
+                           || resultado.payment.external_resource_url;
+        
+        if (externalUrl) {
+          console.log('🏦 PSE - Abriendo página del banco en nueva pestaña:', externalUrl);
+          
+          // Abrir en nueva pestaña
+          window.open(externalUrl, '_blank', 'noopener,noreferrer');
+        } else {
+          console.warn('⚠️ PSE procesado pero no se encontró external_resource_url');
+        }
+      }
+      
       return resultado;
       
     } catch (error: any) {
       console.error('❌ Error procesando pago completo:', error);
       throw new Error(error.message || 'Error al procesar el pago completo');
     }
+  }
+
+  /**
+   * Emite un evento para iniciar el pago con MercadoPago Bricks
+   */
+  iniciarPagoMercadoPago(): void {
+    console.log('🎬 Servicio: Emitiendo evento para iniciar pago con MercadoPago');
+    this.iniciarPagoSubject.next();
+  }
+
+  /**
+   * Emite un evento cuando el pago ha sido aprobado por MercadoPago
+   */
+  notificarPagoAprobado(paymentData: any): void {
+    console.log('✅ Servicio: Pago aprobado, emitiendo evento', paymentData);
+    this.pagoAprobadoSubject.next(paymentData);
+  }
+
+  /**
+   * Guarda el total de la compra
+   */
+  setTotalCompra(total: number): void {
+    this.totalCompra = total;
+  }
+
+  /**
+   * Obtiene el total de la compra
+   */
+  getTotalCompra(): number {
+    return this.totalCompra;
+  }
+
+  /**
+   * Guarda el estado del pago procesado
+   */
+  setEstadoPago(estado: any): void {
+    this.estadoPago = estado;
+  }
+
+  /**
+   * Obtiene el estado del pago
+   */
+  getEstadoPago(): any {
+    return this.estadoPago;
+  }
+
+  /**
+   * Limpia el estado del pago
+   */
+  limpiarEstadoPago(): void {
+    this.estadoPago = null;
   }
 
 }

@@ -37,15 +37,27 @@ export class FavoritosComponent implements OnInit, OnDestroy{
   }
 
   async obtenerProductos() {
-    if (this.usuario.favoritos && this.usuario.favoritos.length !== 0) {
-      const favoritosSnapshot = await Promise.all(this.usuario?.favoritos.map((ref:any) => getDoc(ref)));
-      this.favoritos = favoritosSnapshot.map((favoritoSnapshot)=>{
-        const prd = favoritoSnapshot.data() as Producto;
-        prd.id = favoritoSnapshot.id;
-        return prd
-      })
+    try {
+      if (this.usuario.favoritos && this.usuario.favoritos.length !== 0) {
+        const favoritosSnapshot = await Promise.all(this.usuario?.favoritos.map((ref:any) => getDoc(ref)));
+        this.favoritos = await Promise.all(favoritosSnapshot.map(async (favoritoSnapshot) => {
+          const prd = favoritoSnapshot.data() as Producto;
+          prd.id = favoritoSnapshot.id;
+          
+          // Cargar estilos completos si es necesario
+          await this.prdsService.cargarEstilosCompletos(prd);
+          
+          return prd;
+        }));
+      } else {
+        this.favoritos = [];
+      }
+    } catch (error) {
+      console.error('Error obteniendo favoritos:', error);
+      this.favoritos = [];
+    } finally {
+      this.datosCargados = true;
     }
-    this.datosCargados = true;
   }
 
   async eliminarFavorito(idProducto: string){

@@ -109,7 +109,7 @@
                 border-radius: 5px;
                 &:hover{
                     cursor: pointer;
-                    box-shadow: 0 0 6px #FF9C53;
+                    box-shadow: 0 0 6px #FF9C59;
                 }
             }
         }
@@ -196,7 +196,7 @@
             letter-spacing: .4px;
             &:hover{
                 cursor: pointer;
-                background-color: #FF9C53;
+                background-color: #FF9C59;
             }
         }
         ng-icon.agregarImagen{
@@ -328,11 +328,11 @@
     
                 }
                 .selected{
-                    border: 1.5px solid #FF9C53 !important;
+                    border: 1.5px solid #FF9C59 !important;
                     span{
                         width: 7.8px;
                         height: 7.8px;
-                        background: #FF9C53;
+                        background: #FF9C59;
                         border-radius: 50%;
                         animation: select .25s ease-in-out;
                     }
@@ -376,7 +376,7 @@
             margin: 0;
             font-size: 16.5px;
             font-weight: 480;
-            color: #FF9C53;
+            color: #FF9C59;
             letter-spacing: .4px;
             padding-left: 40px;
         }

@@ -1,0 +1,80 @@
+<div class="resumen-lateral">
+  <!-- Resumen de precios - Solo se muestra cuando NO está el brick -->
+  <div *ngIf="!mostrarBrickPago" class="resumen-container">
+    <div class="resumen-header">
+      <h3>Resumen de tu compra</h3>
+    </div>
+
+    <div class="resumen-detalles">
+      <div class="detalle-item">
+        <span class="label">
+          <span class="label-texto">Producto<span *ngIf="productosLenght !== 1">s</span></span>
+          <span class="badge-cantidad" *ngIf="productosLenght !== 1">{{productosLenght}}</span>
+        </span>
+        <span class="valor">$ {{precioProductos | number: '1.0-0'}}</span>
+      </div>
+      
+      <div class="detalle-item">
+        <span class="label">
+          <span class="label-texto">Envío</span>
+        </span>
+        <span class="valor envio">$ {{precioEnvios | number: '1.0-0'}}</span>
+      </div>
+    </div>
+    
+    <div class="linea-separador"></div>
+    
+    <div class="total-container">
+      <div class="detalle-item total">
+        <span class="label">Total</span>
+        <span class="valor">$ {{ (+precioProductos) + (+precioEnvios) | number: '1.0-0' }}</span>
+      </div>
+      <p class="moneda-aclaracion">Pesos colombianos (COP)</p>
+    </div>
+
+    <!-- Botón principal -->
+    <button 
+      class="btn-procesar"
+      (click)="onProcesarCompra()" 
+      [ngClass]="{'cargando': cargando, 'success': actualizacionExitosa, 'disabled': !botonHabilitado}"
+      [disabled]="!botonHabilitado || cargando">
+      <span *ngIf="!cargando && !actualizacionExitosa">{{getTextoBoton()}}</span> 
+      <span class="loading" *ngIf="cargando && !actualizacionExitosa"></span>
+      <ng-icon name="matCheck" *ngIf="actualizacionExitosa"></ng-icon>
+    </button>
+  </div>
+
+  <!-- Payment Brick de MercadoPago -->
+  <div class="payment-brick-section" *ngIf="mostrarBrickPago">
+    <div class="brick-header">
+      <h3>Completa tu pago</h3>
+      <button class="btn-cerrar" (click)="cerrarBrick()" *ngIf="!procestandoPago && !cargandoBrick" aria-label="Cerrar formulario de pago">
+        <span>✕</span>
+      </button>
+    </div>
+
+    <!-- Mensaje de carga - Solo visible mientras carga -->
+    <div class="brick-loading" *ngIf="cargandoBrick && !errorPago">
+      <div class="spinner"></div>
+      <p>Cargando formulario de pago...</p>
+      <p class="small">Espera un momento</p>
+    </div>
+
+    <!-- Contenedor del Payment Brick - Solo visible cuando NO está cargando y NO está procesando -->
+    <div id="payment-brick-container" [style.display]="cargandoBrick || procestandoPago ? 'none' : 'block'"></div>
+
+    <!-- Mensaje de procesamiento -->
+    <div class="processing" *ngIf="procestandoPago">
+      <div class="spinner"></div>
+      <p>Procesando tu pago...</p>
+      <p class="small">No cierres ni actualices esta ventana</p>
+    </div>
+
+    <!-- Mensaje de error -->
+    <div class="error-pago" *ngIf="errorPago">
+      <div class="error-icon">⚠️</div>
+      <p class="error-mensaje">{{errorPago}}</p>
+      <button class="btn-reintentar" (click)="mostrarPaymentBrick()">Intentar nuevamente</button>
+    </div>
+  </div>
+</div>

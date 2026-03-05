@@ -1,0 +1,9 @@
+<div class="novedad-card">
+    <div class="novedad-header">
+        <h3 class="titulo">{{ novedad.titulo }}</h3>
+        <span class="fecha" *ngIf="novedad.fecha">{{ novedad.fecha.toDate() | date:'short' }}</span>
+    </div>
+    <div class="novedad-contenido">
+        <p>{{ novedad.contenido }}</p>
+    </div>
+</div>

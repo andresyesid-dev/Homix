@@ -1,0 +1,247 @@
+.contenido{
+	position: relative;
+	width: 700px;
+	background-color: white;
+	box-shadow: 0 -0.1px 2.6px rgba(0,0,0,0.17), 0 3.1px 2.3px rgba(0,0,0,0.05);
+	border-radius: 10px;
+	button.back{
+		width: 34px;
+		height: 34px;
+		background-color: #e9e9e9;
+		border-radius: 50%;
+		border: none;
+		position: absolute;
+		left: 20px;
+		top: 25px;
+		cursor: pointer;
+		transition: .2s;
+		ng-icon{
+			color: #666;
+			font-size: 21px;
+			padding: 3px 1px;
+		}
+		&:hover{
+			background-color: #ffad72;
+			ng-icon{
+				color: white;
+			}
+		}
+	}
+}
+form {
+	padding-bottom: 80px;
+	h1 {
+		color: #666;
+		font-size: 24px;
+		letter-spacing: 0.7px;
+		word-spacing: 1.2px;
+		font-weight: 500;
+		text-align: center;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+		margin-bottom: 30px;
+        padding: 11px 0;
+	}
+	p {
+		width: 90%;
+		color: #707070;
+		word-spacing: 1px;
+		font-weight: 450;
+		letter-spacing: 0.5px;
+		margin: auto;
+		text-align: center;
+		font-size: 17px;
+	}
+
+	div.field-container {
+		width: calc(100% - 100px);
+		margin: 50px auto 45px 50px;
+		display: flex;
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 2%;
+		>div{
+			position: relative;
+			width: 23%;
+			button{
+				position: absolute;
+				right: -8px;
+				top: -7px;
+				border-radius: 50%;
+				background-color: #ffacac;
+				width: 20px;
+				height: 20px;
+				border: none;
+				font-size: 11px;
+				color: white;
+				&:hover{
+					cursor: pointer;
+					background-color: #ff8f8f;
+				}
+			}
+		}
+
+		.inputError{
+			border: 1px solid #ff7878 !important;
+		}
+		
+		input {
+			width: calc(100% - 40px);
+			padding: 12px 20px;
+			border: 1px solid #c0c0c0;
+			outline: none;
+			border-radius: 9px;
+			color: #505050;
+			font-weight: 420;
+			letter-spacing: 0.4px;
+			font-size: 14px;
+			margin-bottom: 14px;
+			&:focus {
+				border: 1.5px solid #bbb;
+			}
+			&::placeholder {
+				font-weight: 360;
+				letter-spacing: 0.6px;
+				color: #b0b0b0;
+			}
+		}
+		.addColor{
+			position: relative;
+			width: 23.1% !important;
+			height: 43px;
+			padding: 10px 110px 12px 10px;
+			border-radius: 9px;
+			background: #fffefc;
+			border: 1.5px dashed #ff9950;
+			font-size: 18px;
+			font-weight: 380;
+			color: #f9944b;
+			letter-spacing: .3px;
+			word-spacing: 1px;
+			cursor: pointer;
+			span{
+				position: absolute;
+				margin-left: 6px;
+				margin-top: 2px;
+				font-size: 14px;
+				font-weight: 420;
+			}
+			&:hover{
+				background-color: #fffaf6;
+			}
+		}
+	}
+
+	div.linea {
+		width: 100%;
+		border-bottom: 1px solid #ddd;
+	}
+
+	.botonInvalid {
+		width: 190px;
+		float: right;
+		background: white;
+		height: 40px;
+		border: 1px solid #aaa;
+		color: #888;
+		border-radius: 6px;
+		font-size: 16px;
+		margin: 0 50px;
+		text-align: center;
+		cursor: pointer;
+		transition: .2s;
+	}
+
+	.botonValid {
+		width: 200px;
+		background: #ffad72;
+		border: none;
+		color: white;
+		font-size: 16px;
+		&:hover{
+			background: #ffa462;
+		}
+	}
+}
+
+.alerta{
+	position: fixed;
+	width: 100%;
+	min-height: 100vh;
+	background-color: rgba($color: #000, $alpha: .5);
+    backdrop-filter: blur(5px);
+	left: 0;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	.content{
+		position: relative;
+		transform: translateY(-9vh);
+		width: 600px;
+		background: white;
+		border-radius: 8px;
+		padding: 50px 52px 40px 52px;
+		h1{
+			margin: 0;
+			text-align: center;
+			color: #555;
+			font-size: 30px;
+			padding: 0 20px;
+			letter-spacing: 0.7px;
+			word-spacing: 1.2px;
+			font-weight: 520;
+		}
+		p{
+			margin: 0;
+			font-size: 15.5px;
+			padding: 18px 0;
+			color: #707070;
+			word-spacing: 1px;
+			font-weight: 440;
+			letter-spacing: 0.4px;
+			line-height: 24px;
+		}
+		p:nth-child(2){
+			width: 102%;
+		}
+		>div{
+			width: 104%;
+		}
+		button{
+			width: 45%;
+			transform: translateX(55%);
+			background: #fbfbfb;
+			height: 40px;
+			border: 1px solid #b9b9b9;
+			color: #888;
+			border-radius: 6px;
+			font-size: 15px;
+			margin: 24px 0 0 0;
+			text-align: center;
+			letter-spacing: 0.4px;
+			word-spacing: 1px;
+			transition: .1s;
+			cursor: pointer;
+			&:hover{
+				background: #ff9e57;
+				border: none;
+				color: white;
+				font-weight: 480;
+			}
+		}
+		.close{
+			position: absolute;
+			font-size: 24px;
+			right: 20px;
+			top: 12px;
+			cursor: pointer;
+			padding: 0;
+			margin: 0;
+			color: #a4a4a4;
+			&:hover{
+				color: #606060;
+			}
+		}
+	}
+}

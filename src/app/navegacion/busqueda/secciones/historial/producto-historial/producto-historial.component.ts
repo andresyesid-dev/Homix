@@ -27,11 +27,31 @@ export class ProductoHistorialComponent {
   corazonClick: boolean = false;
   corazonOver: boolean = false;
   enFavoritos: boolean = false;
+  fotoUrl: string = '';
+  imagenCargada: boolean = false;
   
   constructor(private zone: NgZone, private router: Router, private auth: Auth, private firestore: Firestore, private prdService: ProductosService){}
 
-  ngOnInit(){
+  async ngOnInit(){
     this.definirFavorito(this.usuario, this.producto.id!);
+    await this.cargarFoto();
+  }
+
+  async cargarFoto() {
+    try {
+      const fotos = await this.prdService.obtenerFotoUno(this.producto);
+      this.fotoUrl = fotos[0] || '';
+    } catch (error) {
+      console.error('Error cargando foto:', error);
+      // Fallback a foto local si hay
+      if (this.producto.fotos && this.producto.fotos.length > 0) {
+        this.fotoUrl = `assets/img/productos/${this.producto.fotos[0]}.webp`;
+      }
+    }
+  }
+
+  onImageLoad() {
+    this.imagenCargada = true;
   }
 
   navegar(ruta: any[], event: Event){

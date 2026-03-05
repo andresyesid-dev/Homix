@@ -1,0 +1,20 @@
+<div class="opinion-card">
+    <div class="producto-info">
+            <div class="contenedor-foto">
+        <img [src]="opinion.foto" [alt]="opinion.tituloProducto" *ngIf="opinion.foto">
+    </div>
+        <div class="detalles">
+            <h3>{{opinion.tituloProducto}}</h3>
+            <p class="fecha">{{opinion.fecha.toDate() | date:'dd/MM/yyyy'}}</p>
+        </div>
+    </div>
+    <div class="opinion-contenido">
+        <div class="calificacion">
+            <ng-icon *ngFor="let star of [1,2,3,4,5]" 
+                     name="heroStar" 
+                     size="20" 
+                     [class.filled]="star <= (opinion.calificacion || 0)"></ng-icon>
+        </div>
+        <p class="comentario">{{opinion.contenido}}</p>
+    </div>
+</div>

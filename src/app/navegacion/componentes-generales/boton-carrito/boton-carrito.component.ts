@@ -54,7 +54,7 @@ export class BotonCarritoComponent {
                 "line-height": "14px",
                 "font-weight": "510",
                 "font-size": "16px",
-                "color": "#FF9C53",
+                "color": "#FF9C59",
                 "letter-spacing": ".8px",
                 "font-family": "verdana",
                 "border": "1.5px solid #ffa86a",

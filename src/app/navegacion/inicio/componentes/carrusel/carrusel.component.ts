@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, Renderer2, ViewChild, Input, NgZone, SimpleChanges } from '@angular/core';
+import { Component, ElementRef, OnInit, Renderer2, ViewChild, Input, NgZone, SimpleChanges, OnChanges } from '@angular/core';
 import { Storage, getDownloadURL, listAll, ref } from '@angular/fire/storage';
 import { Router } from '@angular/router';
 import { provideIcons } from '@ng-icons/core';
@@ -15,7 +15,7 @@ import { ProductosService } from 'src/app/servicios/productos/productos.service'
   styleUrls: ['./carrusel.component.scss'],
   viewProviders: provideIcons({heroChevronLeftSolid, heroChevronRightSolid})
 })
-export class CarruselComponent {
+export class CarruselComponent implements OnInit, OnChanges {
   @Input() elements!: Producto[];
   @Input() categorias!: Array<any>;
   @Input() carousel = 0;
@@ -24,7 +24,8 @@ export class CarruselComponent {
 
   public leftPosition!: number;
 
-  public fotos: string[] = [];
+  public fotosUrls: string[] = [];
+  public fotosMap: Map<string, string> = new Map();
 
   constructor(private renderer: Renderer2,private zone: NgZone,private router: Router, private storage: Storage, private prdService: ProductosService) { }
 
@@ -48,14 +49,47 @@ export class CarruselComponent {
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (this.carousel === 2){
         this.slickWidth = 250;
     }else
     if (this.carousel === 3){
         this.slickWidth = 252;
-    }  
+    }
+    
+    // Obtener URLs de fotos desde Firebase o assets
+    if (this.elements && this.elements.length > 0) {
+      await this.cargarFotos();
+    }
+  }
 
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
+    if (changes['elements'] && changes['elements'].currentValue) {
+      await this.cargarFotos();
+    }
+  }
+
+  async cargarFotos(): Promise<void> {
+    if (!this.elements || this.elements.length === 0) return;
+    
+    try {
+      this.fotosUrls = await this.prdService.obtenerFotos(this.elements);
+      // Crear mapa para acceso rápido por ID de producto
+      this.elements.forEach((producto, index) => {
+        if (producto.id) {
+          this.fotosMap.set(producto.id, this.fotosUrls[index]);
+        }
+      });
+    } catch (error) {
+      console.error('Error cargando fotos:', error);
+    }
+  }
+
+  obtenerFotoProducto(producto: Producto): string {
+    if (producto.id && this.fotosMap.has(producto.id)) {
+      return this.fotosMap.get(producto.id)!;
+    }
+    return 'assets/img/categoria/pic-loading.svg';
   }
 
   Move(value: number): void {

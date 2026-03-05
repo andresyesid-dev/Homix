@@ -1,0 +1,22 @@
+<div class="contenidoTotal">
+    <div *ngFor='let paso of pasos; index as i;' [ngClass]='{"pasos2": i % 2 === 0, "pasos1": i % 2 !== 0}'>
+        <div [ngClass]="i % 2 === 0 ? 'izquierda' : 'derecha'">
+            <div *ngIf='i % 2 === 0'>
+                <img src="{{ paso.img }}" alt="Image">
+            </div>
+            <div class="text">
+                <h2> {{ paso.titulo }} </h2>
+                <p>{{paso.contenido}}</p>
+            </div>
+            <div *ngIf='i % 2 !== 0'>
+                <img src="{{ paso.img }}" alt="Image">
+            </div>
+            <div class="contenedorRecuadro">
+                <div class="circuloFondo"></div>
+            </div>
+            <div class="circuloFondo-dos"></div>
+            <div class="circulo"><p>{{i + 1}}</p></div>
+        </div>
+    </div>
+
+</div>

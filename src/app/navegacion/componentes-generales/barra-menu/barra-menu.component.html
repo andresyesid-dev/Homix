@@ -5,7 +5,7 @@
           <button (click)='menuLateral.animarMenu()' class="btn-menu" id="button-menu">
               <p><ng-icon class="menu-icon" name="heroBars3Solid"></ng-icon>
           </button>
-          <a (click)="navegar('')" [ngClass]="{'sinLogo': enBuscador}"><img src="../../../../assets/img/logo/logocompleto.png" alt="" class="logo"></a>
+          <a (click)="navegar('')" [ngClass]="{'sinLogo': enBuscador}"><img src="../../../../assets/img/logo/logocompleto.svg" alt="" class="logo"></a>
           <ng-container>
             <input class="Buscador" (keyup.enter)="buscarEnter(busqueda.value)" placeholder='Buscar' type="text" #busqueda [(ngModel)]="ultimoDatoUrl" (focus)="enBuscador = true" (blur)="enBuscador = false">
             <div (click)="buscar(busqueda.value)" class="Buscar" ><ng-icon class="search" name="heroMagnifyingGlassMini"></ng-icon></div>
@@ -60,18 +60,18 @@
                   </a>
                 </li>
 
-                <div class="linea-Menu" *ngIf="usuarioInterno"></div>
-                <li *ngIf="usuarioInterno">
+                <div class="linea-Menu" *ngIf="usuarioInterno || usuarioVendedor"></div>
+                <li *ngIf="usuarioVendedor">
                   <a (click)='navegar(usuario?.usuario + "/publicaciones")'>
                     <ng-icon name="heroBuildingStorefront"></ng-icon> Publicaciones
                   </a>
                 </li>
-                <li *ngIf="usuarioInterno">
+                <li *ngIf="usuarioVendedor">
                   <a (click)='navegar(usuario?.usuario + "/ventas")'>
                     <ng-icon name="heroCurrencyDollar"></ng-icon> Ventas
                   </a>
                 </li>
-                <li *ngIf="usuarioInterno">
+                <li *ngIf="usuarioVendedor">
                   <a (click)='navegar(usuario?.usuario + "/metricas/negocio")'>
                     <ng-icon name="heroChartPie"></ng-icon> Métricas
                   </a>

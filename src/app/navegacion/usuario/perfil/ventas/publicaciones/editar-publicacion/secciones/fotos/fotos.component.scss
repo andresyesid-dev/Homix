@@ -1,0 +1,327 @@
+.contenido{
+	margin-top: 15px;
+	position: relative;
+	width: 700px;
+	background-color: white;
+	box-shadow: 0 -0.1px 2.6px rgba(0,0,0,0.17), 0 3.1px 2.3px rgba(0,0,0,0.05);
+	border-radius: 10px;
+	button.back{
+		width: 34px;
+		height: 34px;
+		background-color: #e9e9e9;
+		border-radius: 50%;
+		border: none;
+		position: absolute;
+		left: 20px;
+		top: 25px;
+		cursor: pointer;
+		transition: .2s;
+		ng-icon{
+			color: #666;
+			font-size: 21px;
+			padding: 3px 1px;
+		}
+		&:hover{
+			background-color: #ffad72;
+			ng-icon{
+				color: white;
+			}
+		}
+	}
+}
+form {
+	width: 100%;
+	padding-bottom: 100px;
+	h1 {
+		color: #666;
+		font-size: 23px;
+		letter-spacing: 0.7px;
+		word-spacing: 1.2px;
+		font-weight: 500;
+		text-align: center;
+        border-bottom: 1px solid #eee;
+        margin: 0;
+		margin-bottom: 30px;
+        padding: 10.5px 0;
+	}
+
+//---------------------------------
+
+	h5{
+		margin: 30px 0 0 50px;
+		color: #666;
+		word-spacing: 1px;
+		font-weight: 520;
+		letter-spacing: 0.5px;
+		font-size: 17px;
+	}
+	.fotos {
+		margin-top: 10px;
+		margin-bottom: 10px;
+		width: calc(100% - 100px);
+		margin-left: 50px;
+		overflow-x: auto; 
+		display: flex;
+		gap: 10px;
+		height: 122px;
+		.marco {
+			flex: 0 0 108px; 
+			height: 108px;
+			background: #fcfcfc;
+			border-radius: 5px;
+			border: 2px dashed #eee;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			ng-icon{
+				font-size: 40px;
+				color: #eee;
+			}
+		}
+		.active{
+			position: relative;
+			flex: 0 0 108px; 
+			height: 108px;
+			background: #f9f9f9;
+			border-radius: 5px;
+			border: 2px dashed #d5d5d5;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: .2s;
+			ng-icon{
+				font-size: 40px;
+				color: #c9c9c9;
+				transition: .2s;
+			}
+			&:hover{
+				background: #fffdfb;
+				border: 2px dashed #ffb886;
+				ng-icon{
+					color: #ffb27b;
+				}
+			}
+			input{
+				display: block !important;
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				opacity: 0;
+				cursor: pointer;
+			}
+			img{
+				display: block !important;
+				position: absolute;
+				width: calc(100% - 4px);
+				height: calc(100% - 4px);
+				margin: 2px;
+				border-radius: 2px;
+				object-fit: contain;
+			}
+		}
+		.conFoto{
+			&:hover{
+				background: #f9f9f9;
+				border: 2px dashed #d5d5d5;
+			}
+			input{
+				cursor: default;
+			}
+			ng-icon:nth-child(4){
+				display: block !important;
+				position: absolute;
+				top: 2px;
+				right: 2px;
+				color: #ff8f8f;
+				font-size: 24px;
+				z-index: 1;
+				cursor: pointer;
+				&:hover{
+					color: #ff8383;
+				}
+				opacity: 0;
+			}
+			.circulo{
+				display: block !important;
+				position: absolute;
+				top: 3px;
+				right: 3px;
+				width: 22px;
+				height: 22px;
+				background-color: white;
+				border-radius: 50%;
+				opacity: 0;
+			}
+			&:hover{
+				.circulo{
+					transition: .3s;
+					opacity: 1;
+				}
+				ng-icon:nth-child(4){
+					transition: .3s;
+					opacity: 1;
+				}
+			}
+		}
+	}
+	.inputs{
+		display: flex;
+		margin-left: 30px;
+		> div{
+			position: relative;
+			display: flex;
+			width: 160px;
+			margin-left: 20px;
+			margin-top: 20px;
+			margin-bottom: 20px;
+
+			label {
+				position: absolute;
+				top: -23px;
+				left: 0;
+				font-size: 14px;
+				font-weight: 420;
+				width: 250px;
+				text-align: left;
+				color: #777;
+				word-spacing: 1px;
+				font-weight: 450;
+				letter-spacing: 0.5px;
+				b {
+					font-size: 16px;
+					font-weight: 500;
+					margin: 0px 2px 0px 0px;
+				}
+			}
+
+			input{
+				width: 100%;
+				padding: 11px 20px;
+				border: 1px solid #c6c6c6;
+				outline: none;
+				border-radius: 7px;
+				color: #505050;
+				font-weight: 420;
+				letter-spacing: 0.4px;
+				font-size: 14px;
+				&::-webkit-inner-spin-button,
+				&::-webkit-outer-spin-button {
+					-webkit-appearance: none; 
+					appearance: none;
+				}
+				&:focus {
+					border: 1.4px solid #bbb;
+				}
+				&::placeholder {
+					font-weight: 380;
+					letter-spacing: 0.6px;
+					color: #b0b0b0;
+				}
+			}
+		}
+	}
+	
+	
+	
+	
+
+//---------------------------------
+
+	.botonInvalid {
+		position: relative;
+		width: 190px;
+		float: right;
+		background: white;
+		height: 40px;
+		border: 1px solid #aaa;
+		color: #888;
+		border-radius: 6px;
+		font-size: 16px;
+		margin: 30px 50px;
+		text-align: center;
+		cursor: default;
+		transition: .2s;
+	}
+
+	.botonValid {
+		width: 200px;
+		background: #ffad72;
+		border: none;
+		color: white;
+		font-size: 16px;
+		cursor: pointer;
+		&:hover{
+			background: #ffa462;
+		}
+	}
+}
+
+.cargando{
+	cursor: default !important;
+    background-color: #ffaa6d !important;
+	&:hover{
+		background: #ffaa6d !important;
+	}
+}
+
+.loading{
+	width: 21px;
+	height: 21px;
+	border: 3px solid white;
+	border-radius: 50%;
+	position: absolute;
+	left: calc(50% - 15px);
+	top: 5px;
+	border-left-color: transparent;
+	animation: load 1s ease infinite;
+}
+
+@keyframes load {
+	0%{
+		transform: rotate(0deg);
+	}
+	100%{
+		transform: rotate(360deg);
+	}
+}
+
+.success{
+    background-color: #3fd06b !important;
+    animation: botonCheck .5s;
+    &:hover{
+        background-color: #3fd06b !important;
+    }
+    ng-icon{
+        margin-top: 3px;
+        font-size: 28px;
+        animation: check .8s;
+		color: white;
+    }
+}
+
+@keyframes botonCheck {
+	0%{
+		transform: scale(.8);
+	}
+    65%{
+        transform: scale(1.05);
+    }
+	100%{
+		transform: scale(1);
+	}
+}
+
+@keyframes check {
+	0%{
+		transform: scale(.0);
+	}
+    40%{
+        transform: scale(.0);
+    }
+    80%{
+        transform: scale(1.3);
+    }
+	100%{
+		transform: scale(1);
+	}
+}

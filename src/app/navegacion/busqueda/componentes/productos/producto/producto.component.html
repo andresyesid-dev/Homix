@@ -7,8 +7,11 @@
     </div>
     
     <div (click)="navegar(['prod/',producto.id], $event)" >
-        <div class="recuadroImg">
-            <img [src]="'assets/img/productos/'+ producto.fotos[0] + '.png'">
+        <div class="recuadroImg" [class.loaded]="imagenCargada">
+            <img [src]="fotoUrl" 
+                 [alt]="imagenCargada ? producto.nombre : ''"
+                 (load)="onImageLoad()"
+                 *ngIf="fotoUrl">
         </div>
         <div style="height: 100px; position: relative;">
             <p class="titulo-producto">{{ producto.nombre }}</p>

@@ -20,11 +20,10 @@ export interface Producto {
   sabores?: string[];
   tamanios?: Tamanio[];
   subCategoria?: string;
-  botonCompra?: {id: string, idDocumento: string, variante?: string};
   soloPorHoy?: boolean;
   masVendido: boolean;
-  colores?: {fotos:string[], color: string, idBoton: string, idBotonDocumento: string, variante: string }[];
-  estilos?: {fotos:string[], estilo: string, idBoton: string, idBotonDocumento: string, variante: string }[];
+  colores?: {fotos:string[], color: string }[];
+  estilos?: Estilo[];
   videos?: {titulo: string, url: string}[];
   
   detalles: string[],
@@ -64,6 +63,15 @@ export interface Tamanio {
   gramos: string,
   precio: number,
   seleccion: boolean
+}
+
+export interface Estilo {
+  id?: string,
+  fotos: string[],
+  estilo: string,
+  nombre?: string,
+  unidades?: number,
+  sku?: string
 }
 
 interface Vistas{

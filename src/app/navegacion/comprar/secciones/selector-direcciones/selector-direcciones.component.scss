@@ -1,0 +1,575 @@
+.selector-direcciones-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 0;
+  background-color: transparent;
+  min-height: 60vh;
+
+  .cargando {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 2rem;
+    gap: 1.5rem;
+    background: white;
+    border-radius: 12px;
+    margin: 0 0 1.25rem 0;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border: 4px solid #f0f0f0;
+      border-top: 4px solid #ff9c59;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    p {
+      font-size: 1.0625rem;
+      color: #ff9c59;
+      margin: 0;
+      font-weight: 500;
+    }
+  }
+
+  .contenido {
+    .header-section {
+      background: transparent;
+      padding: 0 0.5rem 1.5rem 0.5rem;
+      margin: 0 0 1.25rem 0;
+
+      .titulo-seccion {
+        font-size: 1.625rem;
+        font-weight: 700;
+        color: #555;
+        margin: 0 0 0.625rem 0;
+        letter-spacing: -0.02em;
+      }
+
+      .descripcion {
+        font-size: 1rem;
+        color: rgba(0, 0, 0, 0.6);
+        margin: 0;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+    }
+
+    .lista-direcciones {
+      background: white;
+      border-radius: 12px;
+      padding: 1.75rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      position: relative;
+      overflow: hidden;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #d6d6d6 0%, #eee 100%);
+      }
+
+      .btn-agregar-direccion {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.625rem;
+        background: white;
+        border: 1.5px dashed rgba(0, 0, 0, 0.2);
+        color: #666;
+        padding: 1rem 1.25rem;
+        border-radius: 10px;
+        font-size: 0.9375rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        letter-spacing: -0.01em;
+        margin-bottom: 1.25rem;
+
+        ng-icon {
+          font-size: 1.375rem;
+          transition: all 0.3s ease;
+        }
+
+        span {
+          font-weight: 600;
+        }
+
+        &:hover {
+          background: linear-gradient(135deg, #f5f9ff 0%, #eef6ff 100%);
+          border-color: #3483fa;
+          color: #3483fa;
+          border-style: solid;
+          border-width: 1.5px;
+          box-shadow: 0 3px 8px rgba(52, 131, 250, 0.15);
+          transform: translateY(-1px);
+
+          ng-icon {
+            transform: rotate(90deg) scale(1.1);
+          }
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+      }
+
+      .direcciones-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        .direccion-card {
+          background: white;
+          border: 1.5px solid rgba(0, 0, 0, 0.08);
+          border-radius: 12px;
+          padding: 1.25rem 1.25rem;
+          cursor: pointer;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          display: flex;
+          gap: 1rem;
+          position: relative;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+          overflow: hidden;
+          animation: fadeIn 0.4s ease-in-out;
+
+          @for $i from 1 through 10 {
+            &:nth-child(#{$i}) {
+              animation-delay: #{$i * 0.05}s;
+            }
+          }
+
+          &::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, rgba(229, 229, 229, 0.5) 0%, rgba(208, 208, 208, 0.5) 100%);
+            transition: all 0.3s ease;
+            opacity: 0.6;
+          }
+
+          &:hover {
+            border-color: rgba(255, 156, 89, 0.3);
+            box-shadow: 0 3px 12px rgba(255, 156, 89, 0.1);
+            transform: translateY(-2px);
+
+            &::before {
+              background: linear-gradient(180deg, rgba(255, 156, 89, 0.6) 0%, rgba(255, 178, 125, 0.6) 100%);
+              opacity: 1;
+            }
+          }
+
+          &.seleccionada {
+            border-color: rgba(255, 156, 89, 0.4);
+            background: linear-gradient(135deg, #fffbf8 0%, #ffffff 100%);
+            box-shadow: 0 4px 16px rgba(255, 156, 89, 0.12);
+
+            &::before {
+              width: 5px;
+              background: linear-gradient(180deg, rgba(255, 156, 89, 0.8) 0%, rgba(255, 178, 125, 0.8) 100%);
+              opacity: 1;
+            }
+          }
+
+          .direccion-radio {
+            flex-shrink: 0;
+            padding-top: 0.125rem;
+
+            input[type="radio"] {
+              width: 22px;
+              height: 22px;
+              cursor: pointer;
+              accent-color: #ff9c59;
+              margin: 0;
+              transition: transform 0.2s ease;
+              appearance: none;
+              -webkit-appearance: none;
+              -moz-appearance: none;
+              border: none;
+              outline: none;
+              background: white;
+              border-radius: 50%;
+              position: relative;
+              box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.15);
+              
+              &:checked {
+                background: #ff9c59;
+                box-shadow: 0 0 0 1px #ff9c59;
+                
+                &::after {
+                  content: '';
+                  position: absolute;
+                  top: 50%;
+                  left: 50%;
+                  transform: translate(-50%, -50%);
+                  width: 10px;
+                  height: 10px;
+                  background: white;
+                  border-radius: 50%;
+                }
+              }
+
+              &:hover {
+                transform: scale(1.1);
+              }
+
+              &:focus {
+                outline: 3px solid #ff9c59;
+                outline-offset: 3px;
+              }
+            }
+          }
+
+          .direccion-contenido {
+            flex: 1;
+            min-width: 0;
+
+            .direccion-titulo {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              margin-bottom: 1rem;
+              gap: 1rem;
+
+              h3 {
+                font-size: 1.125rem;
+                font-weight: 600;
+                color: #333;
+                margin: 0;
+                flex: 1;
+                letter-spacing: -0.01em;
+              }
+
+              .badge-predeterminada {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.375rem;
+                background: linear-gradient(135deg, #fff9ed 0%, #fffbf0 100%);
+                color: #f59e0b;
+                padding: 0.375rem 0.75rem;
+                border-radius: 6px;
+                font-size: 0.75rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                flex-shrink: 0;
+                border: 1px solid #fde68a;
+                box-shadow: 0 2px 6px rgba(245, 158, 11, 0.15);
+
+                ng-icon {
+                  font-size: 1rem;
+                }
+              }
+            }
+
+            .direccion-detalles {
+              display: flex;
+              flex-direction: column;
+              gap: 0.375rem;
+
+              .direccion-linea {
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.7);
+                margin: 0;
+                line-height: 1.4;
+                font-weight: 500;
+
+                &:first-child {
+                  font-weight: 600;
+                  color: #333;
+                  font-size: 0.9375rem;
+                }
+              }
+
+              .telefono {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.9375rem;
+                color: rgba(0, 0, 0, 0.7);
+                margin: 0.5rem 0 0 0;
+                padding: 0.5rem 0.75rem;
+                background: #f8f8f8;
+                border-radius: 8px;
+                width: fit-content;
+                font-weight: 500;
+
+                ng-icon {
+                  font-size: 1.125rem;
+                  color: #ff9c59;
+                }
+              }
+
+              .detalle {
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.6);
+                margin: 0.375rem 0 0 0;
+                font-style: italic;
+                padding: 0.5rem 0.75rem;
+                background: #fafafa;
+                border-radius: 6px;
+                border-left: 3px solid #d0d0d0;
+              }
+
+              .indicaciones {
+                display: flex;
+                align-items: flex-start;
+                gap: 0.625rem;
+                margin-top: 0.75rem;
+                padding: 0.875rem 1rem;
+                background: linear-gradient(135deg, #fff9f0 0%, #fffbf5 100%);
+                border-left: 4px solid #ffa726;
+                font-size: 0.875rem;
+                color: rgba(0, 0, 0, 0.75);
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(255, 167, 38, 0.1);
+                line-height: 1.5;
+
+                ng-icon {
+                  font-size: 1.25rem;
+                  color: #ff8c00;
+                  flex-shrink: 0;
+                  margin-top: 0.0625rem;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .formulario-seccion {
+      .formulario-wrapper {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          height: 3px;
+          background: linear-gradient(90deg, #ff9c59 0%, #ffb27d 100%);
+        }
+
+        .header-section {
+          padding: 0 0 1.75rem 0;
+          margin: 0 0 1.5rem 0;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+
+          .titulo-seccion {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #555;
+            margin: 0 0 0.625rem 0;
+            letter-spacing: -0.02em;
+          }
+
+          .descripcion {
+            font-size: 0.9375rem;
+            color: rgba(0, 0, 0, 0.6);
+            margin: 0;
+            font-weight: 400;
+            letter-spacing: -0.01em;
+          }
+        }
+
+        app-formulario-direccion {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .selector-direcciones-container {
+    padding: 0 0.5rem;
+
+    .cargando {
+      margin: 0 0 1rem 0;
+      padding: 4rem 1.5rem;
+      border-radius: 10px;
+
+      .spinner {
+        width: 48px;
+        height: 48px;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .contenido {
+      .header-section {
+        padding: 0 0.5rem 1.25rem 0.5rem;
+        
+        .titulo-seccion {
+          font-size: 1.375rem;
+          color: #555;
+        }
+
+        .descripcion {
+          font-size: 0.875rem;
+        }
+      }
+
+      .lista-direcciones {
+        .direcciones-grid {
+          gap: 0.875rem;
+          margin-bottom: 1rem;
+
+          .direccion-card {
+            padding: 1.5rem 1.25rem;
+            border-radius: 10px;
+            gap: 1rem;
+
+            &::before {
+              width: 4px;
+            }
+
+            &.seleccionada::before {
+              width: 5px;
+            }
+
+            .direccion-radio {
+              input[type="radio"] {
+                width: 20px;
+                height: 20px;
+              }
+            }
+
+            .direccion-contenido {
+              .direccion-titulo {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+                margin-bottom: 0.875rem;
+
+                h3 {
+                  font-size: 1rem;
+                }
+
+                .badge-predeterminada {
+                  align-self: flex-start;
+                  padding: 0.375rem 0.625rem;
+                  font-size: 0.6875rem;
+                }
+              }
+
+              .direccion-detalles {
+                gap: 0.5rem;
+
+                .direccion-linea {
+                  font-size: 0.875rem;
+
+                  &:first-child {
+                    font-size: 0.9375rem;
+                  }
+                }
+
+                .telefono {
+                  font-size: 0.875rem;
+                  padding: 0.5rem 0.625rem;
+
+                  ng-icon {
+                    font-size: 1rem;
+                  }
+                }
+
+                .detalle {
+                  font-size: 0.8125rem;
+                }
+
+                .indicaciones {
+                  font-size: 0.8125rem;
+                  padding: 0.75rem 0.875rem;
+
+                  ng-icon {
+                    font-size: 1.125rem;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .btn-agregar-direccion {
+          font-size: 0.875rem;
+          padding: 1rem;
+          border-radius: 10px;
+
+          ng-icon {
+            font-size: 1.25rem;
+          }
+        }
+      }
+
+      .formulario-seccion {
+        .formulario-wrapper {
+          padding: 1.5rem 1.25rem;
+          border-radius: 10px;
+
+          .header-section {
+            padding: 0 0 1.25rem 0;
+            margin: 0 0 1.25rem 0;
+
+            .titulo-seccion {
+              font-size: 1.375rem;
+              color: #555;
+            }
+
+            .descripcion {
+              font-size: 0.875rem;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .selector-direcciones-container {
+    max-width: 900px;
+    padding: 0 1rem;
+  }
+}

@@ -12,11 +12,11 @@
 <rect fill="#000000" height="1024" stroke="none" width="1024" x="0" y="0"/>
 <use fill="#ffffff" fill-rule="evenodd" stroke="none" xlink:href="#Fill"/>
 </mask>
-<use fill="none" mask="url(#StrokeMask)" stroke="#FF9C53" stroke-linecap="butt" stroke-linejoin="round" stroke-width="74.0893" xlink:href="#Fill"/>
+<use fill="none" mask="url(#StrokeMask)" stroke="#FF9C59" stroke-linecap="butt" stroke-linejoin="round" stroke-width="74.0893" xlink:href="#Fill"/>
 </g>
 </g>
 <g id="Capa-3" vectornator:layerName="Capa 3">
 <path d="M465.83 984.248C465.83 984.248 844.997 1033.03 972.558 627.259C921.048 569.747 826.399 453.738 826.399 453.738C826.399 453.738 654.474 400.432 487.325 460.748C252.603 545.448 209.578 744.834 209.578 744.834C277.139 800.445 465.83 984.248 465.83 984.248Z" fill="#fff8f3" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="Curva 2"/>
-<path d="M209.973 744.834C209.973 744.834 182.776 433.81 579.576 372.442L578.935 291.98C578.643 255.341 600.403 245.599 627.537 270.221L816.373 441.57C829.821 453.773 829.729 473.455 816.167 485.532L629.549 651.719C602.186 676.086 580.538 666.142 581.196 629.508L582.621 550.192C582.621 550.192 314.105 463.735 209.973 744.834Z" fill="#FF9C53" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="Curva 1"/>
+<path d="M209.973 744.834C209.973 744.834 182.776 433.81 579.576 372.442L578.935 291.98C578.643 255.341 600.403 245.599 627.537 270.221L816.373 441.57C829.821 453.773 829.729 473.455 816.167 485.532L629.549 651.719C602.186 676.086 580.538 666.142 581.196 629.508L582.621 550.192C582.621 550.192 314.105 463.735 209.973 744.834Z" fill="#FF9C59" fill-rule="nonzero" opacity="1" stroke="none" vectornator:layerName="Curva 1"/>
 </g>
 </svg>

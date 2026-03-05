@@ -1,0 +1,219 @@
+form.paso1 {
+	width: 1000px;
+	height: 450px;
+	margin: 70px auto;
+
+	.container {
+		box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.1);
+		display: flex;
+		height: 436px;
+		width: 100%;
+		display: grid;
+		grid-template-columns: 1fr 2.8fr;
+		border-radius: 10px;
+
+		.text {
+			margin: 0px 20px 0px 0px;
+			background: #fff;
+			padding: 20px 10px;
+			border-radius: 10px 0 0 10px;
+
+			h1 {
+				margin: 10px 0 0 0;
+				color: #555;
+				font-size: 28px;
+				padding: 0 20px;
+				letter-spacing: 0.7px;
+				word-spacing: 1.2px;
+				font-weight: 520;
+			}
+
+			p {
+				font-size: 16.5px;
+				padding: 0 20px;
+				color: #707070;
+				word-spacing: 1px;
+				font-weight: 450;
+				letter-spacing: 0.5px;
+			}
+		}
+
+		.seleccion {
+			overflow-y: auto;
+			display: flex;
+			padding: 5px 0px 0px 0px;
+			flex-wrap: wrap;
+
+			&::-webkit-scrollbar {
+				width: 9px;
+			}
+
+			&::-webkit-scrollbar-thumb {
+				background-color: #f3a955;
+				border-radius: 4px;
+			}
+
+			&::-webkit-scrollbar-track {
+				background-color: #eaeaea;
+				border-radius: 5px;
+			}
+
+			.box {
+				position: relative;
+				width: 140px;
+				height: 180px;
+				border: 1px solid #d6d6d6;
+				border-radius: 5px;
+				cursor: pointer;
+				margin: 10px 10px 20px 25px;
+				background: #fdfdfd;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+
+				img {
+					border-radius: 5px 5px 0 0;
+					width: 75%;
+					transform: translateY(-10px);
+				}
+
+				p {
+					position: absolute;
+					bottom: 0;
+					margin: 0;
+					font-size: 16px;
+					height: 40px;
+					text-align: center;
+					color: #666;
+					letter-spacing: 0.5px;
+					word-spacing: 1px;
+					font-weight: 420;
+				}
+			}
+			
+			input.check {
+				display: none !important;
+			}
+		}
+	}
+
+	.center-content {
+		input {
+			width: 28%;
+			float: right;
+			background: #fdfdfd;
+			height: 40px;
+			border: 1px solid #b9b9b9;
+			color: #888;
+			border-radius: 6px;
+			font-size: 15px;
+			margin: 32px 40px;
+			text-align: center;
+			letter-spacing: 0.4px;
+			word-spacing: 1px;
+			cursor: default;
+		}
+		input:not([disabled]) {
+			background: #ff9e57;
+			border: none;
+			color: white;
+			font-weight: 480;
+			cursor: pointer;
+		}
+	}
+
+	@media (max-width: 1180px) {
+		width: 84.6%;
+	}
+}
+@for $i from 1 through 9 {
+	.check#{$i} {
+		#check#{$i}:checked ~ & {
+			border: 1px solid #ffa86a;
+			box-shadow: 0px 0px 15px #ffa86a;
+		}
+
+		#check#{$i}[type="radio"][checked] ~ & {
+			border: 1px solid #ffa86a;
+			box-shadow: 0px 0px 15px #ffa86a;
+		}
+	}
+}
+.alerta{
+	position: fixed;
+	width: 100%;
+	min-height: 100vh;
+	background-color: rgba($color: #000, $alpha: .5);
+    backdrop-filter: blur(5px);
+	left: 0;
+	top: 0;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	.content{
+		position: relative;
+		transform: translateY(-9vh);
+		width: 520px;
+		height: 160px;
+		background: white;
+		border-radius: 8px;
+		padding: 53px;
+		h1{
+			margin: 0;
+			text-align: center;
+			color: #555;
+			font-size: 28px;
+			padding: 0 20px;
+			letter-spacing: 0.7px;
+			word-spacing: 1.2px;
+			font-weight: 520;
+		}
+		p{
+			margin: 0;
+			font-size: 16px;
+			padding: 18px 0;
+			color: #707070;
+			word-spacing: 1px;
+			font-weight: 450;
+			letter-spacing: 0.5px;
+		}
+		>div{
+			width: 104%;
+		}
+		button{
+			width: 45%;
+			background: #fbfbfb;
+			height: 40px;
+			border: 1px solid #b9b9b9;
+			color: #888;
+			border-radius: 6px;
+			font-size: 15px;
+			margin: 28px 5% 0 0;
+			text-align: center;
+			letter-spacing: 0.4px;
+			word-spacing: 1px;
+			transition: .1s;
+			cursor: pointer;
+			&:hover{
+				background: #ff9e57;
+				border: none;
+				color: white;
+				font-weight: 480;
+			}
+		}
+		.close{
+			position: absolute;
+			font-size: 24px;
+			right: 20px;
+			top: 12px;
+			cursor: pointer;
+			padding: 0;
+			margin: 0;
+			color: #a4a4a4;
+			&:hover{
+				color: #606060;
+			}
+		}
+	}
+}

@@ -3,7 +3,7 @@
         <ng-container *ngFor="let fotoUrl of fotos; let i = index">
             <div *ngIf="fotoUrl" (click)="index = i; cambiarImagen()" class="div">
                 <img src="assets/img/categoria/pic-loading.svg" *ngIf="!producto">
-                <img [src]="'assets/img/productos/'+ fotoUrl + '.png'" *ngIf="producto">
+                <img [src]="fotoUrl" *ngIf="producto">
             </div>
         </ng-container>
         <div *ngIf="fotos && fotos.length > 5 && linea" class="linea">
@@ -13,13 +13,13 @@
     <div class="seccionDerecha" *ngIf="anchoPagina > 670">
         <div>
             <img src="assets/img/categoria/pic-loading.svg" *ngIf="!producto">
-            <img [src]="'assets/img/productos/'+ selectedImage + '.png'" (click)="emitirSombra(); emitirIndex()" *ngIf="producto">
+            <img [src]="selectedImage" (click)="emitirSombra(); emitirIndex()" *ngIf="producto">
         </div>
     </div>
     <div class="seccionDerecha" *ngIf="anchoPagina <= 670" >
         <div (touchend)="touchedScroll($event)" #scrollElement>
-            <ng-container *ngFor="let foto of producto.fotos; let i = index">
-                <img [src]="'assets/img/productos/'+ foto + '.png'" (click)="index = i; emitirSombra(); emitirIndex(i)">
+            <ng-container *ngFor="let foto of fotos; let i = index">
+                <img [src]="foto" (click)="index = i; emitirSombra(); emitirIndex(i)">
             </ng-container>
         </div>
     </div>
@@ -27,7 +27,7 @@
         <ng-container *ngFor="let fotoUrl of fotos; let i = index">
             <div *ngIf="fotoUrl" (click)="index = i; cambiarImagen()" class="div">
                 <img src="assets/img/categoria/pic-loading.svg" *ngIf="!producto">
-                <img [src]="'assets/img/productos/'+ fotoUrl + '.png'" *ngIf="producto">
+                <img [src]="fotoUrl" *ngIf="producto">
             </div>
         </ng-container>
         <div *ngIf="(anchoPagina - 60) < (70 * fotos.length) && linea" class="linea">

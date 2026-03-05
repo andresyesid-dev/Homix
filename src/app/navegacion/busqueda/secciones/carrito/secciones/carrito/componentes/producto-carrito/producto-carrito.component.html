@@ -1,10 +1,14 @@
 <div class="contenedor">
     <div>
-        <div class="cuadroImg">
-            <img [src]="'assets/img/productos/'+ productoCarrito.fotos[0] + '.png'" (click)="navegar(['prod/' + productoCarrito.id])">
+        <div class="cuadroImg" [class.loaded]="imagenCargada">
+            <img [src]="fotoUrl" 
+                 [alt]="imagenCargada ? productoCarrito.nombre : ''"
+                 (load)="onImageLoad()"
+                 (click)="navegar(['prod/' + productoCarrito.id])"
+                 *ngIf="fotoUrl">
         </div>
         <div>
-            <p>{{productoCarrito.nombre}} <span *ngIf="tamanio !== 'false'">{{productoCarrito.tamanios![+tamanio].gramos}}</span></p>
+            <p class="titulo" (click)="navegar(['prod/' + productoCarrito.id])">{{productoCarrito.nombre}} <span *ngIf="tamanio !== 'false'">{{productoCarrito.tamanios![+tamanio].gramos}}</span></p>
             <p>Sabor: {{productoCarrito.sabor}}</p>
             <p *ngIf="productoCarrito.envioGratis" class="envioGratis">Envio gratis</p>
             <p *ngIf="!productoCarrito.envioGratis" class="envioPrecio"><span>Recíbelo</span> por <span>$ {{productoCarrito.precioEnvio | number: '1.0-0'}}</span></p>

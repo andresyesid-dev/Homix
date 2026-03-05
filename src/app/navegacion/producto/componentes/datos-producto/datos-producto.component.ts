@@ -45,6 +45,7 @@ export class DatosProductoComponent implements OnInit, OnChanges {
   vendidos!: string;
   productoPropio!: boolean;
   tamanioSelec = 0;
+  selectEstilo: number = 0; // Índice del estilo seleccionado
   anchoPagina: number = window.innerWidth;
 
   // MercadoPago properties
@@ -79,11 +80,13 @@ export class DatosProductoComponent implements OnInit, OnChanges {
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes['producto'] && changes['producto'].currentValue) {
+      console.log(this.producto)
       this.vendidos = this.calcularVentas(this.producto.ventas);
       this.ventasHechas.emit(this.vendidos);
       this.unidades= 1;
       this.productoPropio = false;
       this.tamanioSelec = 0;
+      this.selectEstilo = 0; // Reset estilo seleccionado
       if(this.auth.currentUser){
         if(this.producto.idUsuario == this.auth.currentUser.uid){
           this.productoPropio = true;
@@ -97,6 +100,12 @@ export class DatosProductoComponent implements OnInit, OnChanges {
       }
     })
     this.unaUnidad = true;
+  }
+
+  // Método helper para crear array de unidades
+  crearArrayUnidades(unidadesDisponibles: number): any[] {
+    const max = unidadesDisponibles > 10 ? 9 : unidadesDisponibles - 1;
+    return Array(max);
   }
 
   calcularVentas(ventas: number): string {
@@ -153,20 +162,12 @@ export class DatosProductoComponent implements OnInit, OnChanges {
     let index = htmlSelect.target.value;
     if(this.producto.colores && this.producto.colores.length !== 1){
       this.seleccionarColr.emit(index);
-      this.producto.botonCompra!.id = this.producto.colores[index].idBoton;
-      this.producto.botonCompra!.idDocumento = this.producto.colores[index].idBotonDocumento;
-      this.producto.botonCompra!.variante = this.producto.colores[index].variante;
     }
   }
 
   async seleccionarEstilo(htmlSelect: any){
-    let index = htmlSelect.target.value;
-    if(this.producto.estilos && this.producto.estilos.length !== 1){
-      this.seleccionarEstl.emit(index);
-      this.producto.botonCompra!.id = this.producto.estilos[index].idBoton;
-      this.producto.botonCompra!.idDocumento = this.producto.estilos[index].idBotonDocumento;
-      this.producto.botonCompra!.variante = this.producto.estilos[index].variante;
-    }
+    this.selectEstilo = Number(htmlSelect.target.value);
+    this.seleccionarEstl.emit(this.selectEstilo);
   }
 
   cambiarUnidades(event: any) {
@@ -191,7 +192,8 @@ export class DatosProductoComponent implements OnInit, OnChanges {
     }
     try {
       await this.comprarService.prepararCompraRapida(this.producto, this.unidades, this.tamanioSelec);
-      this.router.navigate(['comprar/checkout/detalles-envio']);
+      // Navegar al flujo de checkout actualizado: direccion -> pago -> confirmación
+      this.router.navigate(['comprar/checkout/direccion']);
     } catch (e) {
       console.error('Error preparando compra rápida', e);
       alert('No fue posible iniciar la compra. Intenta nuevamente.');

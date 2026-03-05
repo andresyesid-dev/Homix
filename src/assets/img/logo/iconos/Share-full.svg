@@ -9,7 +9,7 @@
 <rect height="1024" width="1024" x="0" y="0"/>
 </clipPath>
 <g clip-path="url(#ArtboardFrame)" id="Capa-1" vectornator:layerName="Capa 1">
-<use fill="#FF9C53" fill-rule="nonzero" opacity="1" stroke="#dddddd" stroke-linecap="butt" stroke-linejoin="round" stroke-width="0.0959189" vectornator:layerName="Óvalo 4" xlink:href="#Fill"/>
+<use fill="#FF9C59" fill-rule="nonzero" opacity="1" stroke="#dddddd" stroke-linecap="butt" stroke-linejoin="round" stroke-width="0.0959189" vectornator:layerName="Óvalo 4" xlink:href="#Fill"/>
 <clipPath clip-rule="nonzero" id="ClipPath">
 <use xlink:href="#Fill"/>
 </clipPath>

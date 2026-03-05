@@ -38,7 +38,7 @@ export const enviarWhatsApp = onCall(
       const client = twilio(accountSid, authToken);
       
       const message = await client.messages.create({
-        from: 'whatsapp:+14155238886',
+        from: 'whatsapp:+16592465522',
         to: `whatsapp:${numero}`,
         body: `Tu código de verificación es: ${codigo}`
       });
@@ -60,22 +60,60 @@ export const crearPagoMercadoPago = onCall(
       console.log('🚀 Función crearPagoMercadoPago iniciada');
       console.log('📋 Datos recibidos:', JSON.stringify(request.data, null, 2));
 
+      // Extraer IP del usuario
+      const userIp = request.rawRequest.headers['x-forwarded-for']?.toString().split(',')[0].trim() 
+                     || request.rawRequest.headers['x-real-ip']?.toString()
+                     || request.rawRequest.socket.remoteAddress 
+                     || '127.0.0.1';
+      console.log('🌐 IP del usuario:', userIp);
+
       const {
         token,
         amount,
         description,
         installments,
         payment_method_id,
-        payer
+        payer,
+        transaction_details,
+        callback_url // URL de retorno después del pago (para PSE)
       } = request.data;
 
+      // Determinar si es un pago con token (tarjetas) o sin token (PSE, Efecty, etc.)
+      const esPagoConTarjeta = !!token;
+      const esPSE = payment_method_id === 'pse';
+
       console.log('🔍 Validando datos...');
+      console.log('Tipo de pago:', esPagoConTarjeta ? 'Tarjeta (con token)' : 'PSE/Efecty/Ticket (sin token)');
+      console.log('Payment method ID:', payment_method_id);
+      console.log('Es PSE:', esPSE);
       console.log('Token presente:', !!token);
       console.log('Amount presente:', !!amount);
       console.log('Payer email presente:', !!payer?.email);
+      
+      // Validación específica para PSE
+      if (esPSE) {
+        console.log('🏦 Validación PSE:');
+        console.log('- Entity type presente:', !!payer?.entity_type);
+        console.log('- Financial institution presente:', !!transaction_details?.financial_institution);
+        
+        if (!payer?.entity_type) {
+          console.error('❌ PSE requiere entity_type');
+          throw new HttpsError('invalid-argument', 'PSE requiere entity_type (individual o association)');
+        }
+        
+        if (!transaction_details?.financial_institution) {
+          console.error('❌ PSE requiere financial_institution');
+          throw new HttpsError('invalid-argument', 'PSE requiere financial_institution (código del banco)');
+        }
+      }
 
-      if (!token || !amount || !payer?.email) {
-        console.error('❌ Datos incompletos:', { token: !!token, amount: !!amount, payerEmail: !!payer?.email });
+      // Validaciones básicas (el token no es requerido para PSE/Efecty)
+      if (!amount || !payer?.email || !payment_method_id) {
+        console.error('❌ Datos incompletos:', { 
+          amount: !!amount, 
+          payerEmail: !!payer?.email,
+          payment_method_id: !!payment_method_id
+        });
         throw new HttpsError('invalid-argument', 'Datos incompletos para procesar el pago');
       }
 
@@ -87,20 +125,55 @@ export const crearPagoMercadoPago = onCall(
       throw new HttpsError('failed-precondition', 'Credenciales de MercadoPago no configuradas');
     }
 
-    const paymentData = {
+    // Construir datos del pago según el tipo
+    const paymentData: any = {
       transaction_amount: parseFloat(amount),
-      token,
       description: description || 'Compra en Homix',
-      installments: installments || 1,
       payment_method_id,
       payer: {
         email: payer.email,
-        identification: {
-          type: payer.identification?.type || 'CC',
-          number: payer.identification?.number || ''
-        }
+        identification: payer.identification ? {
+          type: payer.identification.type || 'CC',
+          number: payer.identification.number || ''
+        } : undefined
+      },
+      additional_info: {
+        ip_address: userIp
       }
     };
+
+    // Solo agregar token y cuotas si es pago con tarjeta
+    if (esPagoConTarjeta) {
+      paymentData.token = token;
+      paymentData.installments = installments || 1;
+      console.log('💳 Pago con tarjeta - Token y cuotas incluidos');
+    } else {
+      console.log('🏦 Pago sin token (PSE/Efecty/Ticket)');
+      
+      // Para PSE, agregar entity_type, transaction_details y callback_url
+      if (esPSE) {
+        if (payer.entity_type) {
+          paymentData.payer.entity_type = payer.entity_type;
+          console.log('🏦 PSE - entity_type agregado:', payer.entity_type);
+        }
+        
+        // Callback URL obligatorio para PSE - redirige al usuario después del pago
+        // Si no se proporciona, usar una URL por defecto de producción
+        const pseCallbackUrl = callback_url || 'https://homix0523.web.app/comprar/checkout/response';
+        paymentData.callback_url = pseCallbackUrl;
+        console.log('🔗 PSE - callback_url agregado:', paymentData.callback_url);
+        
+        // Notification URL para webhooks - MercadoPago notificará aquí cuando cambie el estado
+        paymentData.notification_url = 'https://us-central1-homix0523.cloudfunctions.net/webhookMercadoPago';
+        console.log('🔔 PSE - notification_url agregado:', paymentData.notification_url);
+      }
+      
+      // Para métodos sin token, pueden venir datos adicionales
+      if (transaction_details) {
+        paymentData.transaction_details = transaction_details;
+        console.log('📋 Transaction details agregados:', transaction_details);
+      }
+    }
 
     console.log('💰 Datos del pago preparados:', JSON.stringify(paymentData, null, 2));
     console.log('🌐 Enviando solicitud a MercadoPago API...');
@@ -123,6 +196,11 @@ export const crearPagoMercadoPago = onCall(
     console.log('📨 Respuesta de MercadoPago:', JSON.stringify(result, null, 2));
 
     if (response.ok) {
+      // Log específico para PSE
+      if (esPSE && result.transaction_details?.external_resource_url) {
+        console.log('🏦 PSE - URL del banco encontrada:', result.transaction_details.external_resource_url);
+      }
+      
       // Guardar en Firestore si deseas seguimiento
       await db.collection('mercadopago_payments').add({
         paymentId: result.id,
@@ -156,18 +234,32 @@ export const webhookMercadoPago = onRequest(
   },
   async (req, res) => {
     try {
+      console.log('🔔 Webhook recibido:', JSON.stringify(req.body, null, 2));
+      
       if (req.method !== 'POST') {
         res.status(405).send('Method not allowed');
         return;
       }
 
-      const { type, data } = req.body;
+      const { type, data, action } = req.body;
+      
+      console.log('📨 Tipo de notificación:', type);
+      console.log('🎬 Acción:', action);
 
-      if (type === 'payment') {
+      // MercadoPago envía notificaciones de tipo "payment"
+      if (type === 'payment' || action === 'payment.updated') {
         const paymentId = data.id;
+        console.log('💳 Payment ID:', paymentId);
         
-        // Obtener información del pago
+        // Obtener información completa del pago desde MercadoPago
         const accessToken = process.env.MERCADOPAGO_ACCESS_TOKEN;
+        
+        if (!accessToken) {
+          console.error('❌ Access token no configurado');
+          res.status(500).send('Access token no configurado');
+          return;
+        }
+        
         const paymentResponse = await fetch(`https://api.mercadopago.com/v1/payments/${paymentId}`, {
           headers: {
             'Authorization': `Bearer ${accessToken}`
@@ -177,36 +269,95 @@ export const webhookMercadoPago = onRequest(
         if (paymentResponse.ok) {
           const paymentData = await paymentResponse.json();
           
-          // Actualizar estado en Firestore
-          const preferencesQuery = await db.collection('mercadopago_preferences')
-            .where('externalReference', '==', paymentData.external_reference)
-            .limit(1)
-            .get();
-
-          if (!preferencesQuery.empty) {
-            const preferenceDoc = preferencesQuery.docs[0];
-            await preferenceDoc.ref.update({
-              paymentId: paymentId,
-              status: paymentData.status,
-              paymentMethod: paymentData.payment_method_id,
-              transactionAmount: paymentData.transaction_amount,
-              updatedAt: new Date()
-            });
-
-            // Si el pago fue aprobado, actualizar inventario
-            if (paymentData.status === 'approved') {
-              // Aquí puedes agregar lógica para actualizar el inventario
-              // o enviar confirmaciones al usuario
-              console.log(`Pago aprobado: ${paymentId}`);
-            }
-          }
+          console.log('✅ Datos del pago obtenidos:', {
+            id: paymentData.id,
+            status: paymentData.status,
+            status_detail: paymentData.status_detail,
+            payment_method_id: paymentData.payment_method_id,
+            transaction_amount: paymentData.transaction_amount
+          });
+          
+          // Actualizar o crear documento en Firestore con el estado del pago
+          await db.collection('mercadopago_payments').doc(paymentId.toString()).set({
+            paymentId: paymentData.id,
+            status: paymentData.status,
+            status_detail: paymentData.status_detail,
+            payment_method_id: paymentData.payment_method_id,
+            payment_type_id: paymentData.payment_type_id,
+            transaction_amount: paymentData.transaction_amount,
+            payer_email: paymentData.payer?.email || null,
+            external_reference: paymentData.external_reference || null,
+            date_created: paymentData.date_created,
+            date_approved: paymentData.date_approved || null,
+            date_last_updated: paymentData.date_last_updated,
+            updatedAt: new Date(),
+            webhookReceived: true
+          }, { merge: true });
+          
+          console.log('✅ Estado del pago actualizado en Firestore');
+          
+          res.status(200).send('OK');
+        } else {
+          console.error('❌ Error obteniendo datos del pago:', paymentResponse.status);
+          res.status(500).send('Error obteniendo datos del pago');
         }
+      } else {
+        console.log('ℹ️ Tipo de notificación no manejada:', type);
+        res.status(200).send('OK');
       }
+    } catch (error: any) {
+      console.error('💥 Error en webhook:', error);
+      res.status(500).send('Error en webhook');
+    }
+  }
+);
 
-      res.status(200).send('OK');
-    } catch (error) {
-      console.error('Error procesando webhook:', error);
-      res.status(500).send('Error interno');
+// Función de testing para simular aprobación de pago (solo para desarrollo)
+export const simularAprobacionPago = onRequest(
+  {
+    region: 'us-central1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  async (req, res) => {
+    try {
+      const paymentId = req.query.payment_id as string;
+      
+      if (!paymentId) {
+        res.status(400).send('payment_id es requerido');
+        return;
+      }
+      
+      console.log('🧪 TESTING - Simulando aprobación de pago:', paymentId);
+      
+      // Actualizar el pago en Firestore simulando que fue aprobado
+      await db.collection('mercadopago_payments').doc(paymentId).set({
+        paymentId: paymentId,
+        status: 'approved',
+        status_detail: 'accredited',
+        payment_method_id: 'pse',
+        payment_type_id: 'bank_transfer',
+        transaction_amount: 98000,
+        payer_email: 'test@test.com',
+        date_created: new Date().toISOString(),
+        date_approved: new Date().toISOString(),
+        date_last_updated: new Date().toISOString(),
+        updatedAt: new Date(),
+        webhookReceived: true,
+        simulatedForTesting: true
+      }, { merge: true });
+      
+      console.log('✅ Pago simulado como aprobado en Firestore');
+      
+      res.status(200).json({
+        success: true,
+        message: 'Pago simulado como aprobado',
+        payment_id: paymentId
+      });
+      
+    } catch (error: any) {
+      console.error('❌ Error simulando pago:', error);
+      res.status(500).send('Error simulando pago');
     }
   }
 );
