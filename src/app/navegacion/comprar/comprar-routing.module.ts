@@ -1,9 +1,9 @@
 import { ComprarComponent } from './comprar.component'
 import { Routes } from '@angular/router';
 import { SelectorDireccionesComponent } from './secciones/selector-direcciones/selector-direcciones.component';
-import { MetodoPagoComponent } from './secciones/metodo-pago/metodo-pago.component';
-import { CambiarDireccionComponent } from './secciones/cambiar-direccion/cambiar-direccion.component';
+import { DetallesCompraComponent } from './secciones/detalles-compra/detalles-compra.component';
 import { RespuestaCompraComponent } from './secciones/respuesta-compra/respuesta-compra.component';
+import { FormularioDireccionComponent } from './secciones/formulario-direccion/formulario-direccion.component';
 
 export const routes: Routes = [
   {
@@ -12,20 +12,28 @@ export const routes: Routes = [
     children: [
       {
         path: '',
-        redirectTo: 'direccion',
+        redirectTo: 'seleccionar-direccion',
         pathMatch: 'full'
       },
       {
-        path: 'direccion',
+        path: 'seleccionar-direccion',
         component: SelectorDireccionesComponent
       },
       {
-        path: 'pago',
-        component: MetodoPagoComponent
+        path: 'agregar-direccion',
+        component: FormularioDireccionComponent
       },
       {
-        path: 'cambiar-direccion',
-        component: CambiarDireccionComponent
+        path: 'actualizar-direccion/:id',
+        component: FormularioDireccionComponent
+      },
+      {
+        path: 'detalles-compra',
+        component: DetallesCompraComponent
+      },
+      {
+        path: 'pago',
+        component: DetallesCompraComponent
       },
       {
         path: 'response',

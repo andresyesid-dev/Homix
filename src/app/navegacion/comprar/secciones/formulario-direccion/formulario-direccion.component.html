@@ -1,218 +1,222 @@
-<div class="formulario-direccion-container">
-  <form [formGroup]="form" (ngSubmit)="guardarDireccion()">
-    <div class="form-row">
-      <div class="form-group">
-        <label for="nombresApellidos" [ngClass]="{'invalid-field': invalid('nombresApellidos')}">
-          Nombres y apellidos *
-        </label>
-        <input 
-          id="nombresApellidos" 
-          type="text" 
-          formControlName="nombresApellidos" 
-          maxlength="50"
-          placeholder="Juan Pérez"> 
+<div class="form-container">
+  <div class="formulario-direccion-container">
+    <form [formGroup]="form" (ngSubmit)="guardarDireccion()">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="nombresApellidos" [ngClass]="{'invalid-field': invalid('nombresApellidos')}">
+            Nombres y apellidos *
+          </label>
+          <input 
+            id="nombresApellidos" 
+            type="text" 
+            formControlName="nombresApellidos" 
+            maxlength="50"
+            placeholder="Juan Pérez"> 
+        </div>
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('telefono')}">
+            Teléfono *
+          </label>
+          <div class="telefono-input">
+            <span class="prefijo">+57</span>
+            <input 
+              type="text" 
+              formControlName="telefono" 
+              maxlength="10"
+              placeholder="3001234567">
+          </div>
+        </div>
       </div>
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('telefono')}">
-          Teléfono *
-        </label>
-        <div class="telefono-input">
-          <span class="prefijo">+57</span>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('tipoIdentidad')}">
+            Tipo de identidad *
+          </label>
+          <div class="select-wrapper">
+            <select formControlName="tipoIdentidad">
+              <option value="" disabled selected>Seleccionar</option>
+              <option value="CC">Cédula de Ciudadanía</option>
+              <option value="TI">Tarjeta de Identidad</option>
+              <option value="CE">Cédula de Extranjería</option>
+              <option value="PA">Pasaporte</option>
+            </select>
+            <ng-icon name="ionChevronDown"></ng-icon>
+          </div>
+        </div>
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('numeroIdentificacion')}">
+            Número de identificación *
+          </label>
           <input 
             type="text" 
-            formControlName="telefono" 
+            formControlName="numeroIdentificacion" 
             maxlength="10"
-            placeholder="3001234567">
+            placeholder="1234567890">
         </div>
       </div>
-    </div>
 
-    <div class="form-row">
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('tipoIdentidad')}">
-          Tipo de identidad *
-        </label>
-        <div class="select-wrapper">
-          <select formControlName="tipoIdentidad">
-            <option value="" disabled selected>Seleccionar</option>
-            <option value="CC">Cédula de Ciudadanía</option>
-            <option value="TI">Tarjeta de Identidad</option>
-            <option value="CE">Cédula de Extranjería</option>
-            <option value="PA">Pasaporte</option>
-          </select>
-          <ng-icon name="ionChevronDown"></ng-icon>
+      <div class="form-row">
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('municipioLocalidad')}">
+            Ciudad *
+          </label>
+          <div class="select-wrapper">
+            <select formControlName="municipioLocalidad">
+              <option value="" disabled selected>Seleccionar ciudad</option>
+              <option value="Usaquén">Usaquén</option>
+              <option value="Chapinero">Chapinero</option>
+              <option value="Santa Fe">Santa Fe</option>
+              <option value="San Cristóbal">San Cristóbal</option>
+              <option value="Usme">Usme</option>
+              <option value="Tunjuelito">Tunjuelito</option>
+              <option value="Bosa">Bosa</option>
+              <option value="Kennedy">Kennedy</option>
+              <option value="Fontibón">Fontibón</option>
+              <option value="Engativá">Engativá</option>
+              <option value="Suba">Suba</option>
+              <option value="Barrios Unidos">Barrios Unidos</option>
+              <option value="Teusaquillo">Teusaquillo</option>
+              <option value="Los Mártires">Los Mártires</option>
+              <option value="Antonio Nariño">Antonio Nariño</option>
+              <option value="Puente Aranda">Puente Aranda</option>
+              <option value="La Candelaria">La Candelaria</option>
+              <option value="Rafael Uribe Uribe">Rafael Uribe Uribe</option>
+              <option value="Ciudad Bolívar">Ciudad Bolívar</option>
+              <option value="Sumapaz">Sumapaz</option>
+              <option value="Cota">Cota</option>
+              <option value="Funza">Funza</option>
+              <option value="Villamery">Villamery</option>
+              <option value="Chía">Chía</option>
+            </select>
+            <ng-icon name="ionChevronDown"></ng-icon>
+          </div>
         </div>
-      </div>
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('numeroIdentificacion')}">
-          Número de identificación *
-        </label>
-        <input 
-          type="text" 
-          formControlName="numeroIdentificacion" 
-          maxlength="10"
-          placeholder="1234567890">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('municipioLocalidad')}">
-          Ciudad *
-        </label>
-        <div class="select-wrapper">
-          <select formControlName="municipioLocalidad">
-            <option value="" disabled selected>Seleccionar ciudad</option>
-            <option value="Usaquén">Usaquén</option>
-            <option value="Chapinero">Chapinero</option>
-            <option value="Santa Fe">Santa Fe</option>
-            <option value="San Cristóbal">San Cristóbal</option>
-            <option value="Usme">Usme</option>
-            <option value="Tunjuelito">Tunjuelito</option>
-            <option value="Bosa">Bosa</option>
-            <option value="Kennedy">Kennedy</option>
-            <option value="Fontibón">Fontibón</option>
-            <option value="Engativá">Engativá</option>
-            <option value="Suba">Suba</option>
-            <option value="Barrios Unidos">Barrios Unidos</option>
-            <option value="Teusaquillo">Teusaquillo</option>
-            <option value="Los Mártires">Los Mártires</option>
-            <option value="Antonio Nariño">Antonio Nariño</option>
-            <option value="Puente Aranda">Puente Aranda</option>
-            <option value="La Candelaria">La Candelaria</option>
-            <option value="Rafael Uribe Uribe">Rafael Uribe Uribe</option>
-            <option value="Ciudad Bolívar">Ciudad Bolívar</option>
-            <option value="Sumapaz">Sumapaz</option>
-            <option value="Cota">Cota</option>
-            <option value="Funza">Funza</option>
-            <option value="Villamery">Villamery</option>
-            <option value="Chía">Chía</option>
-          </select>
-          <ng-icon name="ionChevronDown"></ng-icon>
-        </div>
-      </div>
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('barrio')}">
-          Barrio *
-        </label>
-        <input 
-          type="text" 
-          formControlName="barrio" 
-          maxlength="30"
-          placeholder="El Poblado">
-      </div>
-    </div>
-
-    <div class="form-row address-row">
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('tipoCalle')}">
-          Tipo vía *
-        </label>
-        <div class="select-wrapper">
-          <select formControlName="tipoCalle">
-            <option value="" disabled selected>Tipo</option>
-            <option value="Calle">Calle</option>
-            <option value="Avenida calle">Av. Calle</option>
-            <option value="Avenida">Avenida</option>
-            <option value="Carrera">Carrera</option>
-            <option value="Diagonal">Diagonal</option>
-            <option value="Transversal">Transversal</option>
-          </select>
-          <ng-icon name="ionChevronDown"></ng-icon>
-        </div>
-      </div>
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('calle')}">
-          Número *
-        </label>
-        <input 
-          type="text" 
-          formControlName="calle" 
-          maxlength="10"
-          placeholder="123">
-      </div>
-      <div class="form-group">
-        <label [ngClass]="{'invalid-field': invalid('numero')}">
-          Casa/Apto *
-        </label>
-        <div class="numero-input">
-          <span class="hash">#</span>
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('barrio')}">
+            Barrio *
+          </label>
           <input 
             type="text" 
-            formControlName="numero" 
-            maxlength="10"
-            placeholder="45">
-          <span class="guion">-</span>
-          <input 
-            type="text" 
-            formControlName="guion" 
-            maxlength="10"
-            placeholder="67">
+            formControlName="barrio" 
+            maxlength="30"
+            placeholder="El Poblado">
         </div>
       </div>
-    </div>
 
-    <div class="form-row">
-      <div class="form-group full-width">
-        <label [ngClass]="{'invalid-field': invalid('detalle')}">
-          Detalle adicional (Apartamento, torre, etc.) *
-        </label>
-        <input 
-          type="text" 
-          formControlName="detalle" 
-          maxlength="50"
-          placeholder="Torre 3, Apartamento 501">
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group full-width">
-        <label>
-          Indicaciones adicionales (opcional)
-        </label>
-        <textarea 
-          formControlName="indicaciones" 
-          maxlength="100"
-          rows="3"
-          placeholder="Timbre azul, tercer piso, al lado de la escalera..."></textarea>
-      </div>
-    </div>
-
-    <div class="form-row">
-      <div class="form-group checkbox-group">
-        <label class="checkbox-label">
+      <div class="form-row address-row">
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('tipoCalle')}">
+            Tipo vía *
+          </label>
+          <div class="select-wrapper">
+            <select formControlName="tipoCalle">
+              <option value="" disabled selected>Tipo</option>
+              <option value="Calle">Calle</option>
+              <option value="Avenida calle">Av. Calle</option>
+              <option value="Avenida">Avenida</option>
+              <option value="Carrera">Carrera</option>
+              <option value="Diagonal">Diagonal</option>
+              <option value="Transversal">Transversal</option>
+            </select>
+            <ng-icon name="ionChevronDown"></ng-icon>
+          </div>
+        </div>
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('calle')}">
+            Número *
+          </label>
           <input 
-            type="checkbox" 
-            formControlName="direccionPredeterminada">
-          <span>Guardar como dirección predeterminada</span>
-        </label>
+            type="text" 
+            formControlName="calle" 
+            maxlength="10"
+            placeholder="123">
+        </div>
+        <div class="form-group">
+          <label [ngClass]="{'invalid-field': invalid('numero')}">
+            Casa/Apto *
+          </label>
+          <div class="numero-input">
+            <span class="hash">#</span>
+            <input 
+              type="text" 
+              formControlName="numero" 
+              maxlength="10"
+              placeholder="45">
+            <span class="guion">-</span>
+            <input 
+              type="text" 
+              formControlName="guion" 
+              maxlength="10"
+              placeholder="67">
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Mensaje de error -->
-    <div class="error-message" *ngIf="errorGuardado">
-      <ng-icon name="heroXMark"></ng-icon>
-      <p>{{errorGuardado}}</p>
-    </div>
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label [ngClass]="{'invalid-field': invalid('detalle')}">
+            Detalle adicional (Apartamento, torre, etc.) *
+          </label>
+          <input 
+            type="text" 
+            formControlName="detalle" 
+            maxlength="50"
+            placeholder="Torre 3, Apartamento 501">
+        </div>
+      </div>
 
-    <!-- Botones de acción -->
-    <div class="form-actions">
-      <button 
-        type="button" 
-        class="btn-cancelar" 
-        (click)="cancelarFormulario()"
-        [disabled]="guardando">
-        Cancelar
-      </button>
-      <button 
-        type="submit" 
-        class="btn-guardar"
-        [disabled]="guardando || !form.valid"
-        [class.guardando]="guardando">
-        <span *ngIf="!guardando">Guardar dirección</span>
-        <span *ngIf="guardando" class="loading-spinner"></span>
-        <span *ngIf="guardando">Guardando...</span>
-      </button>
-    </div>
-  </form>
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>
+            Indicaciones adicionales (opcional)
+          </label>
+          <textarea 
+            formControlName="indicaciones" 
+            maxlength="100"
+            rows="3"
+            placeholder="Timbre azul, tercer piso, al lado de la escalera..."></textarea>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input 
+              type="checkbox" 
+              formControlName="direccionPredeterminada">
+            <span>Guardar como dirección predeterminada</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Mensaje de error -->
+      <div class="error-message" *ngIf="errorGuardado">
+        <ng-icon name="heroXMark"></ng-icon>
+        <p>{{errorGuardado}}</p>
+      </div>
+
+      <!-- Botones de acción -->
+      <div class="form-actions">
+        <button 
+          type="button" 
+          class="btn-cancelar" 
+          (click)="cancelarFormulario()"
+          [disabled]="guardando">
+          Cancelar
+        </button>
+        <button 
+          type="submit" 
+          class="btn-guardar"
+          [disabled]="guardando || !form.valid"
+          [class.guardando]="guardando">
+          <span *ngIf="!guardando && !modoEdicion">Agregar dirección</span>
+          <span *ngIf="!guardando && modoEdicion">Actualizar dirección</span>
+          <span *ngIf="guardando" class="loading-spinner"></span>
+          <span *ngIf="guardando && !modoEdicion">Guardando...</span>
+          <span *ngIf="guardando && modoEdicion">Actualizando...</span>
+        </button>
+      </div>
+    </form>
+  </div>
 </div>

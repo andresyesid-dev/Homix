@@ -1,5 +1,5 @@
 .body {
-    background-color: #f6f6f6;
+    background-color: #f7f7f7;
     width: 100%;
     min-height: 100vh;
     position: relative;
@@ -8,14 +8,9 @@
 	// Padding para footer solo en desktop
 	padding-bottom: 380px;
 	
-	@media (max-width: 900px) {
-        padding-bottom: 550px;
-	}
-
 	// En móvil no hay footer, solo padding mínimo
     @media (max-width: 768px) {
         padding-bottom: 20px;
-        min-height: calc(100vh - 80px) !important;
 	}
 }
 
@@ -23,8 +18,9 @@
 .progress-indicator-mobile {
     display: none;
     background: white;
-    padding: 16px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     
     @media (max-width: 768px) {
         display: block;
@@ -32,10 +28,9 @@
     
     .steps-container {
         display: flex;
-        justify-content: space-between;
         align-items: center;
-        position: relative;
-        max-width: 300px;
+        justify-content: center;
+        max-width: 400px;
         margin: 0 auto;
         
         .step {
@@ -43,14 +38,13 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            z-index: 2;
             
             .step-number {
                 width: 32px;
                 height: 32px;
                 border-radius: 50%;
                 background: #e0e0e0;
-                color: #666;
+                color: #999;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -63,101 +57,105 @@
             .step-label {
                 font-size: 12px;
                 color: #666;
+                font-weight: 500;
                 text-align: center;
-                line-height: 1.2;
+                transition: all 0.3s ease;
             }
             
             &.active {
                 .step-number {
-                    background: #ff9c59;
+                    background: #FF9C59;
                     color: white;
                 }
                 .step-label {
-                    color: #ff9c59;
+                    color: #FF9C59;
                     font-weight: 600;
                 }
             }
             
             &.completed {
                 .step-number {
-                    background: #ff9c59;
+                    background: #4CAF50;
                     color: white;
                 }
                 .step-label {
-                    color: #ff9c59;
+                    color: #4CAF50;
                 }
             }
         }
         
         .step-line {
-            position: absolute;
-            top: 16px;
-            left: 20%;
-            right: 20%;
+            flex: 1;
             height: 2px;
             background: #e0e0e0;
-            z-index: 1;
+            margin: 0 16px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
             
             &.completed {
-                background: #ff9c59;
+                background: #4CAF50;
             }
         }
     }
 }
 
+// Layout desktop (2 columnas)
 .contenido-compra.desktop-layout {
-    display: grid;
-    grid-template-columns: 1fr 350px;
-    gap: 30px;
+    position: relative;
     max-width: 1200px;
-    margin: 0 auto;
-    padding: 30px 20px;
-    
-    @media (max-width: 768px) {
-        display: none;
-    }
-    
+    width: 90%;
+    display: grid;
+    margin: auto;
+    margin-top: 33px;
+    padding-bottom: 180px;
+    grid-template-columns: 2.6fr 1fr;
+    column-gap: 20px;
+
     .izquierda {
-        min-height: 400px;
+        min-width: 500px;
     }
 }
 
+// Layout móvil (1 columna step-by-step)
 .contenido-compra.mobile-layout {
     display: none;
     
     @media (max-width: 768px) {
         display: block;
-        padding: 0;
-        margin: 0;
-        background: #f7f7f7;
-        min-height: calc(100vh - 80px) !important;
+        width: 100%;
+        min-height: 70vh;
         
         .mobile-step {
-            background: white;
+            width: 100%;
             min-height: calc(100vh - 200px);
+            display: flex;
+            flex-direction: column;
             
+            // El contenido del step
             > *:not(.mobile-navigation) {
-                padding: 20px 16px;
-                border-bottom: 1px solid #eee;
+                flex: 1;
+                width: 100%;
+                padding: 0 16px 20px 16px;
             }
             
             .mobile-navigation {
-                position: fixed;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                background: white;
-                border-top: 1px solid #eee;
                 padding: 16px;
+                background: white;
+                border-top: 1px solid #e0e0e0;
                 display: flex;
                 gap: 12px;
-                z-index: 1000;
+                justify-content: space-between;
+                margin-top: auto; // Empujar hacia abajo dentro del flex container
+                position: relative; // Cambiar a relative para que no interfiera con el footer
+                z-index: 10;
+                box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
                 
                 .btn-navigation {
                     flex: 1;
-                    padding: 12px 16px;
-                    border: none;
+                    max-width: 200px;
+                    height: 48px;
                     border-radius: 8px;
+                    border: none;
                     font-size: 16px;
                     font-weight: 600;
                     cursor: pointer;
@@ -173,11 +171,11 @@
                     }
                     
                     &.btn-next {
-                        background: #ff9c59;
+                        background: #FF9C59;
                         color: white;
                         
                         &:hover:not(:disabled) {
-                            background: #e88a47;
+                            background: #ff8a3d;
                             transform: translateY(-2px);
                         }
                         
@@ -200,57 +198,205 @@
 }
 
 .contenido-respuesta {
-    padding: 40px 20px;
-    min-height: 60vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    @media (max-width: 768px) {
-        padding: 20px 16px;
-        min-height: 50vh;
-    }
+    position: relative;
+    width: 100%;
+    margin: auto;
+    margin-top: 33px;
+    padding-bottom: 180px;
 }
 
-// Animación de carga
-@keyframes pulse {
-    0%, 100% {
-        transform: scale(1);
+//---- Animaciones boton ----
+.cargando{
+	cursor: default !important;
+    background-color: #40d36c !important;
+	&:hover{
+		background: #40d36c !important;
+	}
+}
+.loading{
+	width: 19px;
+	height: 19px;
+	border: 3px solid white;
+	border-radius: 50%;
+	position: absolute;
+	left: calc(50% - 15px);
+	top: 8px;
+	border-left-color: transparent;
+	animation: load 1s ease infinite;
+}
+
+@keyframes load {
+	0%{
+		transform: rotate(0deg);
+	}
+	100%{
+		transform: rotate(360deg);
+	}
+}
+
+.success{
+    background-color: #40d36c !important;
+    animation: botonCheck .5s;
+    &:hover{
+        background-color: #40d36c !important;
     }
-    50% {
+    ng-icon{
+        margin-top: -5px;
+        font-size: 26px;
+        animation: check .8s;
+    }
+}
+@keyframes botonCheck {
+	0%{
+		transform: scale(.8);
+	}
+    65%{
         transform: scale(1.05);
     }
-}
-
-.cargando {
-    animation: pulse 1.5s ease-in-out infinite;
-}
-
-// Animación de éxito
-@keyframes bounce {
-    0%, 20%, 53%, 80%, 100% {
-        transform: translate3d(0, 0, 0);
-    }
-    40%, 43% {
-        transform: translate3d(0, -8px, 0);
-    }
-    70% {
-        transform: translate3d(0, -4px, 0);
-    }
-    90% {
-        transform: translate3d(0, -2px, 0);
-    }
-}
-
-.exito {
-    animation: bounce 1s ease-in-out;
-}
-
-// Animación de escala
-@keyframes scaleIn {
-	0%{
-		transform: scale(0.8);
+	100%{
+		transform: scale(1);
 	}
+}
+@keyframes check {
+	0%{
+		transform: scale(.0);
+	}
+    40%{
+        transform: scale(.0);
+    }
+    80%{
+        transform: scale(1.3);
+    }
+	100%{
+		transform: scale(1);
+	}
+}
+
+
+//----- COMPRA EXITOSA -------
+.compra-exitosa {
+    position: relative;
+    max-width: 1200px;
+    width: 95%;
+    min-height: 330px;
+    margin: auto;
+    margin-top: 45px;
+    background: #FF9C59;
+    border-radius: 5px;
+    animation: compra .7s;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    
+    h1{
+        font-size: 28px;
+        text-align: center;
+        margin: 15px 100px 15px 100px;
+        color: white;
+        font-weight: 550;
+        letter-spacing: 1px;
+        word-spacing: 1.5px;
+    }
+    
+    .payment-info {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 5px;
+        padding: 20px 30px;
+        margin: 20px 0;
+        width: 100%;
+        max-width: 600px;
+        
+        .payment-status {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            
+            .status-icon {
+                font-size: 32px;
+                
+                &.approved { color: #32c65e; }
+                &.pending { color: #FFA726; }
+                &.rejected { color: #EF5350; }
+            }
+            
+            .status-text {
+                flex: 1;
+                
+                h3 {
+                    margin: 0 0 5px 0;
+                    font-size: 18px;
+                    color: #333;
+                    font-weight: 600;
+                }
+                
+                p {
+                    margin: 0;
+                    font-size: 14px;
+                    color: #666;
+                }
+            }
+        }
+        
+        .payment-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 15px;
+            
+            .detail-item {
+                display: flex;
+                flex-direction: column;
+                
+                .label {
+                    font-size: 12px;
+                    color: #888;
+                    margin-bottom: 4px;
+                    text-transform: uppercase;
+                    letter-spacing: 0.5px;
+                }
+                
+                .value {
+                    font-size: 15px;
+                    color: #333;
+                    font-weight: 500;
+                }
+            }
+        }
+    }
+    
+    button{
+        margin-top: 20px;
+        width: 180px;
+        line-height: 40px;
+        height: 40px;
+        border-radius: 4px;
+        background: #f0fbf4;
+        border: none;
+        color: #32c65e;
+        letter-spacing: .4px;
+        font-size: 14.5px;
+        font-weight: 450;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        &:hover{
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    }
+}
+@keyframes compra {
+	0%{
+		transform: scale(.0);
+	}
+    70%{
+        transform: scale(1.08);
+    }
 	100%{
 		transform: scale(1);
 	}
@@ -274,7 +420,7 @@
     // Indicador de pasos
     .pasos-indicador {
         background: white;
-        padding: 6px 0 0 0;
+        padding: 20px 16px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         display: flex;
         justify-content: space-between;
@@ -289,13 +435,11 @@
             align-items: center;
             flex: 1;
             position: relative;
-            min-height: 60px;
-            padding: 12px 8px;
             
             &:not(:last-child)::after {
                 content: '';
                 position: absolute;
-                top: 28px;
+                top: 16px;
                 right: -50%;
                 width: 100%;
                 height: 2px;
@@ -312,20 +456,26 @@
                 height: 32px;
                 border-radius: 50%;
                 background: #e0e0e0;
-                color: #666;
+                color: #999;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 font-size: 14px;
                 font-weight: 600;
                 margin-bottom: 6px;
-                transition: all 0.3s ease;
                 position: relative;
                 z-index: 2;
+                background: white;
+                border: 2px solid #e0e0e0;
             }
             
-            &.completado .paso-numero,
             &.activo .paso-numero {
+                background: #ff9c59;
+                color: white;
+                border-color: #ff9c59;
+            }
+            
+            &.completado .paso-numero {
                 background: #ff9c59;
                 color: white;
                 border-color: #ff9c59;
@@ -336,7 +486,6 @@
                 color: #666;
                 text-align: center;
                 line-height: 1.2;
-                margin-top: 2px;
             }
             
             &.activo .paso-titulo {
@@ -355,13 +504,13 @@
             padding: 20px 16px;
         }
         .paso-2 {
-            padding: 20px 16px 10px 16px;
+            padding: 20px 16px 10px 16px !important;
         }
     }
     
     // Estilos para el componente resumen-compra cuando está fuera de los pasos
     .resumen-compra-container {
-        padding: 16px 28px;
+        padding: 20px 16px;
         background: #f7f7f7;
         
         app-resumen-compra {
@@ -370,77 +519,69 @@
     }
     
     .paso-3 {
-        // En el paso 3, el resumen-compra debe mostrar principalmente los bricks
-        app-resumen-compra {
-            display: block;
-            
-            // El resumen se oculta automáticamente cuando mostrarBrickPago es true
-            // No forzamos la ocultación aquí para evitar interferencias
-            
-            ::ng-deep .payment-brick-section {
-                margin-top: 0;
+            // En el paso 3, el resumen-compra debe mostrar principalmente los bricks
+            app-resumen-compra {
+                display: block;
                 
-                // Asegurar que los bricks sean visibles
-                .brick-header, .brick-loading, #payment-brick-container {
-                    display: block !important;
+                // El resumen se oculta automáticamente cuando mostrarBrickPago es true
+                // No forzamos la ocultación aquí para evitar interferencias
+                
+                ::ng-deep .payment-brick-section {
+                    margin-top: 0;
+                    
+                    // Asegurar que los bricks sean visibles
+                    .brick-header, .brick-loading, #payment-brick-container {
+                        display: block !important;
+                    }
                 }
             }
         }
-    }
-    
-    // Eliminar padding de todos los divs dentro de resumen-compra-container en móvil
-    .resumen-compra-container {
-        ::ng-deep app-resumen-compra {
-            > div {
-                padding: 0 !important;
-                
-                > div {
-                    padding: 0 !important;
-                }
-            }
-            
-            // Eliminar fondo blanco del formulario de métodos de pago
-            .resumen-lateral,
-            .payment-methods-container,
-            [class*="payment"],
-            [class*="brick"] {
-                background: transparent !important;
-                background-color: transparent !important;
-            }
-            
-            // Agregar solo fondo blanco a los recuadros específicos de métodos de pago
-            ::ng-deep #payment-brick-container-1 > div > form > div.mp-checkout-bricks__payment-options-_ANPQa.svelte-19uzzy1 > div {
-                background: white !important;
-            }
-        }
-    }
         
-    // Estilos del título "Medios de pago"
-    ::ng-deep #payment-brick-container-1 > div > form > h1 {
-        padding-top: 0 !important;
-        padding: 15px 0 20px 0 !important;
-        color: #555 !important;
+        .titulo-pago {
+            background: white;
+            padding: 20px;
+            margin-bottom: 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            
+            h2 {
+                margin: 0;
+                font-size: 20px;
+                color: #333;
+                font-weight: 600;
+            }
+            
+            .subtitulo-pago {
+                margin: 8px 0 0 0;
+                font-size: 14px;
+                color: #666;
+            }
+        }
     }
     
     // Botones de navegación
     .botones-navegacion {
+        padding: 20px 16px;
         background: white;
         box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
-        position: fixed;
+        position: sticky;
         bottom: 0;
-        left: 0;
-        right: 0;
         z-index: 100;
-        padding: 20px;
         
         .btn-continuar, .btn-anterior {
             width: 100%;
             padding: 16px;
             border: none;
+            border-radius: 8px;
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            margin-bottom: 8px;
+            
+            &:last-child {
+                margin-bottom: 0;
+            }
         }
         
         .btn-continuar {

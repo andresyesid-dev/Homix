@@ -8,8 +8,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ComponentesGeneralesModule } from '../componentes-generales/componentes-generales.module';
 
 import { ComprarComponent } from './comprar.component';
-import { MetodoPagoComponent } from './secciones/metodo-pago/metodo-pago.component';
-import { CambiarDireccionComponent } from './secciones/cambiar-direccion/cambiar-direccion.component';
+import { DetallesCompraComponent } from './secciones/detalles-compra/detalles-compra.component';
 import { SelectorDireccionesComponent } from './secciones/selector-direcciones/selector-direcciones.component';
 import { FormularioDireccionComponent } from './secciones/formulario-direccion/formulario-direccion.component';
 import { ResumenCompraComponent } from './secciones/resumen-compra/resumen-compra.component';
@@ -20,8 +19,7 @@ import { RespuestaCompraComponent } from './secciones/respuesta-compra/respuesta
     ComprarComponent,
     SelectorDireccionesComponent,
     FormularioDireccionComponent,
-    MetodoPagoComponent,
-    CambiarDireccionComponent,
+    DetallesCompraComponent,
     ResumenCompraComponent,
     RespuestaCompraComponent
   ],

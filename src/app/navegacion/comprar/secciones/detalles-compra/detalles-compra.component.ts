@@ -10,12 +10,12 @@ import { provideIcons } from '@ng-icons/core';
 import { heroMapPin, heroCreditCard, heroCheckCircle, heroPhone, heroInformationCircle, heroPencil } from '@ng-icons/heroicons/outline';
 
 @Component({
-  selector: 'app-metodo-pago',
-  templateUrl: './metodo-pago.component.html',
-  styleUrls: ['./metodo-pago.component.scss'],
+  selector: 'app-detalles-compra',
+  templateUrl: './detalles-compra.component.html',
+  styleUrls: ['./detalles-compra.component.scss'],
   providers: [provideIcons({heroMapPin, heroCreditCard, heroCheckCircle, heroPhone, heroInformationCircle, heroPencil})]
 })
-export class MetodoPagoComponent implements OnInit, OnDestroy {
+export class DetallesCompraComponent implements OnInit, OnDestroy {
   direccionEnvio: Direccion | null = null;
   totalCompra: number = 0;
   productos: Producto[] = [];
@@ -40,7 +40,7 @@ export class MetodoPagoComponent implements OnInit, OnDestroy {
     
     // Si no hay dirección, redirigir al selector
     if (!this.direccionEnvio) {
-      this.router.navigate(['comprar/checkout/direccion']);
+      this.router.navigate(['comprar/checkout/seleccionar-direccion']);
       return;
     }
 
@@ -49,7 +49,7 @@ export class MetodoPagoComponent implements OnInit, OnDestroy {
     
     // Ya NO escuchamos el evento iniciarPago$ aquí
     // El Payment Brick se maneja completamente desde resumen-compra
-    console.log('✅ Componente MetodoPago inicializado - Payment Brick se maneja en ResumenCompra');
+    console.log('✅ Componente DetallesCompra inicializado - Payment Brick se maneja en ResumenCompra');
   }
 
   obtenerProductos(): void {
@@ -139,6 +139,6 @@ export class MetodoPagoComponent implements OnInit, OnDestroy {
   }
 
   volverADireccion(): void {
-    this.router.navigate(['comprar/checkout/direccion']);
+    this.router.navigate(['comprar/checkout/seleccionar-direccion']);
   }
 }

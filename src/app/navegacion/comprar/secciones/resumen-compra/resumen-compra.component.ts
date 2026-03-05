@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, OnChanges, SimpleChanges, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { provideIcons } from '@ng-icons/core';
@@ -14,7 +14,7 @@ declare let MercadoPago: any;
   styleUrls: ['./resumen-compra.component.scss'],
   providers: [provideIcons({matCheck})]
 })
-export class ResumenCompraComponent implements OnInit, OnDestroy {
+export class ResumenCompraComponent implements OnInit, OnDestroy, OnChanges {
 
   @Input() productosLenght: number = 0;
   @Input() precioProductos: number = 0;
@@ -23,8 +23,10 @@ export class ResumenCompraComponent implements OnInit, OnDestroy {
   @Input() actualizacionExitosa: boolean = false;
   @Input() botonHabilitado: boolean = false;
   @Input() pasoActual: string = 'direccion';
+  @Input() esModoMovil: boolean = false;
   
   @Output() procesarCompra = new EventEmitter<void>();
+  @Output() cerrarBricks = new EventEmitter<void>();
 
   // Propiedades para MercadoPago Bricks
   mostrarBrickPago: boolean = false;
@@ -32,7 +34,9 @@ export class ResumenCompraComponent implements OnInit, OnDestroy {
   procestandoPago: boolean = false;
   mercadoPagoListo: boolean = false;
   errorPago: string = '';
-  private mp: any = null; // Instancia de MercadoPago
+  brickContainerId: string = 'payment-brick-container';
+  private mp: any = null;
+  private paymentBrickController: any = null;
 
   private subscriptions: Subscription[] = [];
 
@@ -48,41 +52,97 @@ export class ResumenCompraComponent implements OnInit, OnDestroy {
 
     // Escuchar el evento para iniciar el pago
     const iniciarPagoSub = this.comprarService.iniciarPago$.subscribe(() => {
-      console.log('👂 ResumenCompra: Recibió evento para mostrar Payment Brick');
+      // En móvil, solo responder si estamos en el paso correcto (pago)
+      if (this.esModoMovil && this.pasoActual !== 'pago') {
+        return;
+      }
+      
       this.mostrarPaymentBrick();
     });
     this.subscriptions.push(iniciarPagoSub);
+    
+    // Verificar si debe mostrar bricks automáticamente (móvil paso 3)
+    this.verificarMostrarBricksAutomatico();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    // Si cambia pasoActual, manejar transiciones
+    if (changes['pasoActual']) {
+      const pasoAnterior = changes['pasoActual'].previousValue;
+      const pasoNuevo = changes['pasoActual'].currentValue;
+      
+      // Si salimos del paso 'pago', cerrar bricks
+      if (pasoAnterior === 'pago' && pasoNuevo !== 'pago' && this.mostrarBrickPago) {
+        this.cerrarBrick();
+      }
+      
+      // Verificar si debe mostrar bricks en el nuevo paso
+      setTimeout(() => {
+        this.verificarMostrarBricksAutomatico();
+      }, 100);
+    }
+    
+    // Si cambia esModoMovil, verificar si debe mostrar bricks
+    if (changes['esModoMovil']) {
+      setTimeout(() => {
+        this.verificarMostrarBricksAutomatico();
+      }, 100);
+    }
+  }
+
+  /**
+   * Verifica si debe mostrar los bricks automáticamente en móvil paso 3
+   */
+  private verificarMostrarBricksAutomatico(): void {
+    // Solo mostrar bricks en móvil cuando estamos específicamente en el paso 'pago'
+    // Y no en otros pasos como 'detalles'
+    if (this.esModoMovil && this.pasoActual === 'pago' && !this.mostrarBrickPago) {
+      setTimeout(() => {
+        this.mostrarPaymentBrick();
+      }, 300);
+    }
   }
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(sub => sub.unsubscribe());
+    this.destruirBrickActual();
+  }
+
+  private async destruirBrickActual(): Promise<void> {
+    if (this.paymentBrickController) {
+      try {
+        await this.paymentBrickController.unmount();
+        this.paymentBrickController = null;
+      } catch (error) {
+        console.error('Error al desmontar el brick de pago:', error);
+        this.paymentBrickController = null;
+      }
+    }
   }
 
   async cargarMercadoPagoSDK(): Promise<void> {
-    if (typeof MercadoPago !== 'undefined') {
-      console.log('✅ SDK de MercadoPago ya cargado');
+    if (this.mercadoPagoListo) {
       this.inicializarMercadoPago();
       return Promise.resolve();
     }
 
-    console.log('📦 Cargando SDK de MercadoPago...');
     return new Promise((resolve, reject) => {
       const script = document.createElement('script');
       script.src = 'https://sdk.mercadopago.com/js/v2';
       script.onload = () => {
-        console.log('✅ SDK de MercadoPago cargado');
         this.inicializarMercadoPago();
         resolve();
       };
-      script.onerror = () => {
-        console.error('❌ Error al cargar SDK de MercadoPago');
-        reject(new Error('Error al cargar MercadoPago SDK'));
+      script.onerror = (error) => {
+        console.error('Error al cargar el SDK de MercadoPago:', error);
+        reject(error);
       };
       document.head.appendChild(script);
     });
   }
 
   inicializarMercadoPago(): void {
+    if (this.mercadoPagoListo) return;
     try {
       const publicKey = environment.mercadoPago?.publicKey;
       if (!publicKey) {
@@ -91,100 +151,75 @@ export class ResumenCompraComponent implements OnInit, OnDestroy {
       }
       
       // Crear instancia de MercadoPago (SDK v2)
-      this.mp = new MercadoPago(publicKey, {
-        locale: 'es-CO'
-      });
-      
+      this.mp = new MercadoPago(publicKey, { locale: 'es-CO' });
       this.mercadoPagoListo = true;
-      console.log('✅ MercadoPago inicializado con clave:', publicKey.substring(0, 20) + '...');
     } catch (error) {
-      console.error('❌ Error al inicializar MercadoPago:', error);
+      console.error('Error al inicializar MercadoPago:', error);
     }
   }
 
   async mostrarPaymentBrick(): Promise<void> {
-    console.log('🎨 Mostrando Payment Brick en resumen lateral...');
-    this.mostrarBrickPago = true;
+    if (this.cargandoBrick || this.mostrarBrickPago) {
+      return;
+    }
+
     this.cargandoBrick = true;
     this.errorPago = '';
 
-    // Esperar a que MercadoPago esté listo
-    if (!this.mercadoPagoListo) {
-      console.log('⏳ Esperando a que MercadoPago SDK esté listo...');
+    try {
       await this.cargarMercadoPagoSDK();
-    }
+      await this.destruirBrickActual(); 
 
-    setTimeout(() => {
-      this.inicializarPaymentBrick();
-    }, 300);
+      this.mostrarBrickPago = true;
+      this.cdr.detectChanges();
+
+      await this.renderizarPaymentBrick();
+
+    } catch (error) {
+      console.error('Error al mostrar el brick de pago:', error);
+      this.errorPago = 'No se pudo mostrar el formulario de pago. Inténtalo de nuevo.';
+      this.mostrarBrickPago = false;
+    } finally {
+      this.cargandoBrick = false;
+      this.cdr.detectChanges();
+    }
   }
 
-  inicializarPaymentBrick(): void {
-    if (!this.mercadoPagoListo || !this.mp) {
-      console.error('❌ MercadoPago SDK no está listo después de esperar');
-      this.errorPago = 'Error al cargar MercadoPago. Recarga la página.';
-      this.cargandoBrick = false;
-      this.cdr.detectChanges(); // Forzar detección de cambios
-      return;
-    }
-
+  async renderizarPaymentBrick(): Promise<void> {
     const totalCompra = this.precioProductos + this.precioEnvios;
-    console.log('💰 Total de la compra:', totalCompra);
 
-    const brickContainer = document.getElementById('payment-brick-container');
-    
-    if (!brickContainer) {
-      console.error('❌ No se encontró el contenedor del brick');
-      this.cargandoBrick = false;
-      this.errorPago = 'Error al inicializar el formulario de pago';
-      this.cdr.detectChanges(); // Forzar detección de cambios
-      return;
-    }
-
-    brickContainer.innerHTML = '';
-
-    // Usar la instancia de MercadoPago para crear el brick
-    const bricksBuilder = this.mp.bricks();
-    
-    bricksBuilder.create('payment', 'payment-brick-container', {
+    const settings = {
       initialization: {
         amount: totalCompra,
-        payer: {
-          email: ''
-        }
+        payer: { email: '' },
       },
       customization: {
         paymentMethods: {
           maxInstallments: 12,
           creditCard: 'all',
           debitCard: 'all',
-          bankTransfer: 'all',  // PSE (Transferencia bancaria)
-          ticket: 'all'         // Efecty y otros pagos en efectivo
+          bankTransfer: 'all',
+          ticket: 'all'
         },
-        visual: {
-          style: {
-            theme: 'default'
-          }
-        }
+        visual: { style: { theme: 'default' } }
       },
       callbacks: {
         onReady: () => {
-          console.log('✅ Payment Brick listo con todos los métodos de pago');
           this.cargandoBrick = false;
-          this.cdr.detectChanges(); // Forzar detección de cambios
+          this.cdr.detectChanges();
         },
-        onSubmit: async (formData: any) => {
-          console.log('💳 Usuario completó el formulario, procesando pago...');
-          return this.procesarPago(formData);
-        },
+        onSubmit: (formData: any) => this.procesarPago(formData),
         onError: (error: any) => {
-          console.error('❌ Error en Payment Brick:', error);
+          console.error('Error en Payment Brick:', error);
+          this.errorPago = 'Ocurrió un error en el formulario de pago. Por favor, verifica tus datos.';
           this.cargandoBrick = false;
-          this.errorPago = 'Error al cargar el formulario de pago';
-          this.cdr.detectChanges(); // Forzar detección de cambios
-        }
-      }
-    });
+          this.cdr.detectChanges();
+        },
+      },
+    };
+
+    const bricksBuilder = this.mp.bricks();
+    this.paymentBrickController = await bricksBuilder.create('payment', this.brickContainerId, settings);
   }
 
   async procesarPago(formData: any): Promise<void> {
@@ -369,9 +404,22 @@ export class ResumenCompraComponent implements OnInit, OnDestroy {
     return '❌ Error al procesar el pago';
   }
 
-  cerrarBrick(): void {
+  /**
+   * Método público para cerrar bricks desde el componente padre (móvil)
+   */
+  public cerrarBricksDesdeMovil(): void {
+    if (this.mostrarBrickPago) {
+      this.cerrarBrick();
+    }
+  }
+
+  async cerrarBrick(): Promise<void> {
+    await this.destruirBrickActual();
     this.mostrarBrickPago = false;
     this.errorPago = '';
+    this.cargandoBrick = false;
+    this.cerrarBricks.emit();
+    this.cdr.detectChanges();
   }
 
   onProcesarCompra(): void {
@@ -381,12 +429,23 @@ export class ResumenCompraComponent implements OnInit, OnDestroy {
   }
 
   getTextoBoton(): string {
-    if (this.pasoActual === 'direccion') {
-      return 'Continuar al pago';
-    } else if (this.pasoActual === 'pago') {
-      return 'Procesar compra';
+    if (this.esModoMovil) {
+      if (this.pasoActual === 'direccion') {
+        return 'Continuar';
+      } else if (this.pasoActual === 'detalles') {
+        return 'Ir al pago';
+      } else if (this.pasoActual === 'pago') {
+        return 'Ir al pago';
+      }
+    } else {
+      // Modo desktop
+      if (this.pasoActual === 'direccion') {
+        return 'Continuar';
+      } else if (this.pasoActual === 'pago') {
+        return 'Ir al pago';
+      }
     }
-    return 'Procesar compra';
+    return 'Ir al pago';
   }
 
 }

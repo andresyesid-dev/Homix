@@ -25,22 +25,16 @@
              class="direccion-card"
              [class.seleccionada]="direccionSeleccionada === direccion"
              (click)="seleccionarDireccion(direccion)">
-          
-          <div class="direccion-radio">
-            <input type="radio" 
+          <div class="direccion-radio" *ngIf="!esModoMovil">
+            <input type="radio"
                    [checked]="direccionSeleccionada === direccion"
                    (change)="seleccionarDireccion(direccion)"
                    [id]="'direccion-' + i"
                    [attr.aria-label]="'Seleccionar dirección de ' + direccion.nombresApellidos">
           </div>
-
           <div class="direccion-contenido">
             <div class="direccion-titulo">
               <h3>{{direccion.nombresApellidos}}</h3>
-              <span class="badge-predeterminada" *ngIf="direccion.direccionPredeterminada">
-                <ng-icon name="heroHome"></ng-icon>
-                Principal
-              </span>
             </div>
             
             <div class="direccion-detalles">
@@ -54,29 +48,69 @@
                 {{direccion.detalle}}
               </p>
             </div>
+
+            <!-- Botones de acción -->
+            <div class="direccion-acciones">
+              <button class="btn-accion btn-editar" 
+                      (click)="editarDireccion(direccion, i); $event.stopPropagation()"
+                      [attr.aria-label]="'Editar dirección de ' + direccion.nombresApellidos">
+                <ng-icon name="heroPencil"></ng-icon>
+                <span>Editar</span>
+              </button>
+              
+              <button class="btn-accion btn-eliminar" 
+                      *ngIf="direcciones.length > 1"
+                      (click)="confirmarEliminarDireccion(direccion, i); $event.stopPropagation()"
+                      [attr.aria-label]="'Eliminar dirección de ' + direccion.nombresApellidos">
+                <ng-icon name="heroTrash"></ng-icon>
+                <span>Eliminar</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Formulario para agregar dirección -->
+    <!-- Formulario para agregar/editar dirección -->
     <div *ngIf="mostrarFormulario" class="formulario-seccion">
       <div class="formulario-wrapper">
         <div class="header-section">
-          <h2 class="titulo-seccion">Agrega tu dirección de envío</h2>
-          <p class="descripcion" *ngIf="direcciones.length === 0">
+          <h2 class="titulo-seccion">
+            {{ modoEdicion ? 'Editar dirección de envío' : 'Agrega tu dirección de envío' }}
+          </h2>
+          <p class="descripcion" *ngIf="direcciones.length === 0 && !modoEdicion">
             Para continuar con tu compra, necesitamos saber dónde enviar tu pedido
           </p>
-          <p class="descripcion" *ngIf="direcciones.length > 0">
+          <p class="descripcion" *ngIf="direcciones.length > 0 && !modoEdicion">
             Completa los datos de tu nueva dirección
+          </p>
+          <p class="descripcion" *ngIf="modoEdicion">
+            Modifica los datos de tu dirección
           </p>
         </div>
         
         <app-formulario-direccion 
+          [modoEdicion]="modoEdicion"
+          [direccionParaEditar]="direccionParaEditar"
+          [indiceEdicion]="indiceEdicion"
           (direccionGuardada)="direccionAgregada($event)"
+          (direccionActualizada)="direccionActualizada($event)"
           (cancelar)="cancelarFormulario()">
         </app-formulario-direccion>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Modal de confirmación para eliminar dirección -->
+<app-modal-confirmacion
+  [mostrar]="mostrarModalConfirmacion"
+  [titulo]="'Eliminar dirección'"
+  [mensaje]="'¿Estás seguro de que deseas eliminar la dirección de ' + (direccionAEliminar?.nombresApellidos || '') + '? Esta acción no se puede deshacer.'"
+  [textoConfirmar]="'Eliminar'"
+  [textoCancelar]="'Cancelar'"
+  [tipoAlerta]="'danger'"
+  (confirmar)="onConfirmarEliminacion()"
+  (cancelar)="onCancelarEliminacion()"
+  (cerrar)="onCancelarEliminacion()">
+</app-modal-confirmacion>
