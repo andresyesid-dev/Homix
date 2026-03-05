@@ -69,3 +69,47 @@
         <div class="proteccionCompra">Compra protegida:<span> Obtén lo que esperabas o recupera tu dinero.</span><ng-icon name="matGppGoodOutline"></ng-icon></div>
     </div>
 </div>
+
+<!-- Modal de pago MercadoPago -->
+<div class="modal-overlay" *ngIf="mostrarModalPago" (click)="cerrarModalPago()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Completar pago</h3>
+            <button class="btn-close" (click)="cerrarModalPago()">
+                <ng-icon name="heroXMark"></ng-icon>
+            </button>
+        </div>
+        
+        <div class="modal-body">
+            <!-- Resumen del producto -->
+            <div class="resumen-compra">
+                <h4>Resumen de compra</h4>
+                <div class="producto-resumen">
+                    <p><strong>{{producto.nombre}}</strong></p>
+                    <p>Cantidad: {{unidades}}</p>
+                    <p class="precio-total">Total: ${{calcularTotal() | number:'1.0-0'}} COP</p>
+                </div>
+            </div>
+
+            <!-- Estado del pago -->
+            <div class="payment-status" *ngIf="procestandoPago">
+                <app-cargando></app-cargando>
+                <p>Procesando pago...</p>
+            </div>
+
+            <div class="payment-success" *ngIf="pagoCompletado">
+                <ng-icon name="heroCheckBadge" class="success-icon"></ng-icon>
+                <p>¡Pago completado exitosamente!</p>
+                <p class="redirect-message">Serás redirigido al resumen de compra...</p>
+            </div>
+
+            <div class="payment-error" *ngIf="errorPago">
+                <p class="error-message">{{errorPago}}</p>
+                <button class="btn-retry" (click)="iniciarProcesoPago()">Intentar nuevamente</button>
+            </div>
+
+            <!-- Contenedor del brick de MercadoPago -->
+            <div id="brick-container" *ngIf="!procestandoPago && !pagoCompletado && !errorPago"></div>
+        </div>
+    </div>
+</div>

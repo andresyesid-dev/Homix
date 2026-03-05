@@ -13,6 +13,8 @@ import { Auth } from '@angular/fire/auth';
 import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { DocumentData, DocumentReference, Firestore, doc, getDoc } from '@angular/fire/firestore';
 import { first } from 'rxjs';
+import { MercadoPagoPaymentData, MercadoPagoBrickConfig } from 'src/app/interfaces/mercadopago';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-datos-producto',
@@ -44,6 +46,13 @@ export class DatosProductoComponent implements OnInit, OnChanges {
   productoPropio!: boolean;
   tamanioSelec = 0;
   anchoPagina: number = window.innerWidth;
+
+  // MercadoPago properties
+  mostrarModalPago = false;
+  procestandoPago = false;
+  pagoCompletado = false;
+  errorPago: string | null = null;
+  brickController: any = null;
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
