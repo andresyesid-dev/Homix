@@ -37,13 +37,56 @@ export const enviarWhatsApp = onCall(
 
       const client = twilio(accountSid, authToken);
       
-      // Usar el número del sandbox de Twilio o el número configurado en .env
-      const twilioWhatsAppNumber = process.env.TWILIO_WHATSAPP_NUMBER || 'whatsapp:+14155238886';
+      // Asegurar prefijo whatsapp: en el número de origen
+      const rawNumber = process.env.TWILIO_WHATSAPP_NUMBER || '+14155238886';
+      const twilioWhatsAppNumber = rawNumber.startsWith('whatsapp:') ? rawNumber : `whatsapp:${rawNumber}`;
       
       const message = await client.messages.create({
         from: twilioWhatsAppNumber,
         to: `whatsapp:${numero}`,
         body: `Tu código de verificación es: ${codigo}`
+      });
+      return { success: true, sid: message.sid };
+    } catch (err: any) {
+      throw new HttpsError('internal', err.message);
+    }
+  }
+);
+
+// Función HTTPS callable para enviar SMS (GCF Gen2)
+export const enviarSMS = onCall(
+  {
+    region: 'us-central1',
+    memory: '256MiB',
+    timeoutSeconds: 60,
+  },
+  async (request) => {
+    const numero = request.data?.numero;
+    const codigo = request.data?.codigo;
+
+    if (!numero || !codigo) {
+      throw new HttpsError('invalid-argument', 'Número y código son requeridos');
+    }
+
+    try {
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+
+      if (!accountSid || !authToken) {
+        throw new HttpsError('failed-precondition', 'Credenciales de Twilio no configuradas');
+      }
+
+      const client = twilio(accountSid, authToken);
+
+      const twilioSmsNumber = process.env.TWILIO_SMS_NUMBER;
+      if (!twilioSmsNumber) {
+        throw new HttpsError('failed-precondition', 'Número SMS de Twilio no configurado (TWILIO_SMS_NUMBER)');
+      }
+
+      const message = await client.messages.create({
+        from: twilioSmsNumber,
+        to: numero,
+        body: `Tu código de verificación Homix es: ${codigo}`
       });
       return { success: true, sid: message.sid };
     } catch (err: any) {

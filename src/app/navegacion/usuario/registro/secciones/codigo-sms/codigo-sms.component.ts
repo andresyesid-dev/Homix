@@ -29,12 +29,22 @@ export class CodigoSMSComponent implements OnInit{
   @ViewChild('firstInput') firstInput!: ElementRef;
   private datos!: any;
   numero!: string;
-  private algo: boolean = false;
   codigoIncorrecto = false;
   check = false;
   private generatedCode!: string; // El código que generamos y enviamos
   enteredCodes: string[] = ['', '', '', '', '', ''];
   cargando = false;
+  enviando = false;
+  enviandoSms = false;
+  codigoReenviado = false;
+  tiempoRestante = 60;
+  private intervalo: any;
+
+  get tiempoFormateado(): string {
+    const min = Math.floor(this.tiempoRestante / 60);
+    const seg = this.tiempoRestante % 60;
+    return `${min}:${seg.toString().padStart(2, '0')}`;
+  }
 
 
 
@@ -70,6 +80,47 @@ export class CodigoSMSComponent implements OnInit{
     }, 10);
   }
 
+  private iniciarCronometro(): void {
+    this.tiempoRestante = 60;
+    clearInterval(this.intervalo);
+    this.intervalo = setInterval(() => {
+      if (this.tiempoRestante > 0) {
+        this.tiempoRestante--;
+      } else {
+        clearInterval(this.intervalo);
+      }
+    }, 1000);
+  }
+
+  async reenviarCodigo(): Promise<void> {
+    this.enviando = true;
+    this.codigoIncorrecto = false;
+    this.enteredCodes = ['', '', '', '', '', ''];
+    this.verificationInputs.forEach(input => input.nativeElement.value = '');
+    await this.sendVerificationCode();
+    this.enviando = false;
+    this.codigoReenviado = true;
+  }
+
+  async enviarPorSms(): Promise<void> {
+    this.enviandoSms = true;
+    this.codigoReenviado = true;
+    this.codigoIncorrecto = false;
+    this.enteredCodes = ['', '', '', '', '', ''];
+    this.verificationInputs.forEach(input => input.nativeElement.value = '');
+    try {
+      this.generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+      const enviarSMS = httpsCallable(this.functions, 'enviarSMS');
+      await enviarSMS({ numero: this.numero, codigo: this.generatedCode });
+      this.iniciarCronometro();
+      this.firstInput.nativeElement.focus();
+    } catch (error: any) {
+      console.error('Error al enviar SMS:', error);
+      alert(`Error SMS: ${error.message}`);
+    }
+    this.enviandoSms = false;
+  }
+
   async sendVerificationCode() {
     try {
       // Generar código aleatorio de 6 dígitos
@@ -88,6 +139,7 @@ export class CodigoSMSComponent implements OnInit{
       });
       
       console.log('✅ WhatsApp enviado exitosamente:', result);
+      this.iniciarCronometro();
       this.firstInput.nativeElement.focus();
     } catch (error: any) {
       console.error('❌ Error al enviar WhatsApp:', error);
@@ -102,6 +154,11 @@ export class CodigoSMSComponent implements OnInit{
   async verifyCode() {
     this.cargando = true;
     const enteredCode = this.enteredCodes.join(''); // Código ingresado por el usuario
+    const tipo = this.datos?.tipo;
+    const isSignIn = tipo === 'singIn' || tipo === 'signIn';
+    const isSignUp = tipo === 'singUp' || tipo === 'signUp';
+    const isGoogleFlow = tipo === 'singUpGoogle' || tipo === 'singInGoogle';
+    const isForgotPassword = tipo === 'forgotPassword';
     
     // Verificar si el código ingresado coincide con el generado
     if (enteredCode !== this.generatedCode) {
@@ -111,12 +168,15 @@ export class CodigoSMSComponent implements OnInit{
     }
 
     try {
+      let autenticacionExitosa = false;
+
       // 3.1 - SignIn: Iniciar sesión con email y password
-      if(this.datos.tipo === 'singIn'){
+      if(isSignIn){
         await signInWithEmailAndPassword(this.auth, this.datos.email, this.datos.password);
+        autenticacionExitosa = true;
       } 
       // 3.2 - SignUp: Crear cuenta con email y password
-      else if(this.datos.tipo === 'singUp'){
+      else if(isSignUp){
         const userCredential = await createUserWithEmailAndPassword(this.auth, this.datos.email, this.datos.password);
         
         // Actualizar perfil del usuario
@@ -134,27 +194,39 @@ export class CodigoSMSComponent implements OnInit{
         });
         
         this.authService.usuarioNuevo = true;
+        autenticacionExitosa = true;
       } 
       // 3.3 - Google SignIn/SignUp: Continuar sin phoneCredential
-      else if(this.datos.tipo === 'singUpGoogle' || this.datos.tipo === 'singInGoogle'){
+      else if(isGoogleFlow){
         const currentUser = this.auth.currentUser;
-        if (currentUser) {
-          // Solo actualizar el número en Firestore
-          await updateDoc(doc(this.firestore, "usuarios", currentUser.uid), { 
-            telefono: this.numero 
-          });
-          
-          if(this.datos.tipo === 'singUpGoogle'){
-            this.authService.usuarioNuevo = true;
-          }
+        if (!currentUser) {
+          throw new Error('No hay sesión activa para completar la validación con Google.');
         }
+
+        // Solo actualizar el número en Firestore
+        await updateDoc(doc(this.firestore, "usuarios", currentUser.uid), { 
+          telefono: this.numero 
+        });
+        
+        if(tipo === 'singUpGoogle'){
+          this.authService.usuarioNuevo = true;
+        }
+
+        autenticacionExitosa = true;
+      } else if (!isForgotPassword) {
+        throw new Error(`Tipo de autenticación no soportado: ${tipo}`);
       }
       
       //-----------------------------------------------------------
       // 3.4 - Forgot Password: Enviar email de reset si código es correcto
-      if(this.datos.tipo !== 'forgotPassword'){
+      if(!isForgotPassword){
+        if (!autenticacionExitosa) {
+          throw new Error('No se completó la autenticación.');
+        }
+
         this.dataSharingService.deleteData();
         this.check = true;
+        this.cargando = false;
         this.router.navigate(['']);
       } else {
         try {
@@ -167,6 +239,7 @@ export class CodigoSMSComponent implements OnInit{
         } catch (error) {
           console.error("Error al enviar el correo electrónico:", error);
         }
+        this.cargando = false;
       }
     } catch (error) {
       this.cargando = false;
@@ -177,64 +250,87 @@ export class CodigoSMSComponent implements OnInit{
   }
 
   //--- funcionalidad Inputs ----------------------------------------------------------------------
-  onInput(event: Event,keyboardEvent: KeyboardEvent, index: number): void {
+  onInput(event: Event, index: number): void {
     const input = event.target as HTMLInputElement;
-    const enteredCode = input.value;
-    this.enteredCodes[index] = enteredCode;
-    const inputValue = input.value;
+    const value = input.value;
 
-    if (/^\d$/.test(inputValue)) {
-      if (inputValue.length === 1 && !this.algo) {
-        const nextIndex = index + 1;
-        const nextInput = this.verificationInputs.toArray()[nextIndex];
-        if (nextInput) {
-          nextInput.nativeElement.focus();
-        }
-      }
-    } else {
-      input.value = ''; 
+    // Solo permitir un dígito
+    if (!/^\d$/.test(value)) {
+      input.value = '';
+      this.enteredCodes[index] = '';
+      return;
     }
 
-    if (inputValue.length > 1 ) {
-      input.value = inputValue.charAt(0);
-    }
-    if (keyboardEvent.repeat) {
-      keyboardEvent.preventDefault();
+    this.enteredCodes[index] = value;
+    this.codigoIncorrecto = false;
+
+    // Avanzar al siguiente input
+    const inputs = this.verificationInputs.toArray();
+    if (index < inputs.length - 1) {
+      inputs[index + 1].nativeElement.focus();
     }
   }
-  
-  onInputBefore(event: Event,keyboardEvent: KeyboardEvent, index: number): void {
+
+  onKeydown(event: KeyboardEvent, index: number): void {
     const input = event.target as HTMLInputElement;
-    const inputValue = input.value;
-    if (inputValue.length !== 0) {
-      if (keyboardEvent.key === 'Backspace') {
-        this.algo = false;
-      }else{
-        this.algo = true;
-        keyboardEvent.preventDefault();
+    const inputs = this.verificationInputs.toArray();
+
+    if (event.key === 'Enter') {
+      const codigoCompleto = this.enteredCodes.every(code => /^\d$/.test(code));
+      if (codigoCompleto && !this.cargando) {
+        this.verifyCode();
       }
-    }
-    if (inputValue.length === 0 && keyboardEvent.key === 'Backspace') {
-      this.algo = false;
-      const previousIndex = index - 1;
-      if (previousIndex >= 0) {
-        const previousInput = this.verificationInputs.toArray()[previousIndex];
-        if (previousInput) {
-          previousInput.nativeElement.focus();
-          previousInput.nativeElement.value = '';
-        }
-      }
-    }
-    if (inputValue.length === 0 && keyboardEvent.key === 'e') {
-      keyboardEvent.preventDefault();
-    }
-    if (inputValue.length === 0 && (keyboardEvent.key !== 'e' && keyboardEvent.key !== 'Backspace')) {
-      this.algo = false;
+      event.preventDefault();
+      return;
     }
 
+    if (event.key === 'Backspace') {
+      if (input.value) {
+        input.value = '';
+        this.enteredCodes[index] = '';
+      } else if (index > 0) {
+        inputs[index - 1].nativeElement.focus();
+        inputs[index - 1].nativeElement.value = '';
+        this.enteredCodes[index - 1] = '';
+      }
+      event.preventDefault();
+    } else if (event.key === 'ArrowLeft' && index > 0) {
+      inputs[index - 1].nativeElement.focus();
+    } else if (event.key === 'ArrowRight' && index < inputs.length - 1) {
+      inputs[index + 1].nativeElement.focus();
+    } else if (/^\d$/.test(event.key) && input.value) {
+      // Si ya tiene un dígito, reemplazar y avanzar
+      input.value = event.key;
+      this.enteredCodes[index] = event.key;
+      if (index < inputs.length - 1) {
+        inputs[index + 1].nativeElement.focus();
+      }
+      event.preventDefault();
+    }
+  }
+
+  onPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+    const paste = event.clipboardData?.getData('text')?.trim() || '';
+    const digits = paste.replace(/\D/g, '').substring(0, 6);
+
+    if (!digits.length) return;
+
+    const inputs = this.verificationInputs.toArray();
+    for (let i = 0; i < 6; i++) {
+      const digit = digits[i] || '';
+      inputs[i].nativeElement.value = digit;
+      this.enteredCodes[i] = digit;
+    }
+
+    // Enfocar el siguiente input vacío, o el último si se llenaron todos
+    const focusIndex = Math.min(digits.length, 5);
+    inputs[focusIndex].nativeElement.focus();
+    this.codigoIncorrecto = false;
   }
 
   ngOnDestroy(): void {
+    clearInterval(this.intervalo);
     if(!this.check){
       this.authService.signOut();
       this.dataSharingService.deleteData();

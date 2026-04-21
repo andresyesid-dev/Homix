@@ -1,15 +1,26 @@
 <div class="formulario">
-    <h1>Código SMS</h1>
-    <p>Ingresa el código que enviamos por SMS al {{numero}}</p>
+    <h1>Verificación</h1>
+    <p>Ingresa el código que enviamos por WhatsApp al {{numero}}</p>
     <br>
     <div class="verification-code">
-        <input #firstInput class="verification-input" type="number" max="9" maxlength="1" (keyup)="onInput($event, $event, 0)" (keydown)="onInputBefore($event, $event, 0)" [ngClass]="{ 'error': codigoIncorrecto }"  #verificationInput />
-        <input class="verification-input" type="number" max="9" maxlength="1" (keyup)="onInput($event, $event, 1)" (keydown)="onInputBefore($event, $event, 1)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
-        <input class="verification-input" type="number" max="9" maxlength="1" (keyup)="onInput($event, $event, 2)" (keydown)="onInputBefore($event, $event, 2)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
+        <input #firstInput class="verification-input" type="text" inputmode="numeric" maxlength="1" (input)="onInput($event, 0)" (keydown)="onKeydown($event, 0)" (paste)="onPaste($event)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
+        <input class="verification-input" type="text" inputmode="numeric" maxlength="1" (input)="onInput($event, 1)" (keydown)="onKeydown($event, 1)" (paste)="onPaste($event)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
+        <input class="verification-input" type="text" inputmode="numeric" maxlength="1" (input)="onInput($event, 2)" (keydown)="onKeydown($event, 2)" (paste)="onPaste($event)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
         <div></div>
-        <input class="verification-input" type="number" max="9" maxlength="1" (keyup)="onInput($event, $event, 3)" (keydown)="onInputBefore($event, $event, 3)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
-        <input class="verification-input" type="number" max="9" maxlength="1" (keyup)="onInput($event, $event, 4)" (keydown)="onInputBefore($event, $event, 4)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
-        <input class="verification-input" type="number" max="9" maxlength="1" (keyup)="onInput($event, $event, 5)" (keydown)="onInputBefore($event, $event, 5)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
+        <input class="verification-input" type="text" inputmode="numeric" maxlength="1" (input)="onInput($event, 3)" (keydown)="onKeydown($event, 3)" (paste)="onPaste($event)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
+        <input class="verification-input" type="text" inputmode="numeric" maxlength="1" (input)="onInput($event, 4)" (keydown)="onKeydown($event, 4)" (paste)="onPaste($event)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
+        <input class="verification-input" type="text" inputmode="numeric" maxlength="1" (input)="onInput($event, 5)" (keydown)="onKeydown($event, 5)" (paste)="onPaste($event)" [ngClass]="{ 'error': codigoIncorrecto }" #verificationInput />
     </div>
     <button (click)="verifyCode()" [ngClass]="{'cargando': cargando}"><span *ngIf="!cargando">Validar</span> <span class="loading" *ngIf="cargando"></span></button>
+    <div class="reenviar" *ngIf="!codigoReenviado">
+        <span *ngIf="tiempoRestante > 0">Reenviar código <strong>{{ tiempoFormateado }}</strong></span>
+        <div class="reenviar-botones" *ngIf="tiempoRestante === 0">
+            <button class="btn-reenviar" (click)="reenviarCodigo()" [ngClass]="{'cargando': enviando}">
+                <span *ngIf="!enviando">Reenviar código</span><span class="loading" *ngIf="enviando"></span>
+            </button>
+            <button class="btn-sms" (click)="enviarPorSms()">
+                <span>Enviar por SMS</span>
+            </button>
+        </div>
+    </div>
 </div>

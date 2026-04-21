@@ -2,7 +2,8 @@
     position: relative;
     width: 410px;
     min-width: 375px;
-    height: 325px;
+    height: auto;
+    padding-bottom: 34px;
     background: white;
     border-radius: 12px;
     border: 1px solid #ececec;
@@ -60,7 +61,7 @@
       }
     }
 
-    button{
+    > button{
         position: relative;
         margin-top: 35px;
         width: calc(100% - 84px);
@@ -75,8 +76,67 @@
         letter-spacing: .5px;
         word-spacing: 1px;
         height: 40px;
+        transition: background-color 0.2s ease;
         &:hover{
-            background-color: #FF9C59;
+            background-color: #f58f4a !important;
+        }
+    }
+    .reenviar{
+        margin-top: 16px;
+        text-align: center;
+        min-height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        > span{
+            font-size: 13px;
+            color: #909090;
+            padding: 0;
+            strong{
+                color: #FF9C59;
+                font-weight: 500;
+            }
+        }
+        .reenviar-botones{
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .btn-reenviar, .btn-sms{
+            position: relative;
+            margin: 0;
+            width: auto;
+            padding: 9px 20px;
+            font-size: 13px;
+            color: #fff;
+            border-radius: 6px;
+            height: 36px;
+            margin-left: 0;
+            cursor: pointer;
+            span{
+                color: #fff;
+            }
+        }
+        .btn-reenviar{
+            background-color: #fca870;            
+            overflow: hidden;     
+            border: none !important;      
+            &:hover{
+                background-color: #ff954e !important;
+            }
+        }
+        .btn-sms{
+            background-color: transparent;
+            border: 1.4px solid #d0d0d0 !important;
+            span{
+                color: #707070;
+            }
+            &:hover{
+                border-color: #fca870 !important;
+                span{
+                    color: #fca870;
+                }
+            }
         }
     }
     .error{

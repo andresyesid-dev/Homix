@@ -12,11 +12,13 @@ import { FormularioAgendamientoComponent } from './agendar-llamada/componentes/f
 import { AgendaDisponibleComponent } from './agendar-llamada/componentes/agenda-disponible/agenda-disponible.component';
 import { PasosVenderComponent } from './pasos-vender/pasos-vender.component';
 import { ParteSuperiorVenderComponent } from './parte-superior-vender/parte-superior-vender.component';
+import { AsesoriaVenderComponent } from './asesoria-vender/asesoria-vender.component';
 
 
 @NgModule({
   declarations: [
     ComoVenderComponent,
+    AsesoriaVenderComponent,
     EncabezadoVenderComponent,
     AgendarLlamadaComponent,
     FormularioAgendamientoComponent,
