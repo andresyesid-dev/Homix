@@ -12,9 +12,6 @@ export const environment = {
     appId: "1:460428051807:web:6e545ba98f6adcc6d862ea",
     measurementId: "G-TVXB7QB3G5"
   }, 
-  stripe: {
-    key: 'pk_live_51NttnvIR0Fjtn6lAkTbFofKfbxkqLOVr0p5RNDXFBpaBB0nQgMkQMdXHFfmRbnCaLlKE1JPjNESDxwZOa9jOSzL700rRo2nACz'
-  },
   mercadoPago: {
     // Reemplaza con tu clave pública de producción de MercadoPago
     publicKey: 'APP_USR-your-production-public-key-here'

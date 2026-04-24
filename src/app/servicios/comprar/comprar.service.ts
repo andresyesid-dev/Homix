@@ -186,6 +186,39 @@ export class ComprarService {
       })
     }
   }
+
+  async sumarUnidadesCarrito(idProducto: string, idUsuario: string, unidades: number, stockDisponible: number, tamanioI?: number): Promise<number>{
+    const productoRef = doc(this.firestore, '/productos/' + idProducto);
+    const usuarioRef = doc(this.firestore, '/usuarios/' + idUsuario);
+    const snap = await getDoc(usuarioRef);
+    const carrito: any[] = snap.data()?.['carrito'] ?? [];
+
+    const index = carrito.findIndex((item: any) => {
+      const mismoProducto = item.producto?.path === productoRef.path;
+      const mismoTamanio = typeof tamanioI === 'number'
+        ? item.tamanioIndex === tamanioI
+        : item.tamanioIndex === undefined;
+      return mismoProducto && mismoTamanio;
+    });
+
+    const unidadesActuales = index >= 0 ? Number(carrito[index].unidades) : 0;
+    const nuevasCantidad = unidadesActuales + unidades;
+
+    if (nuevasCantidad > stockDisponible) {
+      throw new Error(`Solo hay ${stockDisponible} unidades disponibles. Ya tienes ${unidadesActuales} en el carrito.`);
+    }
+
+    if (index >= 0) {
+      carrito[index] = { ...carrito[index], unidades: nuevasCantidad };
+    } else {
+      const nuevoItem: any = { producto: productoRef, unidades };
+      if (typeof tamanioI === 'number') nuevoItem['tamanioIndex'] = tamanioI;
+      carrito.push(nuevoItem);
+    }
+
+    await setDoc(usuarioRef, { carrito }, { merge: true });
+    return nuevasCantidad;
+  }
   async agregarReferenciaGuardado(idProducto: string, idUsuario: string, unidades: number, tamanioI?: number): Promise<void>{
     const productoRef = doc(this.firestore, '/productos/' + idProducto);
     const usuarioRef = doc(this.firestore, '/usuarios/' + idUsuario);

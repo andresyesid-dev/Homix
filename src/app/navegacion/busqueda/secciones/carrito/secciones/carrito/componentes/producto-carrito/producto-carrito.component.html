@@ -8,8 +8,8 @@
                  *ngIf="fotoUrl">
         </div>
         <div>
-            <p class="titulo" (click)="navegar(['prod/' + productoCarrito.id])">{{productoCarrito.nombre}} <span *ngIf="tamanio !== 'false'">{{productoCarrito.tamanios![+tamanio].gramos}}</span></p>
-            <p>Sabor: {{productoCarrito.sabor}}</p>
+            <p class="titulo" (click)="navegar(['prod/' + productoCarrito.id])">{{productoCarrito.nombre}} <span *ngIf="tamanio !== 'false' && productoCarrito.tamanios">{{productoCarrito.tamanios![+tamanio].gramos}}</span></p>
+            <p *ngIf="estiloNombre && productoCarrito.estilos && productoCarrito.estilos.length > 1">Estilo: {{estiloNombre}}</p>
             <p *ngIf="productoCarrito.envioGratis" class="envioGratis">Envio gratis</p>
             <p *ngIf="!productoCarrito.envioGratis" class="envioPrecio"><span>Recíbelo</span> por <span>$ {{productoCarrito.precioEnvio | number: '1.0-0'}}</span></p>
         </div>
@@ -27,17 +27,17 @@
             </div>
         </ng-container>
         <ng-container *ngIf="!productoCarrito.descuento">
-            <ng-container *ngIf="tamanio !== 'false'">
+            <ng-container *ngIf="tamanio !== 'false' && productoCarrito.tamanios">
                 <p>$ {{productoCarrito.tamanios![+this.tamanio].precio | number: '1.0-0'}}</p>
             </ng-container>
-            <ng-container *ngIf="tamanio == 'false'">
+            <ng-container *ngIf="tamanio == 'false' || productoCarrito.estilos">
                 <p>$ {{productoCarrito.precio | number: '1.0-0'}}</p>
             </ng-container>
             <p></p>
         </ng-container>
         <p></p>
         <div>
-            <button (click)="cambiarUnidad('-', indice)">-</button><p>{{unidad}}</p><button (click)="cambiarUnidad('+', indice)">+</button>
+            <button (click)="cambiarUnidad('-', indice)" [disabled]="unidad <= 1">-</button><p>{{unidad}}</p><button (click)="cambiarUnidad('+', indice)" [disabled]="unidad >= maxUnidades">+</button>
         </div>
     </div>
 </div>

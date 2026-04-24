@@ -141,14 +141,19 @@ export class ProductosService {
   }
   
   async obtenerFotoUno(producto: any): Promise<string[]>{
+    return this.obtenerFotoPorEstilo(producto, 0);
+  }
+
+  async obtenerFotoPorEstilo(producto: any, estiloIndex: number): Promise<string[]>{
     const urlsArrays: string[] = [''];
     
     // Verificar si usa el formato antiguo (DocumentReference) o nuevo (string[])
     if (producto.estilos && Array.isArray(producto.estilos) && typeof producto.estilos[0] === 'object' && producto.estilos[0].path) {
       // Formato antiguo: estilos con subcolección
-      const estiloSnapshot = await getDoc(producto.estilos[0]);
+      const estiloRef = producto.estilos[estiloIndex] ?? producto.estilos[0];
+      const estiloSnapshot = await getDoc(estiloRef);
       const estilo = await estiloSnapshot.data() as any;
-      const imgRef = ref(this.storage, `productos/${producto.id}/${producto.estilos[0].id}/${estilo.fotos[0].id}`);
+      const imgRef = ref(this.storage, `productos/${producto.id}/${estiloRef.id}/${estilo.fotos[0].id}`);
       urlsArrays[0] = await getDownloadURL(imgRef);
     } else if (producto.fotos && Array.isArray(producto.fotos) && producto.fotos.length > 0) {
       // Formato nuevo: fotos simples
