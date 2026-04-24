@@ -18,6 +18,7 @@ import { EncabezadoNavegadorComponent } from './componentes/encabezado-navegador
 import { VideoComponent } from './componentes/video/video.component';
 import { OpinionesComponent } from './componentes/opiniones/opiniones.component';
 import { TiempoComponent } from './componentes/tiempo/tiempo.component';
+import { CarritoConfirmacionComponent } from './componentes/carrito-confirmacion/carrito-confirmacion.component';
 registerLocaleData(localeEs);
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ registerLocaleData(localeEs);
     EncabezadoNavegadorComponent,
     VideoComponent,
     OpinionesComponent,
-    TiempoComponent
+    TiempoComponent,
+    CarritoConfirmacionComponent
   ],
   imports: [
     CommonModule,

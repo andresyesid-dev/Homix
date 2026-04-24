@@ -16,6 +16,7 @@ import { AuthService } from 'src/app/servicios/usuarios/auth.service';
 import { ComprarService } from 'src/app/servicios/comprar/comprar.service';
 import { Auth } from '@angular/fire/auth';
 import { DocumentData, DocumentReference, Firestore, Timestamp, arrayUnion, doc, getDoc, increment, runTransaction, updateDoc } from '@angular/fire/firestore';
+import { DatosProductoComponent } from './componentes/datos-producto/datos-producto.component';
 
 @Component({
   selector: 'app-producto',
@@ -29,7 +30,7 @@ export class ProductoComponent implements OnInit{
   private routerSubscription!: Subscription;
   private productoId!: string;
   producto!: Producto;
-  usuarioVendedor!: Usuario; //Proteger datos
+  usuarioVendedor?: Usuario; //Proteger datos
   miUsuario!: Usuario; //Proteger datos
   productos!: Producto[];
   fotosProducto: string[][] = []; // Fotos obtenidas de Firebase Storage
@@ -44,6 +45,8 @@ export class ProductoComponent implements OnInit{
   sombraOpinion: boolean = false;
   indexOpinion = 0;
   unidades: number = 1;
+
+  @ViewChild(DatosProductoComponent) datosProductoRef!: DatosProductoComponent;
 
   productoCargado = false;
   productoPropio!: boolean; productoPropioFixed = false;
@@ -277,27 +280,25 @@ export class ProductoComponent implements OnInit{
 //-------------------------- carrito y favoritos ------------------------
 
   async editarFavorito(){
-    if(this.usuarioVendedor){
-      if(this.enFavoritos){
-        if(this.auth.currentUser){ //Eliminar
-          this.enFavoritos = false;
-          const usuarioRef = doc(this.firestore, `usuarios/${this.auth.currentUser.uid}`);
-          const productoRef = doc(this.firestore, `productos/${this.producto.id}`);
-          const snapshot = await getDoc(usuarioRef);
-          const usuario = snapshot.data();
-          const index = usuario!['favoritos'].findIndex((referencia: DocumentReference<DocumentData>) => referencia.id == productoRef.id);
-          usuario!['favoritos'].splice(index, 1);
-          this.prdService.eliminarFavorito(this.auth.currentUser.uid, usuario!['favoritos'], productoRef);
-        }else{
-          this.router.navigate(['cuenta/crear-cuenta']);
-        }
+    if(this.enFavoritos){
+      if(this.auth.currentUser){ //Eliminar
+        this.enFavoritos = false;
+        const usuarioRef = doc(this.firestore, `usuarios/${this.auth.currentUser.uid}`);
+        const productoRef = doc(this.firestore, `productos/${this.producto.id}`);
+        const snapshot = await getDoc(usuarioRef);
+        const usuario = snapshot.data();
+        const index = usuario!['favoritos'].findIndex((referencia: DocumentReference<DocumentData>) => referencia.id == productoRef.id);
+        usuario!['favoritos'].splice(index, 1);
+        this.prdService.eliminarFavorito(this.auth.currentUser.uid, usuario!['favoritos'], productoRef);
       }else{
-        if(this.auth.currentUser){ //Agregar
-          this.enFavoritos = true;
-          this.prdService.agregarFavorito(this.producto.id!, this.auth.currentUser.uid);
-        }else{
-          this.router.navigate(['cuenta/crear-cuenta']);
-        }
+        this.router.navigate(['cuenta/crear-cuenta']);
+      }
+    }else{
+      if(this.auth.currentUser){ //Agregar
+        this.enFavoritos = true;
+        this.prdService.agregarFavorito(this.producto.id!, this.auth.currentUser.uid);
+      }else{
+        this.router.navigate(['cuenta/crear-cuenta']);
       }
     }
   }
@@ -305,12 +306,11 @@ export class ProductoComponent implements OnInit{
 //------------------------- carrito
 
   editarCarrito(){
-    if(this.usuarioVendedor){
-      if(this.enCarrito){
-        this.eliminarCarritoUsuario();
-      }else{
-        this.agregarCarritoUsuario()
-      }
+    if(this.enCarrito){
+      this.eliminarCarritoUsuario();
+    }else{
+      this.enCarrito = true;
+      this.datosProductoRef?.agregarAlCarrito();
     }
   }
   

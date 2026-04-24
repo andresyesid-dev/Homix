@@ -33,6 +33,8 @@ export class DatosProductoComponent implements OnInit, OnChanges {
   ) {}
 
   @Input() producto!: Producto;
+  @Input() fotosPrincipales: string[] = [];
+  @Input() usuarioVendedorNombre: string = '';
   @Output() ventasHechas = new EventEmitter<string>();
   @Output() unidadeS = new EventEmitter<number>();
   @Output() seleccionarColr = new EventEmitter<number>();
@@ -49,6 +51,15 @@ export class DatosProductoComponent implements OnInit, OnChanges {
   anchoPagina: number = window.innerWidth;
 
   // MercadoPago properties
+  get currentUserUid(): string {
+    return this.auth.currentUser?.uid ?? '';
+  }
+
+  cargandoCarrito = false;
+  mostrarConfirmacionCarrito = false;
+  errorCarrito = false;
+  fotoParaConfirmacion = '';
+  unidadesEnCarrito = 0;
   mostrarModalPago = false;
   procestandoPago = false;
   pagoCompletado = false;
@@ -171,8 +182,8 @@ export class DatosProductoComponent implements OnInit, OnChanges {
   }
 
   cambiarUnidades(event: any) {
-    this.unidades = event.target.value;
-    this.unaUnidad = event.target.value == 1;
+    this.unidades = Number(event.target.value);
+    this.unaUnidad = this.unidades === 1;
     this.unidadeS.emit(this.unidades);
   }
 
@@ -209,19 +220,34 @@ export class DatosProductoComponent implements OnInit, OnChanges {
           console.log('❌ Este es tu propio producto');
           alert('No puedes agregar tu propio producto al carrito');
         } else {
+          this.cargandoCarrito = true;
+          let totalEnCarrito = this.unidades;
           try {
-            // Agregar al carrito usando el servicio
-            await this.comprarService.agregarReferenciaCarrito(
+            // Agregar al carrito sumando unidades si ya existe
+            const stock = this.producto.estilos
+              ? (this.producto.estilos[this.selectEstilo]?.unidades ?? 1)
+              : 1;
+            const tamanioIndex = this.producto.estilos?.length
+              ? this.selectEstilo
+              : (this.producto.tamanios ? this.tamanioSelec : undefined);
+            totalEnCarrito = await this.comprarService.sumarUnidadesCarrito(
               this.producto.id!,
               this.auth.currentUser.uid,
               this.unidades,
-              this.producto.tamanios ? this.tamanioSelec : undefined
+              stock,
+              tamanioIndex
             );
-            console.log('✅ Producto agregado al carrito');
-            alert('Producto agregado al carrito exitosamente');
-          } catch (error) {
+            await new Promise(resolve => setTimeout(resolve, 600));
+            this.fotoParaConfirmacion = this.fotosPrincipales[0] ?? '';
+            this.unidadesEnCarrito = totalEnCarrito;
+            this.mostrarConfirmacionCarrito = true;
+          } catch (error: any) {
             console.error('❌ Error al agregar al carrito:', error);
-            alert('Error al agregar el producto al carrito');
+            this.fotoParaConfirmacion = this.fotosPrincipales[0] ?? '';
+            this.errorCarrito = true;
+            this.mostrarConfirmacionCarrito = true;
+          } finally {
+            this.cargandoCarrito = false;
           }
         }
       } else {

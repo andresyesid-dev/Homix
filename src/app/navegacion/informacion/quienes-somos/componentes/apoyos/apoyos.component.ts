@@ -6,8 +6,6 @@ import { heroQuestionMarkCircle } from '@ng-icons/heroicons/outline';
 import { heroXMark } from '@ng-icons/heroicons/outline';
 import { environment } from 'src/environments/environment';
 
-declare var Stripe: any;
-
 @Component({
   selector: 'app-apoyos',
   templateUrl: './apoyos.component.html',
@@ -48,17 +46,7 @@ export class ApoyosComponent {
   donar(): void {
     if(!this.cargando){
       this.cargando = true;
-      var stripe = Stripe(environment.stripe.key);
-      httpsCallable(this.functions, "stripeCheckout")({ precio: this.precio }).then(result => {
-          setTimeout(()=>{
-            this.cargando = false;
-          }, 1500)
-          stripe.redirectToCheckout({
-              sessionId: result.data,
-          }).then(function (result:any) {
-              console.log(result.error.message);
-          });
-      });
+      setTimeout(()=>{ this.cargando = false; }, 1500);
     }
   }
 

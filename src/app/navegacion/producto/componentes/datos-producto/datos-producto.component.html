@@ -65,8 +65,9 @@
             <button class="btn-comprar-directo" (click)="comprar()">
                 Comprar ahora
             </button>
-            <button class="btn-agregar-carrito" (click)="agregarAlCarrito()">
-                Agregar al carrito
+            <button class="btn-agregar-carrito" [ngClass]="{'cargando': cargandoCarrito}" [disabled]="cargandoCarrito" (click)="agregarAlCarrito()">
+                <span *ngIf="!cargandoCarrito">Agregar al carrito</span>
+                <span class="loading" *ngIf="cargandoCarrito"></span>
             </button>
         </div>
         <!--
@@ -82,6 +83,18 @@
         <div class="proteccionCompra">Compra protegida:<span> Obtén lo que esperabas o recupera tu dinero.</span><ng-icon name="matGppGoodOutline"></ng-icon></div>
     </div>
 </div>
+
+<app-carrito-confirmacion
+    [visible]="mostrarConfirmacionCarrito"
+    [producto]="producto"
+    [unidades]="unidades"
+    [unidadesEnCarrito]="unidadesEnCarrito"
+    [fotoActual]="fotoParaConfirmacion"
+    [usuarioVendedorNombre]="usuarioVendedorNombre"
+    [usuarioActualId]="currentUserUid"
+    [esError]="errorCarrito"
+    (cerrar)="mostrarConfirmacionCarrito = false; errorCarrito = false">
+</app-carrito-confirmacion>
 
 <!-- Modal de pago MercadoPago -->
 <div class="modal-overlay" *ngIf="mostrarModalPago" (click)="cerrarModalPago()">

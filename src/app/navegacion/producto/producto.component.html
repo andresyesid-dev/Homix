@@ -49,7 +49,7 @@
             </div>
 
             <div class="seccioDerecha">
-                <app-datos-producto [productoCargado]="productoCargado" [producto]="producto" (unidadeS)="unidades = $event" (seleccionarColr)="seleccionarColor($event)" (seleccionarEstl)="seleccionarEstilo($event)"></app-datos-producto>
+                <app-datos-producto [productoCargado]="productoCargado" [producto]="producto" [fotosPrincipales]="fotosActuales" [usuarioVendedorNombre]="usuarioVendedor?.usuario ?? ''" (unidadeS)="unidades = $event" (seleccionarColr)="seleccionarColor($event)" (seleccionarEstl)="seleccionarEstilo($event)"></app-datos-producto>
                 <app-datos-producto-dos></app-datos-producto-dos>
                 <app-datos-producto-tres [producto]="producto"></app-datos-producto-tres>
             </div>
@@ -74,7 +74,7 @@
             <ng-icon class="corazon-full" name="heroHeartSolid" [class.corazon-click] = "enFavoritos == true" *ngIf="anchoPagina <= 800"></ng-icon>
 
             <app-fotos-producto *ngIf="producto" [producto]="producto" [fotos]="fotosActuales" [sombraPadre]="sombraBool" [indexPadre]="indexFoto" (sombraHijo)="nuevoDatoHijoSombra($event)" (fotoIndex)="nuevoIndex($event)" ></app-fotos-producto>
-            <app-datos-producto [productoCargado]="productoCargado" [producto]="producto" (unidadeS)="unidades = $event" (seleccionarColr)="seleccionarColor($event)" (seleccionarEstl)="seleccionarEstilo($event)" (ventasHechas)="asignarVentas($event)"></app-datos-producto>
+            <app-datos-producto [productoCargado]="productoCargado" [producto]="producto" [fotosPrincipales]="fotosActuales" [usuarioVendedorNombre]="usuarioVendedor?.usuario ?? ''" (unidadeS)="unidades = $event" (seleccionarColr)="seleccionarColor($event)" (seleccionarEstl)="seleccionarEstilo($event)" (ventasHechas)="asignarVentas($event)"></app-datos-producto>
             <!-------------------------->
             <app-video [url]="producto.videos[0].url" [titulo]="producto.videos[0].titulo" *ngIf="producto.videos"></app-video>
             <app-datos-producto-dos></app-datos-producto-dos>

@@ -1,0 +1,91 @@
+<div class="overlay" *ngIf="visible" (click)="seguirComprando()"></div>
+
+<div class="panel" [class.visible]="visible">
+
+  <!-- Header -->
+  <div class="panel-header">
+    <div class="confirmacion">
+      <!-- Éxito -->
+      <div class="icono-check" *ngIf="!esError">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="20 6 9 17 4 12"></polyline>
+        </svg>
+      </div>
+      <!-- Error -->
+      <div class="icono-error" *ngIf="esError">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </div>
+      <div>
+        <p class="titulo" *ngIf="!esError">¡Producto agregado!</p>
+        <p class="subtitulo" *ngIf="!esError">{{ unidadesEnCarrito }} {{ unidadesEnCarrito === 1 ? 'unidad' : 'unidades' }} en tu carrito</p>
+        <p class="titulo error" *ngIf="esError">No se pudo agregar</p>
+        <p class="subtitulo error" *ngIf="esError">Ya tienes el límite de compra</p>
+      </div>
+    </div>
+    <button class="btn-cerrar" (click)="seguirComprando()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Producto -->
+  <div class="panel-body">
+    <div class="producto-card">
+      <div class="foto-container">
+        <img [src]="fotoActual" [alt]="producto.nombre" (error)="$any($event.target).src='assets/img/logo/logocompleto.webp'">
+        <span class="badge" *ngIf="!esError">{{ unidadesEnCarrito }}</span>
+      </div>
+      <div class="producto-info">
+        <p class="nombre">{{ producto.nombre }}</p>
+
+        <!-- Estado éxito -->
+        <ng-container *ngIf="!esError">
+          <p class="precio">$ {{ producto.precio | number:'1.0-0' }} <span>COP</span></p>
+          <div class="meta-row">
+            <span class="meta-label">Cantidad agregada:</span>
+            <span class="meta-valor">{{ unidades }}</span>
+          </div>
+          <div class="meta-row">
+            <span class="meta-label">Total en carrito:</span>
+            <span class="meta-valor destacado">{{ unidadesEnCarrito }}</span>
+          </div>
+        </ng-container>
+
+        <!-- Estado error -->
+        <ng-container *ngIf="esError">
+          <p class="mensaje-error">No pudimos agregar este producto a tu carrito.</p>
+          <p class="detalle-error">Ya tienes la cantidad límite de compra para este producto.</p>
+        </ng-container>
+      </div>
+    </div>
+
+    <button class="btn-seguir" (click)="seguirComprando()">
+      ← Seguir comprando
+    </button>
+  </div>
+
+  <!-- Footer -->
+  <div class="panel-footer">
+    <button class="btn-vendedor" (click)="verVendedor()" *ngIf="!esError">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        <circle cx="12" cy="7" r="4"></circle>
+      </svg>
+      Ver más productos del vendedor
+    </button>
+    <button class="btn-carrito" (click)="irAlCarrito()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+      </svg>
+      Ir al carrito
+    </button>
+  </div>
+
+</div>
