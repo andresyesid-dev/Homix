@@ -35,7 +35,7 @@ export class SliderComponent implements OnInit {
     this.slickWidth = 100;
     setInterval(()=>{
       this.Move(2)
-    },5500)
+    },8500)
   }
 
   Move(value: number): void {

@@ -245,4 +245,39 @@ export class DatosProductoComponent implements OnInit, OnChanges {
   opiniones(){
     window.scroll(0,3000)
   }
+
+  // Métodos para el modal de pago MercadoPago
+  cerrarModalPago(): void {
+    this.mostrarModalPago = false;
+    this.procestandoPago = false;
+    this.pagoCompletado = false;
+    this.errorPago = null;
+    
+    // Limpiar el brick controller si existe
+    if (this.brickController) {
+      this.brickController = null;
+    }
+  }
+
+  calcularTotal(): number {
+    if (!this.producto || !this.producto.precio) {
+      return 0;
+    }
+    return this.producto.precio * this.unidades;
+  }
+
+  async iniciarProcesoPago(): Promise<void> {
+    this.errorPago = null;
+    this.procestandoPago = true;
+    
+    try {
+      // Aquí iría la lógica para inicializar el brick de MercadoPago
+      // Por ahora solo reseteamos el estado
+      this.procestandoPago = false;
+    } catch (error) {
+      console.error('Error iniciando proceso de pago:', error);
+      this.errorPago = 'No se pudo iniciar el proceso de pago. Intenta nuevamente.';
+      this.procestandoPago = false;
+    }
+  }
 }
